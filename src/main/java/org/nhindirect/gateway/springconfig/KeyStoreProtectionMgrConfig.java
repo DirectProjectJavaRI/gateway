@@ -13,9 +13,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class KeyStoreConfig
+public class KeyStoreProtectionMgrConfig
 {
-	  private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreConfig.class);	
+	  private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreProtectionMgrConfig.class);	
 	
 	  @Value("${direct.gateway.keystore.keyStorePin:som3randomp!n}")	
 	  private String keyStorePin;

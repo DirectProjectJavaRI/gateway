@@ -13,8 +13,10 @@ import junit.framework.TestCase;
 import org.apache.commons.io.IOUtils;
 import org.apache.mailet.Mail;
 import org.nhindirect.common.mail.MDNStandard;
+import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.gateway.smtp.james.mailet.AbstractNotificationAwareMailet;
 import org.nhindirect.gateway.testutils.TestUtils;
+import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.AddressSource;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
@@ -33,7 +35,9 @@ public class ReliableDispatchedNotificationProducer_produceTest extends TestCase
 	protected NHINDAddress getMailSender(Mail mail) throws MessagingException
 	{
 		// get the sender
-		final InternetAddress senderAddr = AbstractNotificationAwareMailet.getSender(mail);
+		final SMTPMailMessage smtpMailMessage = AbstractNotificationAwareMailet.mailToSMTPMailMessage(mail);
+		
+		final InternetAddress senderAddr =  MessageUtils.getMailSender(smtpMailMessage);
 		if (senderAddr == null)
 			throw new MessagingException("Failed to process message.  The sender cannot be null or empty.");
 						

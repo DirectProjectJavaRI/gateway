@@ -30,12 +30,14 @@ import javax.mail.internet.MimeMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mailet.Mail;
+import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.options.OptionsManager;
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.tx.model.Tx;
 import org.nhindirect.common.tx.model.TxMessageType;
 import org.nhindirect.gateway.smtp.dsn.DSNCreator;
 import org.nhindirect.gateway.smtp.dsn.impl.FailedDeliveryDSNCreator;
+import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 
@@ -86,9 +88,11 @@ public class TrackIncomingNotification extends AbstractNotificationAwareMailet
 		LOGGER.debug("Calling track incoming notification service");
 		final MimeMessage msg = mail.getMessage();
 
-		final NHINDAddressCollection recipients = getMailRecipients(mail);
+		final SMTPMailMessage smtpMailMessage = mailToSMTPMailMessage(mail);
 		
-		final NHINDAddress sender = getMailSender(mail);
+		final NHINDAddressCollection recipients = MessageUtils.getMailRecipients(smtpMailMessage);
+		
+		final NHINDAddress sender = MessageUtils.getMailSender(smtpMailMessage);
 		
 		final Tx txToMonitor = getTxToTrack(msg, sender, recipients);
 	

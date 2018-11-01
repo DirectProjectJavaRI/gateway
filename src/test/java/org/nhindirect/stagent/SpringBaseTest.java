@@ -36,12 +36,14 @@ import org.nhindirect.config.resources.TrustBundleResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = WebEnvironment.DEFINED_PORT)
 @TestPropertySource("classpath:bootstrap.properties")
+@DirtiesContext
 public abstract class SpringBaseTest
 {
 	protected String filePrefix;
@@ -130,10 +132,11 @@ public abstract class SpringBaseTest
 	@Autowired
 	protected KeyStoreProtectionManager keyStoreMgr;
 	
+	
 	@Before
 	public void setUp() throws Exception
 	{
-				
+		//Thread.sleep(1000);	
 		try
 		{
 			cleanDataStore();

@@ -25,10 +25,12 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.mailet.Mail;
+import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.tx.model.Tx;
 import org.nhindirect.common.tx.model.TxMessageType;
 import org.nhindirect.gateway.smtp.dsn.DSNCreator;
 import org.nhindirect.gateway.smtp.dsn.impl.FailedDeliveryDSNCreator;
+import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 
@@ -58,9 +60,11 @@ public class DirectBounce extends AbstractNotificationAwareMailet
 	{	
 		final MimeMessage msg = mail.getMessage();
 		
-		final NHINDAddressCollection recipients = getMailRecipients(mail);
+		final SMTPMailMessage smtpMailMessage = mailToSMTPMailMessage(mail);
 		
-		final NHINDAddress sender = getMailSender(mail);
+		final NHINDAddressCollection recipients = MessageUtils.getMailRecipients(smtpMailMessage);
+		
+		final NHINDAddress sender = MessageUtils.getMailSender(smtpMailMessage);
 			
 		final Tx txToTrack = getTxToTrack(msg, sender, recipients);
 		

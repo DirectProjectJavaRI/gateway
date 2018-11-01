@@ -13,12 +13,14 @@ import org.apache.commons.io.IOUtils;
 import org.apache.mailet.MailetConfig;
 import org.junit.Test;
 import org.nhindirect.common.mail.MailStandard;
+import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.tx.TxService;
 import org.nhindirect.common.tx.model.Tx;
 import org.nhindirect.common.tx.model.TxDetailType;
 import org.nhindirect.common.tx.model.TxMessageType;
 import org.nhindirect.gateway.testutils.BaseTestPlan;
 import org.nhindirect.gateway.testutils.TestUtils;
+import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.AddressSource;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
@@ -72,7 +74,10 @@ public class NHINDSecurityAndTrustMailet_trackMessageTest extends SpringBaseTest
 			
 			final MimeMessage msg = EntitySerializer.Default.deserialize(originalMessage);
 			final MockMail theMessage = new MockMail(msg);
-			final InternetAddress senderAddr = NHINDSecurityAndTrustMailet.getSender(theMessage);
+			
+			final SMTPMailMessage smtpMailMessage = AbstractNotificationAwareMailet.mailToSMTPMailMessage(theMessage);
+			
+			final InternetAddress senderAddr = MessageUtils.getMailSender(smtpMailMessage);
 			final NHINDAddress sender = new NHINDAddress(senderAddr, AddressSource.From);	
 			
 			final Tx tx = theMailet.getTxToTrack(msg, sender, new NHINDAddressCollection());

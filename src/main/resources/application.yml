@@ -1,0 +1,59 @@
+spring: 
+  cloud: 
+    stream: 
+      bindings: 
+        direct-smtp-gateway-message-output: 
+          destination: direct-smtp-mq-gateway
+          content-type: message/rfc822 
+          
+        direct-smtp-gateway-message-input:
+          destination: direct-smtp-mq-gateway
+          group: direct-sta-mq-gateway-message-group
+          consumer:
+            concurrency: 10    
+            maxAttempts: 4
+            backOffInitialInterval: 15000
+            backOffMaxInterval: 60000   
+            
+        direct-sta-processor-output: 
+          destination: direct-sta-process
+          content-type: message/rfc822 
+          
+        direct-sta-processor-input: 
+          destination: direct-sta-process    
+          group: direct-sta-process-message-group
+          consumer:
+            concurrency: 10                   
+            maxAttempts: 4
+            backOffInitialInterval: 15000
+            backOffMaxInterval: 60000   
+          
+        direct-sta-post-process-output: 
+          destination: direct-sta-post-process
+          content-type: message/rfc822 
+          
+        direct-sta-post-process-input: 
+          destination: direct-sta-post-process   
+          group: direct-sta-post-process-message-group
+          consumer:
+            concurrency: 10             
+            maxAttempts: 4
+            backOffInitialInterval: 15000
+            backOffMaxInterval: 60000    
+            
+        direct-smtp-remote-delivery-output: 
+          destination: direct-remote-delivery-process
+          content-type: message/rfc822 
+        
+        #Default to max 5 attempts, retry at 6 minutes, then multiply by a factor of 4 for each retry  
+        direct-smtp-remote-delivery-input: 
+          destination: direct-remote-delivery-process
+          group: direct-sta-remoted-delivery-group
+          consumer:
+            concurrency: 10             
+            maxAttempts: 5
+            backOffInitialInterval: 360000 
+            backOffMaxInterval: 92160000  
+            backOffMultiplier: 4   
+            republish-to-dlq: true                  
+            

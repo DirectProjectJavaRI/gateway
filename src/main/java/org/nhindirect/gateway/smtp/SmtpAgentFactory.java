@@ -488,7 +488,7 @@ public class SmtpAgentFactory
 		}	
 		
 		if (setting == null || setting.getValue() == null || setting.getValue().isEmpty())
-			storeTypes = STORE_TYPE_DNS + "," + STORE_TYPE_PUBLIC_LDAP; // default to DNS
+			storeTypes = STORE_TYPE_DNS + "," + STORE_TYPE_PUBLIC_LDAP; // default to DNS,LDAP
 		else
 			storeTypes = setting.getValue();
 		

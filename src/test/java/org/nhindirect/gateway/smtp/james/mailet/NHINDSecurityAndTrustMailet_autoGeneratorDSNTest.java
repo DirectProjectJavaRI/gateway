@@ -39,8 +39,6 @@ public class NHINDSecurityAndTrustMailet_autoGeneratorDSNTest extends SpringBase
 			
 			Map<String,String> params = new HashMap<String, String>();
 			
-			params.put(SecurityAndTrustMailetOptions.AUTO_DSN_FAILURE_CREATION_PARAM, getAutoDSNSetting());
-			
 			return new MockMailetConfig(params, "NHINDSecurityAndTrustMailet");	
 		}
 		
@@ -101,12 +99,6 @@ public class NHINDSecurityAndTrustMailet_autoGeneratorDSNTest extends SpringBase
 		protected String getMessageToSend()
 		{
 			return "PlainOutgoingMessage.txt";
-		}
-		
-		
-		protected String getAutoDSNSetting()
-		{
-			return NHINDSecurityAndTrustMailet.GENERAL_DSN_OPTION + "," + NHINDSecurityAndTrustMailet.RELIABLE_DSN_OPTION;
 		}
 		
 		protected void doAssertions(MockMailetContext context) throws Exception
@@ -183,106 +175,6 @@ public class NHINDSecurityAndTrustMailet_autoGeneratorDSNTest extends SpringBase
 		}.perform();
 	}
 	
-	public void testAutoGeneratorDSN_noDSNSetting_multiRecipUntrustedRecips_assertNoDSNSent() throws Exception 
-	{
-		new TestPlan() 
-		{
-			@Override
-			protected String getAutoDSNSetting()
-			{
-				return "";
-			}
-			
-			@Override
-			protected String getMessageToSend()
-			{
-				return "PlainOutgoingMessageWithRejectedRecips.txt";
-			}
-			
-			@Override
-			protected void doAssertions(MockMailetContext context) throws Exception
-			{
-				assertEquals(0, context.getSentMessages().size());
-				
-			}			
-		}.perform();
-	}
-	
-	@Test
-	public void testAutoGeneratorDSN_noGeneralSetting_multiRecipUntrustedRecips_assertNoDSNSent() throws Exception 
-	{
-		new TestPlan() 
-		{
-			@Override
-			protected String getAutoDSNSetting()
-			{
-				return NHINDSecurityAndTrustMailet.RELIABLE_DSN_OPTION;
-			}
-			
-			@Override
-			protected String getMessageToSend()
-			{
-				return "PlainOutgoingMessageWithRejectedRecips.txt";
-			}
-			
-			@Override
-			protected void doAssertions(MockMailetContext context) throws Exception
-			{
-				assertEquals(0, context.getSentMessages().size());
-				
-			}			
-		}.perform();
-	}
-	
-	public void testAutoGeneratorDSN_noDSNSetting_untrustedGeneralMessage_assertDSNNotSent() throws Exception 
-	{
-		new TestPlan() 
-		{
-
-			protected String getAutoDSNSetting()
-			{
-				return "";
-			}
-			
-			@Override
-			protected String getMessageToSend()
-			{
-				return "PlainUntrustedOutgoingMessage.txt";
-			}
-			
-			@Override
-			protected void doAssertions(MockMailetContext context) throws Exception
-			{
-				assertEquals(0, context.getSentMessages().size());
-			}			
-		}.perform();
-	}
-	
-	@Test
-	public void testAutoGeneratorDSN_noGeneralSetting_untrustedGeneralMessage_assertDSNNotSent() throws Exception 
-	{
-		new TestPlan() 
-		{
-
-			protected String getAutoDSNSetting()
-			{
-				return NHINDSecurityAndTrustMailet.RELIABLE_DSN_OPTION;
-			}
-			
-			@Override
-			protected String getMessageToSend()
-			{
-				return "PlainUntrustedOutgoingMessage.txt";
-			}
-			
-			@Override
-			protected void doAssertions(MockMailetContext context) throws Exception
-			{
-				assertEquals(0, context.getSentMessages().size());
-			}			
-		}.perform();
-	}
-	
 	@Test
 	public void testAutoGeneratorDSN_generateDNSForReliableUntrustedRecips_assertDSNSent() throws Exception 
 	{
@@ -317,55 +209,6 @@ public class NHINDSecurityAndTrustMailet_autoGeneratorDSNTest extends SpringBase
 		}.perform();
 	}
 	
-	@Test
-	public void testAutoGeneratorDSN_noDSNSetting_reliableUntrustedRecips_assertNoDSNSent() throws Exception 
-	{
-		new TestPlan() 
-		{
-			
-			protected String getAutoDSNSetting()
-			{
-				return "";
-			}
-			
-			@Override
-			protected String getMessageToSend()
-			{
-				return "PlainUntrustedReliableOutgoingMessage.txt";
-			}
-			
-			@Override
-			protected void doAssertions(MockMailetContext context) throws Exception
-			{
-				assertEquals(0, context.getSentMessages().size());
-			}			
-		}.perform();
-	}
-	
-	@Test
-	public void testAutoGeneratorDSN_noReliableSetting_reliableUntrustedRecips_assertNoDSNSent() throws Exception 
-	{
-		new TestPlan() 
-		{
-			
-			protected String getAutoDSNSetting()
-			{
-				return NHINDSecurityAndTrustMailet.GENERAL_DSN_OPTION;
-			}
-			
-			@Override
-			protected String getMessageToSend()
-			{
-				return "PlainUntrustedReliableOutgoingMessage.txt";
-			}
-			
-			@Override
-			protected void doAssertions(MockMailetContext context) throws Exception
-			{
-				assertEquals(0, context.getSentMessages().size());
-			}			
-		}.perform();
-	}
 	
 	@Test
 	public void testAutoGeneratorDSN_untrustedMDNMessage_assertNoDSNSent() throws Exception 

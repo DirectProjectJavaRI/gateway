@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableFeignClients({"org.nhind.config.rest.feign", "org.nhind.config.rest.feign.configuration"})
+@EnableFeignClients({"org.nhind.config.rest.feign"})
 @ImportAutoConfiguration({RibbonAutoConfiguration.class, FeignRibbonClientAutoConfiguration.class, FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
 public class ConfigServiceClientConfig
 {	

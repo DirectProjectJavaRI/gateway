@@ -42,10 +42,9 @@ import org.nhind.config.rest.SettingService;
 import org.nhind.config.rest.TrustBundleService;
 import org.nhindirect.common.audit.Auditor;
 import org.nhindirect.common.crypto.KeyStoreProtectionManager;
+import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.options.OptionsManager;
 import org.nhindirect.common.options.OptionsParameter;
-import org.nhindirect.common.rest.exceptions.ServiceException;
-import org.nhindirect.common.tx.TxUtil;
 import org.nhindirect.common.tx.model.Tx;
 import org.nhindirect.common.tx.model.TxMessageType;
 import org.nhindirect.gateway.GatewayConfiguration;
@@ -56,9 +55,9 @@ import org.nhindirect.gateway.smtp.SmtpAgentException;
 import org.nhindirect.gateway.smtp.SmtpAgentFactory;
 import org.nhindirect.gateway.smtp.dsn.DSNCreator;
 import org.nhindirect.gateway.smtp.dsn.impl.RejectedRecipientDSNCreator;
+import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
-import org.nhindirect.stagent.cryptography.SMIMEStandard;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -74,9 +73,6 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 {    
 	@SuppressWarnings("deprecation")
 	private static final Log LOGGER = LogFactory.getFactory().getInstance(NHINDSecurityAndTrustMailet.class);	
-	
-	protected static final String GENERAL_DSN_OPTION = "General";
-	protected static final String RELIABLE_DSN_OPTION = "ReliableAndTimely";
 	
 	protected SmtpAgent agent;
 	protected boolean autoDSNForGeneral  = false;
@@ -182,20 +178,6 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 			throw new MessagingException("Failed to create the SMTP agent.  Reason unknown.");
 		}	
 		///CLOVER:ON
-	
-		
-		// get the DSN creation options
-		// default is RELIABLE_DSN_OPTION
-		final String dnsCreateOptions =  GatewayConfiguration.getConfigurationParam(SecurityAndTrustMailetOptions.AUTO_DSN_FAILURE_CREATION_PARAM,
-				this, RELIABLE_DSN_OPTION); 
-	
-		for (String dsnOption : dnsCreateOptions.split(","))
-		{
-			if (dsnOption.equalsIgnoreCase(RELIABLE_DSN_OPTION))
-				autoDSNForTimelyAndReliable = true;
-			else if(dsnOption.equalsIgnoreCase(GENERAL_DSN_OPTION))
-				autoDSNForGeneral = true;
-		}
 				
 		// set the agent and config in the Gateway state
 		final GatewayState gwState = GatewayState.getInstance();
@@ -234,15 +216,16 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 			
 			final MimeMessage msg = mail.getMessage();
 			
-			final NHINDAddressCollection recipients = getMailRecipients(mail);
+			final SMTPMailMessage smtpMailMessage = mailToSMTPMailMessage(mail);
 			
-			// get the sender
-			final NHINDAddress sender = getMailSender(mail);
+			final NHINDAddressCollection recipients = MessageUtils.getMailRecipients(smtpMailMessage);
 			
-			LOGGER.info("Proccessing incoming message from sender " + sender.toString());
+			final NHINDAddress sender = MessageUtils.getMailSender(smtpMailMessage);
+			
+			LOGGER.info("Proccessing message from sender " + sender.toString());
 			MessageProcessResult result = null;
 					
-			final boolean isOutgoing = this.isOutgoing(msg, sender);
+			final boolean isOutgoing = isOutgoing(msg, sender);
 			
 			// if the message is outgoing, then the tracking information must be
 			// gathered now before the message is transformed
@@ -314,7 +297,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 				final Collection<MailAddress> newRCPTList = new ArrayList<MailAddress>();
 				for (MailAddress rctpAdd : (Collection<MailAddress>)mail.getRecipients())
 				{
-					if (!isRcptRejected(rctpAdd, result.getProcessedMessage().getRejectedRecipients()))
+					if (!MessageUtils.isRcptRejected(rctpAdd.toInternetAddress(), result.getProcessedMessage().getRejectedRecipients()))
 					{
 						newRCPTList.add(rctpAdd);
 					}
@@ -356,23 +339,6 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 		{
 			GatewayState.getInstance().unlockFromProcessing();
 		}
-	}
-	
-	
-	
-	/*
-	 * 
-	 * Determine if the recipient has been rejected
-	 * 
-	 * @param rejectedRecips
-	 */
-	private boolean isRcptRejected(MailAddress rctpAdd, NHINDAddressCollection rejectedRecips)
-	{
-		for (NHINDAddress rejectedRecip : rejectedRecips)
-			if (rejectedRecip.getAddress().equals(rctpAdd.toInternetAddress().toString()))
-				return true;
-		
-		return false;
 	}
 	
 	protected SmtpAgentFactory getSmtpAgentFactory() throws MessagingException
@@ -439,17 +405,8 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 	protected void onMessageRejected(Mail mail, NHINDAddressCollection recipients, NHINDAddress sender, boolean isOutgoing,
 			Tx tx, Throwable t)
 	{
-		// if this is an outgoing IMF message, then we may need to send a DSN message
-		boolean sendDSN = false;
+		// if this is an outgoing IMF message, then we need to send a DSN message
 		if (isOutgoing && tx != null && tx.getMsgType() == TxMessageType.IMF)
-		{
-			final boolean timely = TxUtil.isReliableAndTimelyRequested(tx);
-			if ((timely && this.autoDSNForTimelyAndReliable) ||
-					(!timely && this.autoDSNForGeneral))
-				sendDSN = true;
-		}
-		
-		if (sendDSN)
 			sendDSN(tx, recipients, true);
 		
 		this.onMessageRejected(mail, recipients, sender, t);
@@ -479,49 +436,12 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 	protected void onPostprocessMessage(Mail mail, MessageProcessResult result, boolean isOutgoing, Tx tx)
 	{
 		// if there are rejected recipients and an outgoing IMF message, then we may need to send a DSN message
-		boolean sendDSN = false;
 		if (isOutgoing && tx != null && tx.getMsgType() == TxMessageType.IMF && result.getProcessedMessage().hasRejectedRecipients())
-		{
-			final boolean timely = TxUtil.isReliableAndTimelyRequested(tx);
-			if ((timely && this.autoDSNForTimelyAndReliable) ||
-					(!timely && this.autoDSNForGeneral))
-				sendDSN = true;
-		}
-		
-		if (sendDSN)
 			sendDSN(tx, result.getProcessedMessage().getRejectedRecipients(), true);
 		
 		this.onPostprocessMessage(mail, result);
 	}
 		
-	
-	/**
-	 * Determines if a message is incoming or outgoing based on the domains available in the configured agent
-	 * and the sender of the message.
-	 * @param msg The message that is being processed.
-	 * @param sender The sender of the message.
-	 * @return true if the message is determined to be outgoing; false otherwise
-	 */
-	protected boolean isOutgoing(MimeMessage msg, NHINDAddress sender)
-	{		
-		if (agent.getAgent() == null || agent.getAgent().getDomains() == null)
-			return false;
-		
-		// if the sender is not from our domain, then is has to be an incoming message
-		if (!sender.isInDomain(agent.getAgent().getDomains()))
-			return false;
-		else
-		{
-			// depending on the SMTP stack configuration, a message with a sender from our domain
-			// may still be an incoming message... check if the message is encrypted
-			if (SMIMEStandard.isEncrypted(msg))
-			{
-				return false;
-			}
-		}
-		
-		return true;
-	}
 	
 	/**
 	 * {@inheritDoc}
@@ -539,38 +459,16 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 	 * @param tx The message to monitor and track
 	 * @param isOutgoing Indicates the message direction: incoming or outgoing
 	 */
-	@SuppressWarnings("incomplete-switch")
 	protected void trackMessage(Tx tx, boolean isOutgoing)
 	{
-		// only track the following message..
-		// 1. Outgoing IMF message
-		boolean track = false;
-		if (tx != null)
-		{
-			switch (tx.getMsgType())
-			{
-				case IMF:
-				{
-					track = isOutgoing;
-					break;
-				}
-			}
-		}
-		
-		if (track)
-		{
-			try
-			{
-				txService.trackMessage(tx);
-			}
-			catch (ServiceException ex)
-			{
-				LOGGER.warn("Failed to submit message to monitoring service.", ex);
-			}
-		}
-		
+		MessageUtils.trackMessage(tx, isOutgoing, txService);		
 	}
 
+	
+	protected boolean isOutgoing(MimeMessage msg, NHINDAddress sender)
+	{
+		return MessageUtils.isOutgoing(msg, sender, agent.getAgent());
+	}
 	
 	/**
 	 * Shutsdown the gateway and cleans up resources associated with it.

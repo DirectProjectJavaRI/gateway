@@ -21,9 +21,10 @@ THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.nhindirect.gateway.smtp.james.mailet;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.mail.Address;
 import javax.mail.MessagingException;
@@ -35,16 +36,14 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.mailet.Mail;
 import org.apache.mailet.MailAddress;
 import org.apache.mailet.base.GenericMailet;
+import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.tx.TxDetailParser;
 import org.nhindirect.common.tx.TxService;
-import org.nhindirect.common.tx.TxUtil;
 import org.nhindirect.common.tx.impl.DefaultTxDetailParser;
 import org.nhindirect.common.tx.impl.NoOpTxServiceClient;
 import org.nhindirect.common.tx.model.Tx;
-import org.nhindirect.common.tx.model.TxDetail;
-import org.nhindirect.common.tx.model.TxDetailType;
 import org.nhindirect.gateway.smtp.dsn.DSNCreator;
-import org.nhindirect.stagent.AddressSource;
+import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 import org.springframework.context.ApplicationContext;
@@ -167,29 +166,7 @@ public abstract class AbstractNotificationAwareMailet extends GenericMailet
 	 */
 	protected Tx getTxToTrack(MimeMessage msg, NHINDAddress sender, NHINDAddressCollection recipients)
 	{		
-		if (this.txParser == null)
-			return null;
-				
-		try
-		{	
-			
-			final Map<String, TxDetail> details = txParser.getMessageDetails(msg);
-			
-			if (sender != null)
-				details.put(TxDetailType.FROM.getType(), new TxDetail(TxDetailType.FROM, sender.getAddress().toLowerCase(Locale.getDefault())));
-			if (recipients != null && !recipients.isEmpty())
-				details.put(TxDetailType.RECIPIENTS.getType(), new TxDetail(TxDetailType.RECIPIENTS, recipients.toString().toLowerCase(Locale.getDefault())));
-			
-			
-			return new Tx(TxUtil.getMessageType(msg), details);
-		}
-		///CLOVER:OFF
-		catch (Exception e)
-		{
-			LOGGER.warn("Failed to parse message to Tx object.", e);
-			return null;
-		}
-		///CLOVER:ON
+		return MessageUtils.getTxToTrack(msg, sender, recipients, this.txParser);
 	}
 	
 	/**
@@ -221,17 +198,18 @@ public abstract class AbstractNotificationAwareMailet extends GenericMailet
 	}
 
 	/**
-	 * Get the recipients of Mail message by retrieving the recipient list from the SMTP envelope first, then falling back to the recipients
-	 * in the message if the recipients cannot be retrieved from the SMTP envelope.
-	 * @param mail The mail object that contains information from the SMTP envelope.
-	 * @return Collection of message recipients.
-	 * @throws MessagingException
+	 * Converts an Apache James Mail message to the common SMTPMailMessage object;
+	 * @param mail The Apache James smtp message
+	 * @return An SMTPMailMessage message instance container information from the Apache James mail object;
 	 */
 	@SuppressWarnings("unchecked")
-	protected NHINDAddressCollection getMailRecipients(Mail mail) throws MessagingException
+	public static SMTPMailMessage mailToSMTPMailMessage(Mail mail) throws MessagingException
 	{
-		final NHINDAddressCollection recipients = new NHINDAddressCollection();		
+		if (mail == null)
+			return null;
 		
+		List<InternetAddress> toAddrs = new ArrayList<>();
+		final InternetAddress fromAddr = (mail.getSender() == null) ? null : mail.getSender().toInternetAddress();
 		// uses the RCPT TO commands
 		final Collection<MailAddress> recips = mail.getRecipients();
 		if (recips == null || recips.size() == 0)
@@ -239,72 +217,15 @@ public abstract class AbstractNotificationAwareMailet extends GenericMailet
 			// fall back to the mime message list of recipients
 			final Address[] recipsAddr = mail.getMessage().getAllRecipients();
 			for (Address addr : recipsAddr)
-			{
-				
-				recipients.add(new NHINDAddress(addr.toString(), (AddressSource)null));
-			}
+				toAddrs.add(new NHINDAddress((InternetAddress)addr));
 		}
 		else
 		{
-			for (MailAddress addr : recips)
-			{
-				recipients.add(new NHINDAddress(addr.toString(), (AddressSource)null));
-			}
+			toAddrs = recips.stream().
+					map(toAddr -> new NHINDAddress(toAddr.toInternetAddress())).collect(Collectors.toList());
+
 		}
 		
-		return recipients;
-	}
-	
-	/**
-	 * Gets the sender of the message.
-	 * @param mail The mail object to get the mail information from.
-	 * @return The sender of the message.
-	 * @throws MessagingException
-	 */
-	protected NHINDAddress getMailSender(Mail mail) throws MessagingException
-	{
-		// get the sender
-		final InternetAddress senderAddr = AbstractNotificationAwareMailet.getSender(mail);
-		if (senderAddr == null)
-			throw new MessagingException("Failed to process message.  The sender cannot be null or empty.");
-						
-			// not the best way to do this
-		return new NHINDAddress(senderAddr, AddressSource.From);
-	}
-	
-	/**
-	 * Gets the sender attribute of a Mail message
-	 * @param mail The message to retrive the sender from
-	 * @return The message sender.
-	 */
-	public static InternetAddress getSender(Mail mail) 
-	{
-		InternetAddress retVal = null;
-		
-		if (mail.getSender() != null)
-			retVal = mail.getSender().toInternetAddress();	
-		else
-		{
-			// try to get the sender from the message
-			Address[] senderAddr = null;
-			try
-			{
-				if (mail.getMessage() == null)
-					return null;
-				
-				senderAddr = mail.getMessage().getFrom();
-				if (senderAddr == null || senderAddr.length == 0)
-					return null;
-			}
-			catch (MessagingException e)
-			{
-				return null;
-			}
-						
-			// not the best way to do this
-			retVal = (InternetAddress)senderAddr[0];	
-		}
-	
-		return retVal;
+		return new SMTPMailMessage(mail.getMessage(), toAddrs, fromAddr);
 	}
 }

@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.mailet.Mail;
 import org.apache.mailet.Mailet;
 import org.apache.mailet.MailetConfig;
+import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.options.OptionsManager;
 import org.nhindirect.common.tx.TxUtil;
 import org.nhindirect.common.tx.model.Tx;
@@ -46,6 +47,7 @@ import org.nhindirect.gateway.smtp.NotificationSettings;
 import org.nhindirect.gateway.smtp.ReliableDispatchedNotificationProducer;
 import org.nhindirect.gateway.smtp.dsn.DSNCreator;
 import org.nhindirect.gateway.smtp.dsn.impl.FailedDeliveryDSNCreator;
+import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.mail.Message;
@@ -218,9 +220,11 @@ public class TimelyAndReliableLocalDelivery extends AbstractNotificationAwareMai
 		final MimeMessage msg = mail.getMessage();
 		final boolean isReliableAndTimely = TxUtil.isReliableAndTimelyRequested(msg);
 		
-		final NHINDAddressCollection recipients = getMailRecipients(mail);
-								
-		final NHINDAddress sender = getMailSender(mail);
+		final SMTPMailMessage smtpMailMessage = mailToSMTPMailMessage(mail);
+		
+		final NHINDAddressCollection recipients = MessageUtils.getMailRecipients(smtpMailMessage);
+		
+		final NHINDAddress sender = MessageUtils.getMailSender(smtpMailMessage);
 		
 		
 		try
