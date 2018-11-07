@@ -31,14 +31,14 @@ import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.mailet.Mail;
 import org.apache.mailet.MailAddress;
 import org.apache.mailet.base.GenericMatcher;
 import org.nhindirect.gateway.smtp.SmtpAgentError;
 import org.nhindirect.gateway.smtp.SmtpAgentException;
 import org.nhindirect.stagent.NHINDAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Matcher for returning recipients when the sender is local and the recipient is not local.  This is useful
@@ -48,8 +48,7 @@ import org.nhindirect.stagent.NHINDAddress;
  */
 public class RecipAndSenderIsNotLocal extends  GenericMatcher
 {
-	@SuppressWarnings("deprecation")
-	private static final Log LOGGER = LogFactory.getFactory().getInstance(RecipAndSenderIsNotLocal.class);	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RecipAndSenderIsNotLocal.class);
 	private Set<String> domains = new HashSet<String>();
 	
 	/**
@@ -75,7 +74,7 @@ public class RecipAndSenderIsNotLocal extends  GenericMatcher
 			this.domains.add(domain.toUpperCase(Locale.getDefault()));
 		}
 		
-		LOGGER.info(logMessage);
+		LOGGER.info(logMessage.toString());
 	}
 	
 	/**

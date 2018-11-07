@@ -23,12 +23,12 @@ package org.nhindirect.gateway.smtp.james.mailet;
 
 import javax.mail.MessagingException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.mailet.Mail;
 import org.apache.mailet.base.GenericMailet;
 import org.nhindirect.gateway.smtp.GatewayState;
 import org.nhindirect.stagent.cert.CertCacheFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Mailet used to refresh the state of the security and trust mailet.  Specifically it forces the {@link GatewayState} to stop and restart the 
@@ -43,8 +43,7 @@ import org.nhindirect.stagent.cert.CertCacheFactory;
  */
 public class RefreshSecurityAndTrustStateMailet extends GenericMailet 
 {
-	@SuppressWarnings("deprecation")
-	private static final Log LOGGER = LogFactory.getFactory().getInstance(RefreshSecurityAndTrustStateMailet.class);	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RefreshSecurityAndTrustStateMailet.class);
 	
 	/**
 	 * {@inheritDoc}

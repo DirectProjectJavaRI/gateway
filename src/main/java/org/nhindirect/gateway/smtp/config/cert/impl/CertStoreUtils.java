@@ -30,8 +30,6 @@ import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.nhindirect.common.crypto.CryptoExtensions;
 import org.nhindirect.common.crypto.KeyStoreProtectionManager;
 import org.nhindirect.common.crypto.MutableKeyStoreProtectionManager;
@@ -41,6 +39,8 @@ import org.nhindirect.stagent.AgentError;
 import org.nhindirect.stagent.NHINDException;
 import org.nhindirect.stagent.cert.WrappedOnDemandX509CertificateEx;
 import org.nhindirect.stagent.cert.X509CertificateEx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility methods for working with certificate stores and certificate data.
@@ -50,8 +50,7 @@ import org.nhindirect.stagent.cert.X509CertificateEx;
  */
 public class CertStoreUtils
 {
-	@SuppressWarnings("deprecation")
-	private static final Log LOGGER = LogFactory.getFactory().getInstance(CertStoreUtils.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CertStoreUtils.class);
 	
     public static X509Certificate certFromData(KeyStoreProtectionManager mgr,  byte[] data)
     {

@@ -37,8 +37,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.nhind.config.rest.AnchorService;
 import org.nhind.config.rest.CertPolicyService;
 import org.nhind.config.rest.CertificateService;
@@ -80,6 +78,8 @@ import org.nhindirect.stagent.policy.impl.DomainPolicyResolver;
 import org.nhindirect.stagent.trust.DefaultTrustAnchorResolver;
 import org.nhindirect.stagent.trust.TrustAnchorResolver;
 import org.nhindirect.stagent.trust.TrustModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The SmtpAgentFactory is a bootstrapper for creating instances of the {@link SmtpAgent) based on configuration information.  Configurations
@@ -95,8 +95,7 @@ public class SmtpAgentFactory
 	
 	protected static SmtpAgentFactory INSTANCE;
 	
-	@SuppressWarnings("deprecation")
-	private static final Log LOGGER = LogFactory.getFactory().getInstance(SmtpAgentFactory.class);	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SmtpAgentFactory.class);	
 
 	protected static final String MESSAGE_SETTING_RAW = "Raw";
 	protected static final String MESSAGE_SETTING_INCOMING = "Incoming";
@@ -186,10 +185,9 @@ public class SmtpAgentFactory
 		final MessageProcessingSettings incomingSettings = getMessageProcessingSetting(MESSAGE_SETTING_INCOMING + "MessageSaveFolder");
 		final MessageProcessingSettings badSettings = getMessageProcessingSetting(MESSAGE_SETTING_BAD + "MessageSaveFolder");
 		
-		final Setting autoResponseSettings = getSafeSetting("MDNAutoResponse");
 		final Setting prodNameSetting = getSafeSetting("MDNProdName");
 		final Setting textSetting = getSafeSetting("MDNText");
-		boolean autoResponse = (autoResponseSettings == null) ? true : Boolean.parseBoolean(autoResponseSettings.getValue());
+		boolean autoResponse = true;  /* MDNs are part of the Direct spec.  This should not be an option */
 		final String prodName = (prodNameSetting == null) ? "" : prodNameSetting.getValue();
 		final String text = (textSetting == null) ? "" : textSetting.getValue();
 		final NotificationProducer notificationProducer = new NotificationProducer(new NotificationSettings(autoResponse, prodName, text));

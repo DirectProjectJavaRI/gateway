@@ -31,8 +31,6 @@ import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.mailet.Mail;
 import org.apache.mailet.Mailet;
 import org.apache.mailet.MailetConfig;
@@ -52,6 +50,8 @@ import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.mail.Message;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This mailet override the built in Apache James LocalDelivery mailet and sends an MDN dispatched message on successful delivery to a local mailbox
@@ -62,8 +62,7 @@ import org.nhindirect.stagent.mail.notifications.NotificationMessage;
  */
 public class TimelyAndReliableLocalDelivery extends AbstractNotificationAwareMailet
 {
-	@SuppressWarnings("deprecation")
-	private static final Log LOGGER = LogFactory.getFactory().getInstance(TimelyAndReliableLocalDelivery.class);	
+	private static final Logger LOGGER = LoggerFactory.getLogger(TimelyAndReliableLocalDelivery.class);
 
 	protected static final String DISPATCHED_MDN_DELAY = "DispatchedMDNDelay";
 	

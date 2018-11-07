@@ -25,10 +25,10 @@ package org.nhindirect.gateway.smtp;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.nhindirect.stagent.MutableAgent;
 import org.nhindirect.stagent.NHINDAgent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages the settings state of the gateway provides read/write lock protectors for concurrent operations.
@@ -39,8 +39,7 @@ import org.nhindirect.stagent.NHINDAgent;
  */
 public class GatewayState 
 {
-	 @SuppressWarnings("deprecation")
-	 private static final Log LOGGER = LogFactory.getFactory().getInstance(GatewayState.class);
+	 private static final Logger LOGGER = LoggerFactory.getLogger(GatewayState.class);
 	
 	 protected static final long DEFAULT_SETTINGS_UPDATE_DELAY = 300000; // 5 mintues
 	

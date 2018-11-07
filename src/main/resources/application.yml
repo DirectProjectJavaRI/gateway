@@ -56,4 +56,7 @@ spring:
             backOffMaxInterval: 92160000  
             backOffMultiplier: 4   
             republish-to-dlq: true                  
-            
+       
+        direct-xd-delivery-output: 
+          destination: direct-xd-delivery-process
+          content-type: message/rfc822             

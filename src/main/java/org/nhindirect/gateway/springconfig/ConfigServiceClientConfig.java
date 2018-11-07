@@ -1,17 +1,20 @@
 package org.nhindirect.gateway.springconfig;
 
+import org.nhind.config.rest.AddressService;
 import org.nhind.config.rest.AnchorService;
 import org.nhind.config.rest.CertPolicyService;
 import org.nhind.config.rest.CertificateService;
 import org.nhind.config.rest.DomainService;
 import org.nhind.config.rest.SettingService;
 import org.nhind.config.rest.TrustBundleService;
+import org.nhind.config.rest.feign.AddressClient;
 import org.nhind.config.rest.feign.AnchorClient;
 import org.nhind.config.rest.feign.CertificateClient;
 import org.nhind.config.rest.feign.CertificatePolicyClient;
 import org.nhind.config.rest.feign.DomainClient;
 import org.nhind.config.rest.feign.SettingClient;
 import org.nhind.config.rest.feign.TrustBundleClient;
+import org.nhind.config.rest.impl.DefaultAddressService;
 import org.nhind.config.rest.impl.DefaultAnchorService;
 import org.nhind.config.rest.impl.DefaultCertPolicyService;
 import org.nhind.config.rest.impl.DefaultCertificateService;
@@ -73,6 +76,13 @@ public class ConfigServiceClientConfig
 	public SettingService settingService(SettingClient settingClient)
 	{
 		return new DefaultSettingService(settingClient);
+	}	
+	
+	@Bean
+	@ConditionalOnMissingBean
+	public AddressService addressService(AddressClient addressClient)
+	{
+		return new DefaultAddressService(addressClient);
 	}	
 	
 }

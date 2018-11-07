@@ -28,8 +28,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jcs.JCS;
 import org.apache.jcs.access.exception.CacheException;
 import org.apache.jcs.engine.behavior.ICompositeCacheAttributes;
@@ -44,6 +42,8 @@ import org.nhindirect.stagent.cert.CacheableCertStore;
 import org.nhindirect.stagent.cert.CertCacheFactory;
 import org.nhindirect.stagent.cert.CertStoreCachePolicy;
 import org.nhindirect.stagent.cert.CertificateStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigServiceRESTCertificateStore extends CertificateStore implements CacheableCertStore
 {
@@ -62,8 +62,7 @@ public class ConfigServiceRESTCertificateStore extends CertificateStore implemen
 	protected static final int DEFAULT_WS_MAX_CAHCE_ITEMS = 1000;
 	protected static final int DEFAULT_WS_TTL = 3600; // 1 hour
     
-	@SuppressWarnings("deprecation")
-	private static final Log LOGGER = LogFactory.getFactory().getInstance(ConfigServiceRESTCertificateStore.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConfigServiceRESTCertificateStore.class);
 	
 	private static final String CACHE_NAME = "CONFIG_SERVICE_CERT_CACHE";
 	

@@ -8,10 +8,10 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -21,8 +21,7 @@ import org.springframework.messaging.MessageChannel;
 @EnableBinding(SmtpGatewayMessageOutput.class)
 public class SmtpGatewayMessageSource
 {	
-	@SuppressWarnings("deprecation")
-	private static final Log LOGGER = LogFactory.getFactory().getInstance(SmtpGatewayMessageSource.class);		
+	private static final Logger LOGGER = LoggerFactory.getLogger(SmtpGatewayMessageOutput.class);	
 	
 	@Autowired
 	@Qualifier(SmtpGatewayMessageOutput.SMTP_GATEWAY_MESSAGE_OUTPUT)

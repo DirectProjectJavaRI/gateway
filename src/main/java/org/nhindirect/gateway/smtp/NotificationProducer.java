@@ -27,8 +27,6 @@ import java.util.Collections;
 
 import javax.mail.internet.InternetAddress;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.nhindirect.stagent.IncomingMessage;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.mail.Message;
@@ -38,6 +36,8 @@ import org.nhindirect.stagent.mail.notifications.NotificationHelper;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
 import org.nhindirect.stagent.mail.notifications.NotificationType;
 import org.nhindirect.stagent.mail.notifications.ReportingUserAgent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -48,8 +48,7 @@ import org.nhindirect.stagent.mail.notifications.ReportingUserAgent;
  */
 public class NotificationProducer implements NotificationCreator
 {
-	@SuppressWarnings("deprecation")
-	private static final Log LOGGER = LogFactory.getFactory().getInstance(NotificationProducer.class);	
+	private static final Logger LOGGER = LoggerFactory.getLogger(NotificationProducer.class);
 
 	protected final NotificationSettings settings;
 	

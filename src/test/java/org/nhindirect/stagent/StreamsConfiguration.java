@@ -31,6 +31,7 @@ import org.nhindirect.gateway.springconfig.DNSResolverConfig;
 import org.nhindirect.gateway.springconfig.DSNGeneratorConfig;
 import org.nhindirect.gateway.springconfig.KeyStoreProtectionMgrConfig;
 import org.nhindirect.gateway.springconfig.MessageMonitorServiceConfig;
+import org.nhindirect.gateway.springconfig.RouteResolverConfig;
 import org.nhindirect.gateway.springconfig.SMTPAgentConfig;
 import org.nhindirect.gateway.springconfig.SMTPGatewayFactoryConfig;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -44,7 +45,8 @@ import org.springframework.context.annotation.Profile;
 @ComponentScan({"org.nhindirect.config", "org.nhind.config", "org.nhindirect.gateway.streams"})
 @EnableFeignClients({"org.nhind.config.rest.feign"})
 @Import({DSNGeneratorConfig.class, MessageMonitorServiceConfig.class, AuditorConfig.class, 
-	KeyStoreProtectionMgrConfig.class, SMTPAgentConfig.class, SMTPGatewayFactoryConfig.class, DNSResolverConfig.class})
+	KeyStoreProtectionMgrConfig.class, SMTPAgentConfig.class, SMTPGatewayFactoryConfig.class, DNSResolverConfig.class, 
+	RouteResolverConfig.class})
 @Configuration
 @Profile("streams")
 public class StreamsConfiguration

@@ -27,8 +27,6 @@ import java.util.Map;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.mailet.Mail;
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.options.OptionsManager;
@@ -43,6 +41,8 @@ import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.mail.notifications.MDNStandard;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This mailet determines if a notification messages need to be suppressed from delivery to the original message's edge client.
@@ -51,8 +51,7 @@ import org.nhindirect.stagent.mail.notifications.MDNStandard;
  */
 public class NotificationSuppressor extends AbstractNotificationAwareMailet
 {
-	@SuppressWarnings("deprecation")
-	private static final Log LOGGER = LogFactory.getFactory().getInstance(NotificationSuppressor.class);	
+	private static final Logger LOGGER = LoggerFactory.getLogger(NotificationSuppressor.class);
 	protected boolean consumeMDNProcessed;
 	
 	static

@@ -27,8 +27,6 @@ import java.util.Map;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.mailet.Mail;
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.options.OptionsManager;
@@ -40,6 +38,8 @@ import org.nhindirect.gateway.smtp.dsn.impl.FailedDeliveryDSNCreator;
 import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Notification messages are not tracked by the security and trust mailet to allow for a modular tracking design.  This mailet should be configured to 
@@ -49,8 +49,7 @@ import org.nhindirect.stagent.NHINDAddressCollection;
  */
 public class TrackIncomingNotification extends AbstractNotificationAwareMailet
 {
-	@SuppressWarnings("deprecation")
-	private static final Log LOGGER = LogFactory.getFactory().getInstance(TrackIncomingNotification.class);	
+	private static final Logger LOGGER = LoggerFactory.getLogger(TrackIncomingNotification.class);
 
 	static
 	{		

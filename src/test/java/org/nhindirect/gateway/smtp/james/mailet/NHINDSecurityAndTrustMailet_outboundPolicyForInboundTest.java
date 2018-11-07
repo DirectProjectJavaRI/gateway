@@ -84,7 +84,7 @@ public class NHINDSecurityAndTrustMailet_outboundPolicyForInboundTest extends Sp
 			{
 				final OptionsParameter param = OptionsManager.getInstance().getParameter(OptionsParameter.USE_OUTGOING_POLICY_FOR_INCOMING_NOTIFICATIONS);
 				assertNotNull(param);
-				assertEquals("false", param.getParamValue());
+				assertEquals("true", param.getParamValue());
 						
 			}				
 		}.perform();
@@ -106,7 +106,7 @@ public class NHINDSecurityAndTrustMailet_outboundPolicyForInboundTest extends Sp
 			{
 				final OptionsParameter param = OptionsManager.getInstance().getParameter(OptionsParameter.USE_OUTGOING_POLICY_FOR_INCOMING_NOTIFICATIONS);
 				assertNotNull(param);
-				assertEquals("false", param.getParamValue());
+				assertEquals("true", param.getParamValue());
 						
 			}				
 		}.perform();
@@ -296,7 +296,7 @@ public class NHINDSecurityAndTrustMailet_outboundPolicyForInboundTest extends Sp
 			{
 				final OptionsParameter param = OptionsManager.getInstance().getParameter(OptionsParameter.USE_OUTGOING_POLICY_FOR_INCOMING_NOTIFICATIONS);
 				assertNotNull(param);
-				assertEquals("false", param.getParamValue());
+				assertEquals("true", param.getParamValue());
 						
 			}				
 		}.perform();

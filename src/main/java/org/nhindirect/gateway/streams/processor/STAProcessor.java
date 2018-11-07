@@ -28,6 +28,7 @@ import org.nhindirect.stagent.mail.notifications.NotificationMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.Message;
@@ -50,6 +51,7 @@ public class STAProcessor
 	protected TxService txService;
 	
 	@Autowired
+	@Qualifier("rejectedRecipientDSNCreator")
 	protected DSNCreator dsnCreator;
 	
 	@Autowired
@@ -221,7 +223,6 @@ public class STAProcessor
 	{
 		try
 		{
-
 			final Collection<MimeMessage> msgs = dsnCreator.createDSNFailure(tx, undeliveredRecipeints, useSenderAsPostmaster);
 			if (msgs != null && msgs.size() > 0)
 				for (MimeMessage msg : msgs)

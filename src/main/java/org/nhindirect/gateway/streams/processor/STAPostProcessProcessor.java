@@ -1,7 +1,11 @@
 package org.nhindirect.gateway.streams.processor;
 
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
 
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
@@ -14,11 +18,13 @@ import org.nhindirect.common.tx.model.TxDetailType;
 import org.nhindirect.common.tx.model.TxMessageType;
 import org.nhindirect.gateway.streams.STAPostProcessInput;
 import org.nhindirect.gateway.streams.SmtpRemoteDeliverySource;
+import org.nhindirect.gateway.streams.XDRemoteDeliverySource;
 import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.cryptography.SMIMEStandard;
 import org.nhindirect.stagent.mail.notifications.MDNStandard;
+import org.nhindirect.xd.routing.RoutingResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +39,17 @@ public class STAPostProcessProcessor
 	@Value("${direct.gateway.postprocess.ConsumeMDNProcessed:true}")
 	protected boolean consumeMDNProcessed;
 	
+	@Value("${direct.gateway.xd.enabled:true}")
+	protected boolean xdEnabled;	
+	
 	@Autowired
 	protected SmtpRemoteDeliverySource remoteDeliverySource;
+	
+	@Autowired 
+	protected XDRemoteDeliverySource xdRemoteDeliverySource;
+	
+	@Autowired
+	protected RoutingResolver routingResolver;
 	
 	@Autowired
 	protected TxService txService;
@@ -80,6 +95,23 @@ public class STAPostProcessProcessor
 			{
 				// local delivery
 				LOGGER.debug("Incoming message.  Sending to local delivery");
+			}
+			
+			/*
+			 * Determine if there are any XD recipients
+			 */
+			if (xdEnabled)
+			{
+				final List<InternetAddress> xdRecipients = smtpMessage.getRecipientAddresses().stream()
+					.filter(addr -> routingResolver.isXdEndpoint(addr.getAddress())).collect(Collectors.toList()); 
+				
+				if (!xdRecipients.isEmpty())
+				{
+					final SMTPMailMessage xdBoundMessage = new SMTPMailMessage(smtpMessage.getMimeMessage(), xdRecipients, 
+							smtpMessage.getMailFrom());
+					
+					xdRemoteDeliverySource.xdRemoteDelivery(xdBoundMessage);
+				}
 			}
 		}
 		

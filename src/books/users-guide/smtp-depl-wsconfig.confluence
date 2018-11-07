@@ -227,7 +227,6 @@ h2. MDN Settings
 The agent automatically produce MDN message for all successfully processed messages with a disposition of _Processed_.  MDN is described in [RFC3798|http://tools.ietf.org/html/rfc3798] and is intended (for the SMTP Agent purposes) to indicate the successful reception and processing of message by the security and trust agent. 
 
 ||Setting||Description||
-|MDNAutoResponse|Indicates if the SMTP agent should produce MDN messages for MDN requests.  The default setting is true if this attribute is not present.|  
 |MDNProdName|The product name used in the user agent header of the MDN message.  Defaults to _Security Agent_ if this attribute is not present.|  
 |MDNText|Human readable response text sent back to the sender indicating a successful reception of the senders message.|  
 

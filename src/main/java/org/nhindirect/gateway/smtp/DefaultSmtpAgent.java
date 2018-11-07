@@ -39,8 +39,6 @@ import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.nhindirect.common.audit.AuditContext;
 import org.nhindirect.common.audit.AuditEvent;
 import org.nhindirect.common.audit.Auditor;
@@ -64,10 +62,10 @@ import org.nhindirect.stagent.mail.notifications.Notification;
 import org.nhindirect.stagent.mail.notifications.NotificationHelper;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
 import org.nhindirect.stagent.parser.EntitySerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.mail.util.CRLFOutputStream;
-
-
 
 /**
  * Default implementation of the SmtpAgent interface.
@@ -75,13 +73,10 @@ import com.sun.mail.util.CRLFOutputStream;
  */
 public class DefaultSmtpAgent implements SmtpAgent
 {	
-	@SuppressWarnings("deprecation")
-	private static final Log LOGGER = LogFactory.getFactory().getInstance(DefaultSmtpAgent.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSmtpAgent.class);
 	
 	private static final String PRINICPAL;
-	
 
-	
 	private NHINDAgent agent;
 	private final SmtpAgentSettings settings;
 	private Auditor auditor;

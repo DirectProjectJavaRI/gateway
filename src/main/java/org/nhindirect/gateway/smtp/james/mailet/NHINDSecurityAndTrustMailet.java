@@ -30,8 +30,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.mailet.Mail;
 import org.apache.mailet.MailAddress;
 import org.nhind.config.rest.AnchorService;
@@ -59,6 +57,8 @@ import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -71,8 +71,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet 
 {    
-	@SuppressWarnings("deprecation")
-	private static final Log LOGGER = LogFactory.getFactory().getInstance(NHINDSecurityAndTrustMailet.class);	
+	private static final Logger LOGGER = LoggerFactory.getLogger(NHINDSecurityAndTrustMailet.class);	
 	
 	protected SmtpAgent agent;
 	protected boolean autoDSNForGeneral  = false;
