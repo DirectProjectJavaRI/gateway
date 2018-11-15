@@ -9,7 +9,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.mailet.MailAddress;
+import org.apache.james.core.MailAddress;
 import org.nhindirect.gateway.smtp.james.mailet.MockMail;
 import org.nhindirect.gateway.testutils.TestUtils;
 
@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 
 public class IsNotSMIMEEncryptedTest extends TestCase
 {
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings({"deprecation" })
 	public void testIsNotSMIMEMessage_unecryptedMessage_assertAllRecips() throws Exception
 	{
 		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("PlainOutgoingMessage.txt")));
@@ -38,7 +38,7 @@ public class IsNotSMIMEEncryptedTest extends TestCase
 		assertEquals(initialRecips.iterator().next().toString(), matchAddresses.iterator().next().toString());
 	}
 	
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings({"deprecation" })
 	public void testIsNotSMIMEMessage_ecryptedMessage_assertNull() throws Exception
 	{
 		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("EncryptedMessage.txt")));
@@ -58,7 +58,6 @@ public class IsNotSMIMEEncryptedTest extends TestCase
 		assertEquals(null, matchAddresses);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void testIsNotSMIMEMessage_nullMail_assertNull() throws Exception
 	{
 		
@@ -70,7 +69,6 @@ public class IsNotSMIMEEncryptedTest extends TestCase
 		assertEquals(null, matchAddresses);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void testIsNotSMIMEMessage_nullMessage_assertNull() throws Exception
 	{
 		

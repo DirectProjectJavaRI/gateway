@@ -40,6 +40,8 @@ import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Notification messages are not tracked by the security and trust mailet to allow for a modular tracking design.  This mailet should be configured to 
@@ -123,4 +125,13 @@ public class TrackIncomingNotification extends AbstractNotificationAwareMailet
 	{
 		return new FailedDeliveryDSNCreator(this);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected ApplicationContext createSpringApplicationContext()
+	{
+		return new ClassPathXmlApplicationContext("contexts/ConfigServices.xml");
+	}	
 }

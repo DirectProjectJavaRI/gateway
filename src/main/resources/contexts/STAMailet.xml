@@ -11,9 +11,9 @@
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 	default-autowire="byName">
 
+	<context:property-placeholder location="classpath:properties/staMailet.properties"/>	 
+
 	<context:annotation-config />
 	
-	<context:component-scan base-package="org.nhindirect.gateway.springconfig" />
-
-    <context:property-placeholder location="classpath:properties/staMailet.properties"/>	      
+	<context:component-scan base-package="org.nhindirect.gateway.springconfig" />   
 </beans>

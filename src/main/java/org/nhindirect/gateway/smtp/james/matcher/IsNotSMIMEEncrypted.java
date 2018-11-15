@@ -26,6 +26,7 @@ import java.util.Collection;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.james.core.MailAddress;
 import org.apache.mailet.Mail;
 
 import org.apache.mailet.base.GenericMatcher;
@@ -42,8 +43,7 @@ public class IsNotSMIMEEncrypted extends GenericMatcher
 	/**
 	 * {@inheritDoc}
 	 */
-    @SuppressWarnings("rawtypes")
-	public Collection match(Mail mail) throws MessagingException 
+	public Collection<MailAddress> match(Mail mail) throws MessagingException 
     {
         if (mail == null) 
         	return null;

@@ -98,18 +98,18 @@ public class STAProcessor
 			try
 			{
 				// process the message with the agent stack
-				LOGGER.info("Calling stapProcessor.processSmtpMessage");
+				LOGGER.trace("Calling stapProcessor.processSmtpMessage");
 				result = smtpAgent.processMessage(smtpMessage.getMimeMessage(), recipients, sender);
-				LOGGER.info("Finished calling agent.processMessage");
+				LOGGER.trace("Finished calling agent.processMessage");
 				
 				if (result == null)
 				{				
-					LOGGER.info("Failed to process message.  processMessage returned null.");		
+					LOGGER.error("Failed to process message.  processMessage returned null.");		
 					
 					onMessageRejected(smtpMessage, originalRecipList, sender, isOutgoing, txToMonitor, null);
 					
 					
-					LOGGER.info("Exiting service(Mail mail)");
+					LOGGER.trace("Exiting service(Mail mail)");
 					return;
 				}
 			}	
@@ -124,7 +124,7 @@ public class STAProcessor
 				return;
 			}
 			
-			LOGGER.info("Updating SMTPMailMessage message with processed result");
+			LOGGER.debug("Updating SMTPMailMessage message with processed result");
 			if (result.getProcessedMessage() != null)
 			{
 				smtpMessage = new SMTPMailMessage((MimeMessage)result.getProcessedMessage().getMessage(), 
@@ -133,15 +133,13 @@ public class STAProcessor
 			}
 			else
 			{
-				/*
-				 * TODO: Handle exception... GHOST the message for now and eat it
-				 */		
-				LOGGER.info("Processed message is null.  Eat the message.");
+	
+				LOGGER.debug("Processed message is null.  Eat the message.");
 	
 				return;
 			}
 			
-			LOGGER.info("Removing reject recipients from the RCTP headers");
+			LOGGER.trace("Removing reject recipients from the RCTP headers");
 			// remove reject recipients from the RCTP headers
 			if (result.getProcessedMessage().getRejectedRecipients() != null && 
 					result.getProcessedMessage().getRejectedRecipients().size() > 0 && smtpMessage.getRecipientAddresses() != null &&
@@ -160,14 +158,14 @@ public class STAProcessor
 				smtpMessage = new SMTPMailMessage(smtpMessage.getMimeMessage(), newRCPTList, (InternetAddress)sender);
 			}
 			
-			LOGGER.info("Handling sending MDN messages");
+			LOGGER.trace("Handling sending MDN messages");
 			/*
 			 * Handle sending MDN messages
 			 */
 			final Collection<NotificationMessage> notifications = result.getNotificationMessages();
 			if (notifications != null && notifications.size() > 0)
 			{
-				LOGGER.info("MDN messages requested.  Sending MDN \"processed\" messages");
+				LOGGER.trace("MDN messages requested.  Sending MDN \"processed\" messages");
 				// create a message for each notification and send it the SmtpGatewayMessageProcessor via streams
 				for (NotificationMessage message : notifications)
 				{
@@ -183,15 +181,15 @@ public class STAProcessor
 				}
 			}
 			
-			LOGGER.info("Track message");
+			LOGGER.trace("Track message");
 			// track message
 			MessageUtils.trackMessage(txToMonitor, isOutgoing, txService);
 			
 			
-			LOGGER.info("Post processing for rejected recips.");
+			LOGGER.trace("Post processing for rejected recips.");
 			onPostprocessMessage(smtpMessage, result, isOutgoing, txToMonitor);
 			
-			LOGGER.info("Sending to sta post process");
+			LOGGER.trace("Sending to sta post process");
 			staPostProcessSource.staPostProcess(smtpMessage);
 			
 			LOGGER.trace("Exiting Message<?> streamMsg");

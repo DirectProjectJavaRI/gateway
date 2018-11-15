@@ -74,7 +74,7 @@ public class STAPostProcessProcessor
 		
 		if (isOutgoing)
 		{
-			// TODO: Implement virus scanning and sending to delivery processor
+			// TODO: Implement virus scanning
 			
 			/*
 			 * send remotely

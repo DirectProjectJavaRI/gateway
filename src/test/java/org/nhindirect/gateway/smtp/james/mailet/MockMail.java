@@ -10,8 +10,10 @@ import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.james.core.MailAddress;
 import org.apache.mailet.Mail;
-import org.apache.mailet.MailAddress;
+import org.apache.mailet.PerRecipientHeaders;
+import org.apache.mailet.PerRecipientHeaders.Header;
 
 @SuppressWarnings("serial")
 public class MockMail implements Mail 
@@ -32,7 +34,7 @@ public class MockMail implements Mail
 		return null;
 	}
 
-	public Iterator<Object> getAttributeNames() {
+	public Iterator<String> getAttributeNames() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -184,6 +186,20 @@ public class MockMail implements Mail
 	protected Object clone() throws CloneNotSupportedException {
 		// TODO Auto-generated method stub
 		return super.clone();
+	}
+
+	@Override
+	public void addSpecificHeaderForRecipient(Header header, MailAddress recipient)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public PerRecipientHeaders getPerRecipientSpecificHeaders()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

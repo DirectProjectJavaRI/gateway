@@ -8,13 +8,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Matchers.any;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 
 import junit.framework.TestCase;
 
+import org.apache.james.mailbox.MailboxManager;
+import org.apache.james.metrics.api.MetricFactory;
+import org.apache.james.transport.mailets.LocalDelivery;
+import org.apache.james.user.api.UsersRepository;
 import org.apache.mailet.Mail;
-import org.apache.mailet.Mailet;
 import org.apache.mailet.MailetConfig;
 import org.nhindirect.common.mail.MDNStandard;
 import org.nhindirect.common.mail.MailStandard;
@@ -42,8 +46,16 @@ public class TimelyAndReliableLocalDelivery_serviceTest extends TestCase
 		@Override
 		protected void setupMocks() 
 		{
-			theMailet = new TimelyAndReliableLocalDelivery();
-
+			theMailet = new TimelyAndReliableLocalDelivery(mock(UsersRepository.class), mock(MailboxManager.class),
+					mock(MetricFactory.class))
+			{
+				@Override
+				protected LocalDelivery createLocalDeliveryClass()
+				{
+					return mock(LocalDelivery.class);
+				}
+			};
+			
 			try
 			{
 				MailetConfig config = getMailetConfig();
@@ -172,12 +184,21 @@ public class TimelyAndReliableLocalDelivery_serviceTest extends TestCase
 			@Override
 			protected void setupMocks() 
 			{
-				theMailet = new TimelyAndReliableLocalDelivery()
+				theMailet = new TimelyAndReliableLocalDelivery(mock(UsersRepository.class), mock(MailboxManager.class),
+						mock(MetricFactory.class))
 				{
-					protected Object createLocalDeliveryClass() throws Exception
+					protected LocalDelivery createLocalDeliveryClass()
 					{
-						Mailet mailet = mock(Mailet.class);
-						doThrow(new RuntimeException()).when(mailet).service((Mail)any());
+						LocalDelivery mailet = mock(LocalDelivery.class);
+						try
+						{
+							doThrow(new RuntimeException()).when(mailet).service((Mail)any());
+						} 
+						catch (MessagingException e)
+						{
+							// TODO Auto-generated catch block
+							
+						}
 						
 						return mailet;
 					}
@@ -223,12 +244,21 @@ public class TimelyAndReliableLocalDelivery_serviceTest extends TestCase
 			@Override
 			protected void setupMocks() 
 			{
-				theMailet = new TimelyAndReliableLocalDelivery()
+				theMailet = new TimelyAndReliableLocalDelivery(mock(UsersRepository.class), mock(MailboxManager.class),
+						mock(MetricFactory.class))
 				{
-					protected Object createLocalDeliveryClass() throws Exception
+					protected LocalDelivery createLocalDeliveryClass()
 					{
-						Mailet mailet = mock(Mailet.class);
-						doThrow(new RuntimeException()).when(mailet).service((Mail)any());
+						LocalDelivery mailet = mock(LocalDelivery.class);
+						try
+						{
+							doThrow(new RuntimeException()).when(mailet).service((Mail)any());
+						} 
+						catch (MessagingException e)
+						{
+							// TODO Auto-generated catch block
+							
+						}
 						
 						return mailet;
 					}

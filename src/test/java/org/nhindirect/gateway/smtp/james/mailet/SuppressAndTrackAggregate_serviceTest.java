@@ -1,5 +1,7 @@
 package org.nhindirect.gateway.smtp.james.mailet;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -7,11 +9,10 @@ import java.util.Map;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.mailet.Mail;
 import org.apache.mailet.MailetConfig;
+import org.junit.Test;
 import org.nhindirect.common.mail.MailStandard;
 import org.nhindirect.common.tx.TxService;
 import org.nhindirect.common.tx.model.Tx;
@@ -19,9 +20,10 @@ import org.nhindirect.common.tx.model.TxDetailType;
 import org.nhindirect.common.tx.model.TxMessageType;
 import org.nhindirect.gateway.testutils.BaseTestPlan;
 import org.nhindirect.gateway.testutils.TestUtils;
+import org.nhindirect.stagent.SpringBaseTest;
 import org.nhindirect.stagent.parser.EntitySerializer;
 
-public class SuppressAndTrackAggregate_serviceTest extends TestCase
+public class SuppressAndTrackAggregate_serviceTest extends SpringBaseTest
 {
 	abstract class TestPlan extends BaseTestPlan 
 	{		
@@ -96,6 +98,7 @@ public class SuppressAndTrackAggregate_serviceTest extends TestCase
 		}			
 	}
 	
+	@Test
 	public void testMonitorMessage_MDNMessage_assertMessageTracked() throws Exception 
 	{
 		new TestPlan() 

@@ -31,8 +31,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.james.core.MailAddress;
 import org.apache.mailet.Mail;
-import org.apache.mailet.MailAddress;
 import org.apache.mailet.base.GenericMailet;
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.tx.TxDetailParser;
@@ -201,7 +201,6 @@ public abstract class AbstractNotificationAwareMailet extends GenericMailet
 	 * @param mail The Apache James smtp message
 	 * @return An SMTPMailMessage message instance container information from the Apache James mail object;
 	 */
-	@SuppressWarnings("unchecked")
 	public static SMTPMailMessage mailToSMTPMailMessage(Mail mail) throws MessagingException
 	{
 		if (mail == null)

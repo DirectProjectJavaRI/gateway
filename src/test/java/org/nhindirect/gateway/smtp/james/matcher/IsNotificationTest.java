@@ -10,13 +10,13 @@ import javax.mail.internet.MimeMessage;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.mailet.MailAddress;
+import org.apache.james.core.MailAddress;
 import org.nhindirect.gateway.smtp.james.mailet.MockMail;
 import org.nhindirect.gateway.testutils.TestUtils;
 
 public class IsNotificationTest extends TestCase
 {
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings({ "deprecation" })
 	public void testIsNotification_MDNMessage_assertAllRecips() throws Exception
 	{
 		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("MDNMessage.txt")));
@@ -37,7 +37,7 @@ public class IsNotificationTest extends TestCase
 		assertEquals(initialRecips.iterator().next().toString(), matchAddresses.iterator().next().toString());
 	}
 	
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings({"deprecation" })
 	public void testIsNotification_DSNMessage_assertAllRecips() throws Exception
 	{
 		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("DSNMessage.txt")));
@@ -58,7 +58,7 @@ public class IsNotificationTest extends TestCase
 		assertEquals(initialRecips.iterator().next().toString(), matchAddresses.iterator().next().toString());
 	}
 	
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings({"deprecation" })
 	public void testIsNotification_ecryptedMessage_assertNull() throws Exception
 	{
 		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("EncryptedMessage.txt")));
@@ -78,7 +78,7 @@ public class IsNotificationTest extends TestCase
 		assertEquals(null, matchAddresses);
 	}
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings({"deprecation" })
 	public void testIsNotification_plainMessage_assertNull() throws Exception
 	{
 		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("PlainOutgoingMessage.txt")));
@@ -98,7 +98,6 @@ public class IsNotificationTest extends TestCase
 		assertEquals(null, matchAddresses);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void testIsNoticiation_nullMail_assertNull() throws Exception
 	{
 		
@@ -110,7 +109,6 @@ public class IsNotificationTest extends TestCase
 		assertEquals(null, matchAddresses);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void testIsNotification_nullMessage_assertNull() throws Exception
 	{
 		

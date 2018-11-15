@@ -43,6 +43,8 @@ import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.mail.notifications.MDNStandard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * This mailet determines if a notification messages need to be suppressed from delivery to the original message's edge client.
@@ -139,5 +141,14 @@ public class NotificationSuppressor extends AbstractNotificationAwareMailet
 	protected DSNCreator createDSNGenerator() 
 	{
 		return null;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected ApplicationContext createSpringApplicationContext()
+	{
+		return new ClassPathXmlApplicationContext("contexts/ConfigServices.xml");
 	}
 }

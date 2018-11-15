@@ -30,12 +30,16 @@ import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.cloud.openfeign.ribbon.FeignRibbonClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
 @EnableFeignClients({"org.nhind.config.rest.feign"})
 @ImportAutoConfiguration({RibbonAutoConfiguration.class, FeignRibbonClientAutoConfiguration.class, FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
+@PropertySource(value="classpath:properties/staMailet.properties", ignoreResourceNotFound=true)
 public class ConfigServiceClientConfig
 {	
+	
 	@Bean
 	@ConditionalOnMissingBean
 	public CertificateService certificateService(CertificateClient certClient)
@@ -85,4 +89,9 @@ public class ConfigServiceClientConfig
 		return new DefaultAddressService(addressClient);
 	}	
 	
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() 
+    {
+       return new PropertySourcesPlaceholderConfigurer();
+    }
 }

@@ -3,8 +3,8 @@ package org.nhindirect.gateway.smtp.james.matcher;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.apache.james.core.MailAddress;
 import org.apache.mailet.Mail;
-import org.apache.mailet.MailAddress;
 import org.apache.mailet.MatcherConfig;
 import org.nhindirect.gateway.smtp.SmtpAgentException;
 
@@ -92,7 +92,7 @@ public class RecipAndSenderIsNotLocalTest extends TestCase
 		Collection<MailAddress> matchAddresses = matcher.match(mockMail);
 		
 		assertEquals(1, matchAddresses.size());
-		assertEquals("you@remoteMail", matchAddresses.iterator().next().toString());
+		assertEquals("you@remotemail", matchAddresses.iterator().next().toString());
 	}	
 	
 	@SuppressWarnings("unchecked")
@@ -129,6 +129,6 @@ public class RecipAndSenderIsNotLocalTest extends TestCase
 		Collection<MailAddress> matchAddresses = matcher.match(mockMail);
 		
 		assertEquals(1, matchAddresses.size());
-		assertEquals("someone@remoteMail.com", matchAddresses.iterator().next().toString());
+		assertEquals("someone@remotemail.com", matchAddresses.iterator().next().toString());
 	}		
 }

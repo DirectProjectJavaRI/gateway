@@ -3,13 +3,20 @@ package org.nhindirect.gateway.smtp.james.mailet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.james.core.Domain;
+import org.apache.james.core.MailAddress;
+import org.apache.mailet.HostAddress;
+import org.apache.mailet.LookupException;
 import org.apache.mailet.Mail;
-import org.apache.mailet.MailAddress;
 import org.apache.mailet.MailetContext;
+import org.apache.mailet.TemporaryLookupException;
+import org.slf4j.Logger;
 
 public class MockMailetContext implements MailetContext 
 {
@@ -136,6 +143,76 @@ public class MockMailetContext implements MailetContext
 			throws MessagingException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void log(LogLevel level, String message)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void log(LogLevel level, String message, Throwable t)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isLocalServer(Domain domain)
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Collection<String> getMailServers(Domain domain)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<HostAddress> getSMTPHostAddresses(Domain domain)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void sendMail(Mail mail, long delay, TimeUnit unit) throws MessagingException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendMail(Mail mail, String state) throws MessagingException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendMail(Mail mail, String state, long delay, TimeUnit unit) throws MessagingException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<String> dnsLookup(String name, RecordType type) throws TemporaryLookupException, LookupException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Logger getLogger()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

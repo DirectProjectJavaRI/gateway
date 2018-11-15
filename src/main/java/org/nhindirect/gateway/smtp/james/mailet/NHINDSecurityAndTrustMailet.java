@@ -30,8 +30,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.james.core.MailAddress;
 import org.apache.mailet.Mail;
-import org.apache.mailet.MailAddress;
 import org.nhind.config.rest.AnchorService;
 import org.nhind.config.rest.CertPolicyService;
 import org.nhind.config.rest.CertificateService;
@@ -199,7 +199,6 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void service(Mail mail) throws MessagingException 
 	{ 		

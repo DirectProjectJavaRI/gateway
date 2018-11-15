@@ -31,8 +31,8 @@ import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
+import org.apache.james.core.MailAddress;
 import org.apache.mailet.Mail;
-import org.apache.mailet.MailAddress;
 import org.apache.mailet.base.GenericMatcher;
 import org.nhindirect.gateway.smtp.SmtpAgentError;
 import org.nhindirect.gateway.smtp.SmtpAgentException;
@@ -87,7 +87,7 @@ public class RecipAndSenderIsNotLocal extends  GenericMatcher
 		String domain = "";
 		
 		if (mail.getSender() != null && mail.getSender().getDomain() != null)
-			domain = mail.getSender().getDomain().toUpperCase(Locale.getDefault());
+			domain = mail.getSender().getDomain().name().toUpperCase(Locale.getDefault());
 		else
 		{
 			Address[] senderAddr = mail.getMessage().getFrom();
@@ -110,7 +110,7 @@ public class RecipAndSenderIsNotLocal extends  GenericMatcher
         Collection<MailAddress> matching = new Vector<MailAddress>();
         for (MailAddress addr : (Collection<MailAddress>)mail.getRecipients()) 
         {
-            if (!domains.contains(addr.getDomain().toUpperCase(Locale.getDefault()))) 
+            if (!domains.contains(addr.getDomain().name().toUpperCase(Locale.getDefault()))) 
             {
             	LOGGER.debug("Matched recipient " + addr.toString());
                 matching.add(addr);
