@@ -45,6 +45,7 @@ import org.nhind.config.rest.SettingService;
 import org.nhind.config.rest.TrustBundleService;
 import org.nhindirect.common.audit.Auditor;
 import org.nhindirect.common.crypto.KeyStoreProtectionManager;
+import org.nhindirect.config.model.Anchor;
 import org.nhindirect.config.model.CertPolicy;
 import org.nhindirect.config.model.CertPolicyGroupDomainReltn;
 import org.nhindirect.config.model.CertPolicyGroupUse;
@@ -254,6 +255,11 @@ public class SmtpAgentFactory
 		{
 			Map<String, TrustBundle> bundleMap = null;
 			
+			/*
+			 * Get all the of the trust bundles and put them into a map
+			 * keyed by the bundle name.  We will use this later
+			 * when populating each domain's collection of anchors.
+			 */
 			try
 			{
 				bundleMap = bundleService.getTrustBundles(true).
@@ -267,58 +273,74 @@ public class SmtpAgentFactory
 	
 			final Map<String, TrustBundle> finalBundleMap = Collections.unmodifiableMap(bundleMap);
 			
+			/*
+			 * Get all of the anchors in the system in one call.  This is more efficient
+			 * than making numerous REST and database calls.  
+			 */
+			Collection<Anchor> systemAnchors = null;
+			try
+			{
+				systemAnchors = anchorService.getAnchors();
+			}
+			catch (Exception e)
+			{
+				throw new SmtpAgentException(SmtpAgentError.InvalidConfigurationFormat,  
+						"WebService error getting anchors: " + e.getMessage(), e);
+			}
+			
+			/*
+			 * Iterate through all of the domains and start them out with an empty collection.
+			 * We will fill in the collections as we go in the next sections
+			 */
 			for (String domain : domains)
 			{
-				
-				final Collection<X509Certificate> incomingAnchorsToAdd = new ArrayList<>();
-				final Collection<X509Certificate> outgoingAnchorsToAdd = new ArrayList<>();			
-				try
-				{
-					
-					// get the anchors for the domain
-					anchorService.getAnchorsForOwner(domain, false, false, null).
-						stream().forEach(anchor -> 
-						{
-							final X509Certificate anchorToAdd = CertUtils.toX509Certificate(anchor.getCertificateData());
-							if (anchor.isIncoming())
-								incomingAnchorsToAdd.add(anchorToAdd);
-							if (anchor.isOutgoing())
-								outgoingAnchorsToAdd.add(anchorToAdd);						
-						});
-					
-					// check to see if there is a bundle associated to this domain
-					bundleService.getTrustBundlesByDomain(domain, false).stream().forEach(domainAssoc ->
-					{
-						final TrustBundle bundle = finalBundleMap.get(domainAssoc.getTrustBundle().getBundleName());
-						if (bundle != null && bundle.getTrustBundleAnchors() != null)
-						{
-							for (TrustBundleAnchor anchor : bundle.getTrustBundleAnchors())
-							{
-								final X509Certificate anchorToAdd = CertUtils.toX509Certificate(anchor.getAnchorData());
-								if (domainAssoc.isIncoming())
-									incomingAnchorsToAdd.add(anchorToAdd);
-								if (domainAssoc.isOutgoing())
-									outgoingAnchorsToAdd.add(anchorToAdd);
-							}
-						}					
-					});
-					
-	
-					incomingAnchors.put(domain, incomingAnchorsToAdd);
-					outgoingAnchors.put(domain, outgoingAnchorsToAdd);
-					
-				}
-				catch (SmtpAgentException e)
-				{
-					// rethrow
-					throw e;
-				}
-				catch (Exception e)
-				{
-					throw new SmtpAgentException(SmtpAgentError.InvalidTrustAnchorSettings, 
-							"WebService error getting trust anchors for domain " + domain + ":" + e.getMessage(), e);
-				}			
+				incomingAnchors.put(domain, new ArrayList<X509Certificate>());
+				outgoingAnchors.put(domain, new ArrayList<X509Certificate>());
 			}
+
+			/*
+			 * Iterate through all anchors and drop them into their
+			 * appropriate domain collections
+			 */
+			systemAnchors.forEach(anchor -> 
+				{
+					final X509Certificate anchorToAdd = CertUtils.toX509Certificate(anchor.getCertificateData());
+					if (anchor.isIncoming())
+						incomingAnchors.get(anchor.getOwner()).add(anchorToAdd);
+					if (anchor.isOutgoing())
+						outgoingAnchors.get(anchor.getOwner()).add(anchorToAdd);					
+				});
+			
+			try
+			{
+				/*
+				 * Get all of the trust bundle to domain relation ships.  We will lookup
+				 * the anchors in the bundles using the bundle map that we retrieved earlier.
+				 * Then drop the anchors from each bundle into it appropriate domain collection
+				 */
+				bundleService.getAllTrustBundleDomainReltns(false).stream().forEach(domainAssoc ->
+				{
+					final TrustBundle bundle = finalBundleMap.get(domainAssoc.getTrustBundle().getBundleName());
+					if (bundle != null && bundle.getTrustBundleAnchors() != null)
+					{
+						for (TrustBundleAnchor anchor : bundle.getTrustBundleAnchors())
+						{
+							final X509Certificate anchorToAdd = CertUtils.toX509Certificate(anchor.getAnchorData());
+							if (domainAssoc.isIncoming())
+								incomingAnchors.get(domainAssoc.getDomain().getDomainName()).add(anchorToAdd);
+							if (domainAssoc.isOutgoing())
+								outgoingAnchors.get(domainAssoc.getDomain().getDomainName()).add(anchorToAdd);
+						}
+					}					
+				});
+			}
+			catch (Exception e)
+			{
+				throw new SmtpAgentException(SmtpAgentError.InvalidConfigurationFormat,  
+						"WebService error getting trust bundle/domain relationships: " + e.getMessage(), e);
+			}
+					
+
 		}
 		
 		if (incomingAnchors.size() == 0 && outgoingAnchors.size() == 0)

@@ -16,6 +16,7 @@ import org.nhindirect.common.tx.model.Tx;
 import org.nhindirect.common.tx.model.TxDetail;
 import org.nhindirect.common.tx.model.TxDetailType;
 import org.nhindirect.common.tx.model.TxMessageType;
+import org.nhindirect.gateway.streams.STALastMileSource;
 import org.nhindirect.gateway.streams.STAPostProcessInput;
 import org.nhindirect.gateway.streams.SmtpRemoteDeliverySource;
 import org.nhindirect.gateway.streams.XDRemoteDeliverySource;
@@ -47,6 +48,9 @@ public class STAPostProcessProcessor
 	
 	@Autowired 
 	protected XDRemoteDeliverySource xdRemoteDeliverySource;
+	
+	@Autowired 
+	protected STALastMileSource lastMileSource;
 	
 	@Autowired
 	protected RoutingResolver routingResolver;
@@ -91,11 +95,12 @@ public class STAPostProcessProcessor
 			 * and check to see if it needs to suppressed from delivering to the 
 			 * final destination
 			 */
-			if (!suppressAndTrackNotifications(smtpMessage))
+			if (suppressAndTrackNotifications(smtpMessage))
 			{
-				// local delivery
-				LOGGER.debug("Incoming message.  Sending to local delivery");
+				LOGGER.debug("Incoming notification message with id " + smtpMessage.getMimeMessage().getMessageID() + " will be suppressed.  Eating the message");
+				return;
 			}
+
 			
 			/*
 			 * Determine if there are any XD recipients
@@ -113,6 +118,15 @@ public class STAPostProcessProcessor
 					xdRemoteDeliverySource.xdRemoteDelivery(xdBoundMessage);
 				}
 			}
+			
+			/*
+			 * Now do final delivery for non XD recipients.  This just simply puts the message a channel that will actually do
+			 * the final delivery.  There could be any possibility of implementers listening on this channel, and we will 
+			 * leave it to those implementations to do their work.  Because this is using asycn delivery to the final destination,
+			 * it is up the the final delivery implementation to generate a negative MDN/DSN if final delivery cannot be performed.
+			 */
+			lastMileSource.staLastMile(smtpMessage);
+			
 		}
 		
 	}
