@@ -1,0 +1,11 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="refreshBundle">
+      <from uri="direct:refresh-start"/>
+      <bean ref="bundleRefreshProcessor"/>
+    </route>
+ 
+    <route id="cache-refresher">
+      <from uri="timer://cache-refresh?period=1h"/>
+      <bean ref="bundleCacheUpdateProcessor"/>
+    </route>
+</routes>  
