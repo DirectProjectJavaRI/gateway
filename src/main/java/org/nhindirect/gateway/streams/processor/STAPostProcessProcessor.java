@@ -16,7 +16,7 @@ import org.nhindirect.common.tx.model.Tx;
 import org.nhindirect.common.tx.model.TxDetail;
 import org.nhindirect.common.tx.model.TxDetailType;
 import org.nhindirect.common.tx.model.TxMessageType;
-import org.nhindirect.gateway.streams.STALastMileSource;
+import org.nhindirect.gateway.streams.STALastMileDeliverySource;
 import org.nhindirect.gateway.streams.STAPostProcessInput;
 import org.nhindirect.gateway.streams.SmtpRemoteDeliverySource;
 import org.nhindirect.gateway.streams.XDRemoteDeliverySource;
@@ -50,7 +50,7 @@ public class STAPostProcessProcessor
 	protected XDRemoteDeliverySource xdRemoteDeliverySource;
 	
 	@Autowired 
-	protected STALastMileSource lastMileSource;
+	protected STALastMileDeliverySource lastMileSource;
 	
 	@Autowired
 	protected RoutingResolver routingResolver;
