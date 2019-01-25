@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>gateway</artifactId>    
     <name>Direct Project Agent Gateways.</name>
-    <version>6.0-SNAPSHOT</version>
+    <version>6.0</version>
     <description>Direct Project security agent gateways and bridges.</description>
     <inceptionYear>2010</inceptionYear>
-    <url>http://api.nhindirect.org/x/www/api.nhindirect.org/java/site/gateway/${project.version}</url>        
+    <url>https://github.com/DirectProjectJavaRI/gateway</url>        
     <developers>
         <developer>
             <name>Greg Meyer</name>
@@ -39,15 +39,7 @@
         <name>New BSD License</name>
         <url>http://nhindirect.org/BSDLicense</url>
      </license>
-  </licenses>   
-  <repositories>
-	    <!-- Temp repository for Spring Boot Milestone -->
-        <repository>
-            <id>spring-milestone</id>
-            <name>Spring Milestone Releases</name>
-            <url>https://repo.spring.io/milestone/</url>
-        </repository>
-  </repositories>   
+  </licenses>     
 	<dependencyManagement>
 		<dependencies>
 		  <dependency>
@@ -60,7 +52,7 @@
 		  <dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-starter-parent</artifactId>
-				<version>Greenwich.RC1</version>
+				<version>Greenwich.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 		  </dependency>  
@@ -70,32 +62,32 @@
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>agent</artifactId>
-	        <version>6.0-SNAPSHOT</version>
+	        <version>6.0</version>
 	    </dependency> 
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-common</artifactId>
-	        <version>6.0-SNAPSHOT</version>
+	        <version>6.0</version>
 	    </dependency> 	
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-common-audit</artifactId>
-	        <version>6.0-SNAPSHOT</version>
+	        <version>6.0</version>
 	    </dependency> 	        
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>config-service-client</artifactId>
-	        <version>6.0-SNAPSHOT</version>
+	        <version>6.0</version>
 	    </dependency>	
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-msg-monitor-client</artifactId>
-	        <version>6.0-SNAPSHOT</version>
+	        <version>6.0</version>
 	    </dependency>	
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>xd-common</artifactId>
-	        <version>6.0-SNAPSHOT</version>
+	        <version>6.0</version>
 	        <exclusions>
 	           <exclusion>
 	              <groupId>org.springframework.boot</groupId>
@@ -111,7 +103,7 @@
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>agent</artifactId>
-	        <version>6.0-SNAPSHOT</version>
+	        <version>6.0</version>
 	         <type>test-jar</type>
 	        <scope>test</scope>
 	    </dependency>      
@@ -164,7 +156,7 @@
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>config-service-jar</artifactId>
-	        <version>6.0-SNAPSHOT</version>
+	        <version>6.0</version>
 	        <scope>test</scope>	        
 	    </dependency>							
 	    <dependency>
@@ -210,11 +202,21 @@
   </dependencies>        
   <build>
   	<extensions>
-  		<extension>
- 	 		<groupId>org.apache.maven.wagon</groupId> 
-  			<artifactId>wagon-webdav</artifactId> 
-  			<version>RELEASE</version> 
-  		</extension>
+		<extension>
+			<groupId>org.apache.maven.wagon</groupId>
+			<artifactId>wagon-webdav-jackrabbit</artifactId>
+			<version>3.1.0</version>
+		</extension>
+		<extension>
+			<groupId>org.apache.maven.wagon</groupId>
+			<artifactId>wagon-ssh-external</artifactId>
+			<version>3.1.0</version>
+		</extension>
+		<extension>
+			<groupId>org.apache.maven.wagon</groupId>
+			<artifactId>wagon-ssh</artifactId>
+			<version>3.1.0</version>
+		</extension>
    	</extensions>
     <resources>
       <resource>
@@ -287,25 +289,6 @@
                </archive>
             </configuration>
          </plugin>
-        <plugin>
-            <groupId>com.atlassian.maven.plugins</groupId>
-            <artifactId>maven-clover2-plugin</artifactId>
-            <version>3.0.2</version>
-            <configuration>
-                <jdk>1.8</jdk>
-				<licenseLocation>
-					${project.basedir}/../licenses/clover.license
-				</licenseLocation>
-            </configuration>
-            <executions>
-                <execution>
-                    <phase>pre-site</phase>
-                    <goals>
-                        <goal>instrument</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>	
         <!-- DOXIA does not yet copy resources to the generated-site or site location.  Bug
         DOXIA-355 was submitted in July of 09 and is listed to be resolved in DOXIA 1.2.
         This plugin a is work around for copying the resources from the book source to 
@@ -376,22 +359,22 @@
                 </dependency>
 			</dependencies>
 		</plugin>   			
-		<!--  for release only
 	      <plugin>
 	      	<groupId>org.apache.maven.plugins</groupId> 
 	        <artifactId>maven-javadoc-plugin</artifactId>
 	        <version>2.6.1</version>
 	        <configuration>
-	          <charset>UTF-8</charset>
-	          <docencoding>UTF-8</docencoding>
-	          <docfilessubdirs>true</docfilessubdirs>
-              <detectJavaApiLink>true</detectJavaApiLink>
-              <detectLinks>true</detectLinks>
-	          <source>1.8</source>
-	          <show>public</show>
-	          <excludePackageNames>
-	              org.nhindirect.gateway.smtp.annotation:org.nhindirect.gateway.smtp.module:org.nhindirect.gateway.smtp.provider:org.nhindirect.gateway.smtp.config.cert.impl
-	          </excludePackageNames>     	               	          
+			    <additionalparam>-Xdoclint:none</additionalparam>
+				<charset>UTF-8</charset>
+				<docencoding>UTF-8</docencoding>
+				<docfilessubdirs>true</docfilessubdirs>
+				<detectJavaApiLink>true</detectJavaApiLink>
+				<detectLinks>true</detectLinks>
+				<source>1.8</source>
+				<show>public</show>
+	            <excludePackageNames>
+	               org.nhindirect.gateway.smtp.annotation:org.nhindirect.gateway.smtp.module:org.nhindirect.gateway.smtp.provider:org.nhindirect.gateway.smtp.config.cert.impl:org.nhindirect.gateway.streams:org.nhindirect.gateway.springconfig:org.nhindirect.gateway.smtp.dsn.impl:org.nhindirect.gateway.util
+	            </excludePackageNames>     	               	          
 	        </configuration>
 	        <executions>
 	            <execution>
@@ -403,6 +386,7 @@
 	            </execution>
 	        </executions>		        
 	      </plugin>
+		<!--  for release only	      
 	      <plugin>
              <groupId>org.apache.maven.plugins</groupId>
              <artifactId>maven-gpg-plugin</artifactId>
@@ -417,65 +401,31 @@
             </executions>
          </plugin>      
           -->    
-    </plugins>
-    <pluginManagement>
-       <plugins>
-          <plugin>
-             <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-release-plugin</artifactId>
-             <version>2.0</version>
-             <configuration>
-                <tagBase>scm:hg:https://nhin-d.googlecode.com/hg/nhin-d/java/tags</tagBase>
-             </configuration>
-          </plugin>
-           <plugin>
-             <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-site-plugin</artifactId>
-             <version>2.1.1</version>
-             <dependencies>
-               <dependency>
-                <groupId>commons-httpclient</groupId>
-                <artifactId>commons-httpclient</artifactId>
-                <version>3.1</version>
-                <exclusions>
-                 <exclusion>
-                   <groupId>commons-logging</groupId>
-                   <artifactId>commons-logging</artifactId>
-                 </exclusion>
-               </exclusions>
-             </dependency>
-            </dependencies>
-          </plugin>          
-       </plugins>
-    </pluginManagement>		    
+    </plugins>	    
   </build>                        
   <reporting>
 		<plugins>
           <plugin>
              <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-site-plugin</artifactId>
-             <version>2.1.1</version>
-          </plugin>  
-          <plugin>
-             <groupId>org.apache.maven.plugins</groupId>
              <artifactId>maven-project-info-reports-plugin</artifactId>
-             <version>2.2</version>
+             <version>2.9</version>
           </plugin>   
 	      <plugin>
 	      	<groupId>org.apache.maven.plugins</groupId> 
 	        <artifactId>maven-javadoc-plugin</artifactId>
 	        <version>2.6.1</version>
 	        <configuration>
-	          <charset>UTF-8</charset>
-	          <docencoding>UTF-8</docencoding>
-	          <docfilessubdirs>true</docfilessubdirs>
-              <detectJavaApiLink>true</detectJavaApiLink>
-              <detectLinks>true</detectLinks>
-	          <source>1.8</source>
-	          <show>public</show>
-	          <excludePackageNames>
-	              org.nhindirect.gateway.smtp.annotation:org.nhindirect.gateway.smtp.module:org.nhindirect.gateway.smtp.provider:org.nhindirect.gateway.smtp.config.cert.impl:org.nhindirect.gateway.smtp.dsn.impl
-	          </excludePackageNames>          	          
+			    <additionalparam>-Xdoclint:none</additionalparam>
+				<charset>UTF-8</charset>
+				<docencoding>UTF-8</docencoding>
+				<docfilessubdirs>true</docfilessubdirs>
+				<detectJavaApiLink>true</detectJavaApiLink>
+				<detectLinks>true</detectLinks>
+				<source>1.8</source>
+				<show>public</show>
+	            <excludePackageNames>
+	               org.nhindirect.gateway.smtp.annotation:org.nhindirect.gateway.smtp.module:org.nhindirect.gateway.smtp.provider:org.nhindirect.gateway.smtp.config.cert.impl:org.nhindirect.gateway.streams:org.nhindirect.gateway.springconfig:org.nhindirect.gateway.smtp.dsn.impl:org.nhindirect.gateway.util
+	            </excludePackageNames>          	          
 	        </configuration>
 	      </plugin>
 			<plugin>
@@ -492,24 +442,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
-			</plugin>
-<!--  			
-			<plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-changelog-plugin</artifactId>
-	            <configuration>
-	                <dates>
-                        <date>2010-11-10</date>
-	                </dates>
-	                <outputEncoding>UTF-8</outputEncoding>
-	                <type>date</type>
-	            </configuration>
-	        </plugin>	
--->	        
+			</plugin>      
 	        <plugin>
 	            <groupId>org.codehaus.mojo</groupId> 
 	            <artifactId>findbugs-maven-plugin</artifactId>
-	            <version>2.5</version> 
 	            <configuration>
 	                <effort>Max</effort>
 	                <excludeFilterFile>${project.basedir}/src/report/findbugs-exclude.xml</excludeFilterFile>
@@ -526,17 +462,7 @@
 	                    <tag>@deprecated</tag>
 	                </tags>
 	            </configuration>
-	        </plugin>  
-			<plugin>
-	            <groupId>com.atlassian.maven.plugins</groupId>
-	            <artifactId>maven-clover2-plugin</artifactId>
-	            <version>3.0.2</version>
-				<configuration>
-					<licenseLocation>
-						${project.basedir}/../licenses/clover.license
-					</licenseLocation>
-				</configuration>
-			</plugin>	                         
+	        </plugin>  	                         
 		</plugins>
   </reporting>
   <distributionManagement>
