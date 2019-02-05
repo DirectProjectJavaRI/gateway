@@ -6,6 +6,42 @@
         Greg Meyer
         ---
 
+{6.0.1}
+
+    Changes included with release 6.0.1
+    
+    []
+    
+    Enhancements
+    
+ 	* NA
+
+    [] 
+     
+    Bug Fixes
+
+    * Allowing SmtpAgentFactory to be extensible for custom HISP implementation.
+
+{6.0}
+
+    Changes included with release 6.0
+    
+    []
+    
+    Enhancements
+    
+ 	* Requires Java 8
+ 	
+ 	* Incorporation/Upgrade to Spring 5, SpringBoot 2.1, and SpringCloud Greenwich.
+ 	
+ 	* Removal of Google Guice IoC framework
+
+    [] 
+     
+    Bug Fixes
+
+    * NA
+
 {4.2.2}
 
     Changes included with release 4.2.2
