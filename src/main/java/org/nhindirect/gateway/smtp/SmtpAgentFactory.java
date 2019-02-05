@@ -132,7 +132,7 @@ public class SmtpAgentFactory
 		return INSTANCE;
 	}
 	
-	private SmtpAgentFactory(CertificateService certService, TrustBundleService bundleService, DomainService domainService,
+	protected SmtpAgentFactory(CertificateService certService, TrustBundleService bundleService, DomainService domainService,
 			AnchorService anchorService, SettingService settingService, CertPolicyService polService, Auditor auditor, KeyStoreProtectionManager keyStoreMgr)
 	{
 		this.certService = certService;
