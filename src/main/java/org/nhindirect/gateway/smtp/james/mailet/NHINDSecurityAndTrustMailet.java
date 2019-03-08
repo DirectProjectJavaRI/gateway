@@ -113,7 +113,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 		try
 		{	
 			final boolean useOutboundPolicy = Boolean.parseBoolean(
-					GatewayConfiguration.getConfigurationParam(SecurityAndTrustMailetOptions.USE_OUTGOING_POLICY_FOR_INCOMING_NOTIFICATIONS, this, "false"));
+					GatewayConfiguration.getConfigurationParam(SecurityAndTrustMailetOptions.USE_OUTGOING_POLICY_FOR_INCOMING_NOTIFICATIONS, this, ctx, "false"));
 			
 			// we don't know if this parameter came from the mailet config or the options manager, so just go ahead and set it at
 			// the options manager level because that it where the agent reads the value... no danger that we will overwrite the value that we want...
@@ -132,7 +132,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 		try
 		{
 			final boolean rejectOnTamperPolicy = Boolean.parseBoolean(
-					GatewayConfiguration.getConfigurationParam(SecurityAndTrustMailetOptions.REJECT_ON_ROUTING_TAMPER, this, "false"));
+					GatewayConfiguration.getConfigurationParam(SecurityAndTrustMailetOptions.REJECT_ON_ROUTING_TAMPER, this, ctx, "false"));
 			
 			OptionsManager.getInstance().setOptionsParameter(
 					new OptionsParameter(OptionsParameter.REJECT_ON_ROUTING_TAMPER, Boolean.toString(rejectOnTamperPolicy)));
@@ -143,12 +143,12 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 		}
 		
 		// set the JCE providers if available
-		final String JCEName = GatewayConfiguration.getConfigurationParam(SecurityAndTrustMailetOptions.JCE_PROVIDER_NAME, this, "");
+		final String JCEName = GatewayConfiguration.getConfigurationParam(SecurityAndTrustMailetOptions.JCE_PROVIDER_NAME, this, ctx, "");
 		if (!StringUtils.isEmpty(JCEName))
 			OptionsManager.getInstance().setOptionsParameter(
 					new OptionsParameter(OptionsParameter.JCE_PROVIDER, JCEName));
 		
-		final String sensitiveJCEName = GatewayConfiguration.getConfigurationParam(SecurityAndTrustMailetOptions.JCE_SENTITIVE_PROVIDER, this, "");
+		final String sensitiveJCEName = GatewayConfiguration.getConfigurationParam(SecurityAndTrustMailetOptions.JCE_SENTITIVE_PROVIDER, this, ctx, "");
 		if (!StringUtils.isEmpty(sensitiveJCEName))
 			OptionsManager.getInstance().setOptionsParameter(
 					new OptionsParameter(OptionsParameter.JCE_SENTITIVE_PROVIDER, sensitiveJCEName));					

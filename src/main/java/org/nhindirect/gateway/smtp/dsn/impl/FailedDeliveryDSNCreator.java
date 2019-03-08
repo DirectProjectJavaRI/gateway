@@ -77,25 +77,25 @@ public class FailedDeliveryDSNCreator extends AbstractDSNCreator
 		this.dsnStatus = DSNStatus.DELIVERY_OTHER;
 		
 		generator = new DSNGenerator(GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_FAILED_PREFIX, 
-				mailet, FailedDeliveryDSNCreatorOptions.DEFAULT_PREFIX));
+				mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_PREFIX));
 		
 		postmasterMailbox = GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_POSTMASTER, 
-				mailet, FailedDeliveryDSNCreatorOptions.DEFAULT_POSTMASTER);
+				mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_POSTMASTER);
 		
 		reportingMta = GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_MTA_NAME, 
-				mailet, FailedDeliveryDSNCreatorOptions.DEFAULT_MTA_NAME);
+				mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_MTA_NAME);
 		
 		
 		textGenerator = new DefaultDSNFailureTextBodyPartGenerator(
 				GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_FAILED_HEADER, 
-						mailet, FailedDeliveryDSNCreatorOptions.DEFAULT_HEADER), 
+						mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_HEADER), 
 						GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_FAILED_FOOTER, 
-						mailet, FailedDeliveryDSNCreatorOptions.DEFAULT_FOOTER), 
+						mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_FOOTER), 
 						GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_FAILED_RECIP_TITLE, 
-						mailet, FailedDeliveryDSNCreatorOptions.DEFAULT_FAILED_RECIP_TITLE), 
+						mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_FAILED_RECIP_TITLE), 
 						FailedDeliveryDSNCreatorOptions.DEFAULT_ERROR_MESSAGE_TITLE,
 					GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_FAILED_ERROR_MESSAGE, 
-								mailet, FailedDeliveryDSNCreatorOptions.DEFAULT_ERROR_MESSAGE),
+								mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_ERROR_MESSAGE),
 			    HumanReadableTextAssemblerFactory.getInstance());
 	}
 }

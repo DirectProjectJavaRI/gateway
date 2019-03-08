@@ -81,25 +81,25 @@ public class RejectedRecipientDSNCreator extends AbstractDSNCreator
 		this.dsnStatus = DSNStatus.UNDEFINED_STATUS;
 		
 		generator = new DSNGenerator(GatewayConfiguration.getConfigurationParam(RejectedRecipientDSNCreatorOptions.DSN_FAILED_PREFIX, 
-				mailet, RejectedRecipientDSNCreatorOptions.DEFAULT_PREFIX));
+				mailet, null, RejectedRecipientDSNCreatorOptions.DEFAULT_PREFIX));
 		
 		postmasterMailbox = GatewayConfiguration.getConfigurationParam(RejectedRecipientDSNCreatorOptions.DSN_POSTMASTER, 
-				mailet, RejectedRecipientDSNCreatorOptions.DEFAULT_POSTMASTER);
+				mailet, null, RejectedRecipientDSNCreatorOptions.DEFAULT_POSTMASTER);
 		
 		reportingMta = GatewayConfiguration.getConfigurationParam(RejectedRecipientDSNCreatorOptions.DSN_MTA_NAME, 
-				mailet, RejectedRecipientDSNCreatorOptions.DEFAULT_MTA_NAME);
+				mailet, null, RejectedRecipientDSNCreatorOptions.DEFAULT_MTA_NAME);
 		
 		
 		textGenerator = new DefaultDSNFailureTextBodyPartGenerator(
 				GatewayConfiguration.getConfigurationParam(RejectedRecipientDSNCreatorOptions.DSN_FAILED_HEADER, 
-						mailet, RejectedRecipientDSNCreatorOptions.DEFAULT_HEADER), 
+						mailet, null, RejectedRecipientDSNCreatorOptions.DEFAULT_HEADER), 
 						GatewayConfiguration.getConfigurationParam(RejectedRecipientDSNCreatorOptions.DSN_FAILED_FOOTER, 
-						mailet, RejectedRecipientDSNCreatorOptions.DEFAULT_FOOTER), 
+						mailet, null, RejectedRecipientDSNCreatorOptions.DEFAULT_FOOTER), 
 						GatewayConfiguration.getConfigurationParam(RejectedRecipientDSNCreatorOptions.DSN_FAILED_RECIP_TITLE, 
-						mailet, RejectedRecipientDSNCreatorOptions.DEFAULT_FAILED_RECIP_TITLE), 
+						mailet, null, RejectedRecipientDSNCreatorOptions.DEFAULT_FAILED_RECIP_TITLE), 
 					RejectedRecipientDSNCreatorOptions.DEFAULT_ERROR_MESSAGE_TITLE,
 					GatewayConfiguration.getConfigurationParam(RejectedRecipientDSNCreatorOptions.DSN_FAILED_ERROR_MESSAGE, 
-								mailet, RejectedRecipientDSNCreatorOptions.DEFAULT_ERROR_MESSAGE),
+								mailet, null, RejectedRecipientDSNCreatorOptions.DEFAULT_ERROR_MESSAGE),
 			    HumanReadableTextAssemblerFactory.getInstance());
 	}
 
