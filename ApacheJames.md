@@ -137,7 +137,7 @@ This use case describes a scenario where the HISP is only used for development t
 
 This use case describes a scenario where the HISP consists of only one domain, and a deployed instance of James comprises the entire SMTP server stack.
 
-![JamesStandAlone](JamesStandAlone.png)
+![JamesStandAlone](assets/JamesStandAlone.png)
 
 Mailet configuration in this use case is fairly simple.
 
