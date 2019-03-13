@@ -1,0 +1,10 @@
+# Protocol Bridge Architecture
+
+The bridge architecture can conceptually be split into four parts and is logically stacked in the following order:
+
+* **Protocol Implementation:** The specific implementation component of a particular backbone protocol such as SMTP. Examples are SMTP servers such as Apache James that integrate with [Mailets](http://james.apache.org/mailet/index.html) or a light weight SMTP server that integrates with SpringCloud Streams or other data flow architectures.
+* **Protocol Bridge:** A component that integrates with the protocol implementation. The bridge is responsible for intercepting messages as they pass through the implementation stack, translating the implementation's message structure to a common agent structure, and handing the message off to the protocol agent. Bridges are generally written using APIs and/or configurations specific to the protocol implementation. Example: The Apache James server provides the Mailet API for integrating custom processing logic into the SMTP stack.
+* **Protocol Agent:** A component that provides processing logic specific to a backbone protocol and delegates messages to the security and trust module. The Direct Proejct gateway module provides protocol agents for core backbone protocol such as SMTP.
+* **Security And Trust Agent:** A component that implements the DirectProject [specification](http://wiki.directproject.org/w/images/e/e6/Applicability_Statement_for_Secure_Health_Transport_v1.2.pdf).
+
+Typically a message flows through a Direct Project gateway starting at the protocol implementation and eventually makes it way to the security and trust agent. After processing is complete through the protocol and security agents, the processed message is handed back to the protocol bridge which must decide how the processed message will continue through the protocol implementation.
