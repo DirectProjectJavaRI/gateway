@@ -10,11 +10,11 @@
     <body>
         <menu name="Documents">
             <item name="Release Notes" href="releaseNotes.html" />
-            <item name="Users Guide" href="users-guide/"/>                
+            <item name="Users Guide" href="https://directprojectjavari.github.io/gateway/"/>                
         </menu>
         <menu name="External Links">
         	<item name="The Direct Project Wiki" href="http://nhindirect.org" />
-        	<item name="Security And Trust Agent Specification" href="http://nhindirect.org/Content+Security+for+Simple+Health+Transport" />
+        	<item name="Security And Trust Agent Specification" href="http://wiki.directproject.org/w/images/e/e6/Applicability_Statement_for_Secure_Health_Transport_v1.2.pdf" />
         </menu>
         ${reports}
     </body>

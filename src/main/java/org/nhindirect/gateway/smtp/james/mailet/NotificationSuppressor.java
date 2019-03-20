@@ -85,7 +85,7 @@ public class NotificationSuppressor extends AbstractNotificationAwareMailet
 		// get the consume processed MDN message setting
 		// default is false
 		consumeMDNProcessed = GatewayConfiguration.getConfigurationParamAsBoolean(SecurityAndTrustMailetOptions.CONSUME_MND_PROCESSED_PARAM,
-				this, false);
+				this, ctx, false);
 		
 
 		LOGGER.info("NotificationSupressor initialization complete.");

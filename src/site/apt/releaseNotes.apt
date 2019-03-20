@@ -6,6 +6,26 @@
         Greg Meyer
         ---
 
+{6.0.2}
+
+    Changes included with release 6.0.2
+    
+    []
+    
+    Enhancements
+    
+ 	* Removing Doxia books and moving to GitHub pages.
+ 	
+ 	* Adding ability to bypass DNS and mail gateway routing for outbound messages destined to local recipient.
+
+    [] 
+     
+    Bug Fixes
+
+    * Adding missing last mile delivery.
+    
+    * Fixing generation of DSN bounce message for rejected recipients in the STAProcessor (no bounce messages were being generated).
+
 {6.0.1}
 
     Changes included with release 6.0.1

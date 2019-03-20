@@ -118,7 +118,7 @@ public class TimelyAndReliableLocalDelivery extends AbstractNotificationAwareMai
 		try
 		{
 			final String sDispatchedDelay =  GatewayConfiguration.getConfigurationParam(DISPATCHED_MDN_DELAY,
-					this, "0"); 
+					this, ctx, "0"); 
 			
 			try
 			{

@@ -13,6 +13,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang3.StringUtils;
+import org.nhind.config.rest.DomainService;
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
 import org.nhindirect.gateway.streams.SmtpRemoteDeliveryInput;
@@ -61,11 +62,17 @@ public class SmtpRemoteDeliveryProcessor
 	@Value("${direct.gateway.remotedelivery.gateway.userSSL:}")
 	protected String useSSL;
 	
+	@Value("${direct.gateway.remotedelivery.gateway.supressLocalDomains:true}")
+	protected boolean supressLocalDomains;
+	
 	@Autowired
 	protected SmtpRemoteDeliverySource remoteDeliverySource;
 	
 	@Autowired
 	protected ExtendedResolver dnsResolver;
+	
+	@Autowired
+	protected DomainService domainService;
 	
 	@StreamListener(target = SmtpRemoteDeliveryInput.SMTP_REMOTE_DELIVERY_MESSAGE_INPUT)
 	public void remotelyDeliverMessage(Message<?> streamMsg) throws MessagingException
@@ -117,6 +124,16 @@ public class SmtpRemoteDeliveryProcessor
 	
 	protected void remoteDeliver(SMTPMailMessage smtpMessage) throws MessagingException
 	{
+		/*
+		 * If this is a local domain and the supressLocalDomains flag is set, it is assumed that the STA post processor
+		 * has already routed the message back to the gateway stream to get processed by the STA.  
+		 */
+		if (supressLocalDomains && isLocalDomain(smtpMessage))
+		{
+			return;
+		}
+		
+		
 		final List<String> servers = getMailServers(smtpMessage);
 		
 		Exception lastError = null;
@@ -272,5 +289,23 @@ public class SmtpRemoteDeliveryProcessor
             groupByServerMultimap.put(addr.getHost(), recipient);
         }
         return groupByServerMultimap.asMap();
+    }
+    
+    protected boolean isLocalDomain(SMTPMailMessage smtpMessage)
+    {
+    	// messages have been grouped by recipient domain at this point, so we should be able to grab the first
+    	// recipient out of the list
+    	
+    	final NHINDAddress addr = new NHINDAddress(smtpMessage.getRecipientAddresses().get(0));
+    	final String domain = addr.getHost();
+    	
+    	try
+    	{
+    		return (domainService.getDomain(domain) != null);
+    	}
+    	catch (Exception e)
+    	{
+    		throw new IllegalStateException("Could not get local domain status for domain " + domain);
+    	}
     }
 }
