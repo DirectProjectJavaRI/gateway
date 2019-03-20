@@ -91,6 +91,11 @@ public class STAProcessor
 		{
 			isOutgoing = MessageUtils.isOutgoing(smtpMessage.getMimeMessage(), sender, smtpAgent.getAgent());
 			
+			// if the message is outgoing, then the tracking information must be
+			// gathered now before the message is transformed
+			if (isOutgoing)
+				txToMonitor = MessageUtils.getTxToTrack(smtpMessage.getMimeMessage(), sender, recipients, this.txParser);
+			
 			// recipients can get modified by the security and trust agent, so make a local copy
 			// before processing
 			final NHINDAddressCollection originalRecipList = NHINDAddressCollection.create(recipients);

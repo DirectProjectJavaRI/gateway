@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
+import org.nhind.config.rest.DomainService;
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
 import org.nhindirect.common.rest.exceptions.ServiceException;
@@ -18,6 +19,7 @@ import org.nhindirect.common.tx.model.TxDetailType;
 import org.nhindirect.common.tx.model.TxMessageType;
 import org.nhindirect.gateway.streams.STALastMileDeliverySource;
 import org.nhindirect.gateway.streams.STAPostProcessInput;
+import org.nhindirect.gateway.streams.SmtpGatewayMessageSource;
 import org.nhindirect.gateway.streams.SmtpRemoteDeliverySource;
 import org.nhindirect.gateway.streams.XDRemoteDeliverySource;
 import org.nhindirect.gateway.util.MessageUtils;
@@ -42,6 +44,9 @@ public class STAPostProcessProcessor
 	
 	@Value("${direct.gateway.xd.enabled:true}")
 	protected boolean xdEnabled;	
+
+	@Value("${direct.gateway.postprocess.routeLocalRecipientToGateway:true}")
+	protected boolean routeLocalRecipientToGateway;	
 	
 	@Autowired
 	protected SmtpRemoteDeliverySource remoteDeliverySource;
@@ -60,6 +65,12 @@ public class STAPostProcessProcessor
 	
 	@Autowired
 	protected TxDetailParser txParser;
+	
+	@Autowired
+	protected DomainService domainService;
+	
+	@Autowired
+	protected SmtpGatewayMessageSource smtpMessageSource;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(STAPostProcessProcessor.class);	
 			
@@ -85,6 +96,13 @@ public class STAPostProcessProcessor
 			 */
 			
 			LOGGER.debug("Outgoing message.  Sending to remote delivery");
+			
+			/*
+			 * If the routeLocalRecipientToGateway flag is set, we will try to by-pass the remote delivery gateway
+			 * for local recipients and send the message directly back to the STA via the gateway stream
+			 */
+			if (routeLocalRecipientToGateway && isLocalRecipients(smtpMessage))
+				smtpMessageSource.sendMimeMessage(smtpMessage.getMimeMessage());
 			
 			remoteDeliverySource.remoteDelivery(smtpMessage, false);
 		}
@@ -175,5 +193,27 @@ public class STAPostProcessProcessor
 			///CLOVER:ON
 		}
 		return suppress;
+	}
+	
+	public boolean isLocalRecipients(SMTPMailMessage smtpMessage)
+	{
+
+		for (InternetAddress addr : smtpMessage.getRecipientAddresses())
+		{
+	    	final NHINDAddress nhinAddr = new NHINDAddress(addr);
+	    	final String domain = nhinAddr.getHost();
+	    	
+	    	try
+	    	{
+		    	if (domainService.getDomain(domain) != null)
+		    		return true;
+	    	}
+	    	catch (Exception e)
+	    	{
+	    		throw new IllegalStateException("Could not get local domain status for domain " + domain);
+	    	}
+		}
+
+		return false;
 	}
 }
