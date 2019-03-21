@@ -163,7 +163,7 @@ The private certificate storage medium is configured in the settings page of the
 
 Private and public certificates stored in the configuration service are added and maintained in the *Manage Certificates* page of the configuration service application.
 
-![](http://api.directproject.info/gateway/4.2/users-guide/images/WSConfigAddCertificate.png)
+![WSConfigAddCertificate](assets/WSConfigAddCertificate.png)
 
 Certificates can be uploaded in the multiple formats and may or may not include a private key. The *Private Key Type* drop down determines the format of the certificate you are uploading. The following formats below are supported along with what type of files should be uploaded with each (NOTE: All formats are expected to use DER encoding).
 
