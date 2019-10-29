@@ -1,6 +1,8 @@
 package org.nhindirect.gateway.springconfig;
 
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.xbill.DNS.ExtendedResolver;
 import org.xbill.DNS.Resolver;
+import org.xbill.DNS.ResolverConfig;
 import org.xbill.DNS.SimpleResolver;
 
 @Configuration
@@ -43,24 +46,23 @@ public class DNSResolverConfig
 			}
 		}
 		
-		if (!StringUtils.isEmpty(dnsServers)) 
+		final List<String> servers = getDNSServers();
+		
+		for (String server : servers) 
 		{
-			for (String server : dnsServers.split(",")) 
-			{
-				// support for IP addresses instead of names
-				server = server.replaceFirst("\\.$", "");
+			// support for IP addresses instead of names
+			server = server.replaceFirst("\\.$", "");
 
-				try 
-				{
-					// create and add a SimpleResolver for each server
-					SimpleResolver simpleResolver = new SimpleResolver(server);
-					extendedResolver.addResolver(simpleResolver);
-				} 
-				catch (UnknownHostException e) 
-				{
-					LOGGER.warn("Unable to add resolver for " + server, e);
-					continue;
-				}
+			try 
+			{
+				// create and add a SimpleResolver for each server
+				SimpleResolver simpleResolver = new SimpleResolver(server);
+				extendedResolver.addResolver(simpleResolver);
+			} 
+			catch (UnknownHostException e) 
+			{
+				LOGGER.warn("Unable to add resolver for " + server, e);
+				continue;
 			}
 		}
 		
@@ -69,4 +71,12 @@ public class DNSResolverConfig
 		
 		return extendedResolver;
 	}		
+	
+	protected List<String> getDNSServers()
+	{
+		final String[] configedServers = (!StringUtils.isEmpty(dnsServers)) ? dnsServers.split(",") :
+			ResolverConfig.getCurrentConfig().servers();
+		
+		return Arrays.asList(configedServers);
+	}
 }
