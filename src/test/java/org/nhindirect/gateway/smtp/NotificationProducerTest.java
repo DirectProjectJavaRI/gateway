@@ -1,5 +1,11 @@
 package org.nhindirect.gateway.smtp;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -13,9 +19,7 @@ import org.nhindirect.stagent.mail.notifications.Notification;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
 
 
-import junit.framework.TestCase;
-
-public class NotificationProducerTest extends TestCase 
+public class NotificationProducerTest 
 {
 	private IncomingMessage getMessageFromFile(String fileName, Collection<String> domains) throws Exception
 	{
@@ -30,6 +34,7 @@ public class NotificationProducerTest extends TestCase
 		return retVal;
 	}
 	
+	@Test
 	public void testConstructProducer()
 	{
 		NotificationProducer prod = new NotificationProducer(new NotificationSettings());
@@ -37,6 +42,7 @@ public class NotificationProducerTest extends TestCase
 		assertNotNull(prod);
 	}
 	
+	@Test
 	public void testConstructProducer_NullSettings_AssertException()
 	{
 		boolean exceptionOccured = false;
@@ -53,6 +59,7 @@ public class NotificationProducerTest extends TestCase
 		assertTrue(exceptionOccured);
 	}	
 	
+	@Test
 	public void testCreateAckWithText() throws Exception
 	{
 		NotificationSettings setting = new NotificationSettings(true, "", "Some Text");
@@ -66,6 +73,7 @@ public class NotificationProducerTest extends TestCase
 		
 	}		
 	
+	@Test
 	public void testCreateAckWithNoText() throws Exception
 	{
 		NotificationSettings setting = new NotificationSettings(true, "", "");
@@ -79,6 +87,7 @@ public class NotificationProducerTest extends TestCase
 		
 	}	
 	
+	@Test
 	public void testProduce_NullEnvelope_AssertException() throws Exception
 	{
 		NotificationSettings setting = new NotificationSettings(true, "", "");
@@ -100,6 +109,7 @@ public class NotificationProducerTest extends TestCase
 		
 	}		
 	
+	@Test
 	public void testProduce_AuthResponseFalse_AssertEmptyList() throws Exception
 	{
 		NotificationSettings setting = new NotificationSettings(false, "", "");
@@ -115,6 +125,7 @@ public class NotificationProducerTest extends TestCase
 		
 	}
 	
+	@Test
 	public void testProduce_NoDomainRecipients_AssertEmptyList() throws Exception
 	{
 		NotificationSettings setting = new NotificationSettings(true, "", "");
@@ -130,6 +141,7 @@ public class NotificationProducerTest extends TestCase
 		
 	}	
 	
+	@Test
 	public void testProduce_MessageIsMDN_AssertEmptyList() throws Exception
 	{
 		NotificationSettings setting = new NotificationSettings(true, "", "");
@@ -145,6 +157,7 @@ public class NotificationProducerTest extends TestCase
 		
 	}	
 	
+	@Test
 	public void testProduceSingleMDN() throws Exception
 	{
 		NotificationSettings setting = new NotificationSettings(true, "", "");
@@ -162,6 +175,7 @@ public class NotificationProducerTest extends TestCase
 		assertEquals(msg.getDomainRecipients().get(0).toString(), noteMsg.getFrom()[0].toString());		
 	}	
 	
+	@Test
 	public void testProduceMDN_MultipleRecipients() throws Exception
 	{
 		NotificationSettings setting = new NotificationSettings(true, "", "");
@@ -190,6 +204,7 @@ public class NotificationProducerTest extends TestCase
 		assertTrue(foundSecureHealth);
 	}	
 	
+	@Test
 	public void testProduceMDN_MultipleRecipients_SingleDomain_AssertOneMDN() throws Exception
 	{
 		NotificationSettings setting = new NotificationSettings(true, "", "");

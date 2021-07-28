@@ -1,6 +1,8 @@
 package org.nhindirect.gateway.smtp;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.security.cert.X509Certificate;
@@ -9,7 +11,6 @@ import java.util.Collection;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
 import org.nhindirect.config.model.Anchor;
 import org.nhindirect.config.model.Domain;
 import org.nhindirect.config.model.EntityStatus;

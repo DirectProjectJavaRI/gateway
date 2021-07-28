@@ -51,8 +51,8 @@ import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.mail.Message;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This mailet override the built in Apache James LocalDelivery mailet and sends an MDN dispatched message on successful delivery to a local mailbox
@@ -61,10 +61,9 @@ import org.slf4j.LoggerFactory;
  * @author Greg Meyer
  * @since 2.0
  */
+@Slf4j
 public class TimelyAndReliableLocalDelivery extends AbstractNotificationAwareMailet
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TimelyAndReliableLocalDelivery.class);
-
 	protected static final String DISPATCHED_MDN_DELAY = "DispatchedMDNDelay";
 	
 	private UsersRepository usersRepository;
@@ -155,7 +154,7 @@ public class TimelyAndReliableLocalDelivery extends AbstractNotificationAwareMai
 	@Override
 	public void service(Mail mail) throws MessagingException 
 	{
-		LOGGER.debug("Calling timely and reliable service method.");
+		log.debug("Calling timely and reliable service method.");
 		
 		boolean deliverySuccessful = false;
 		
@@ -176,7 +175,7 @@ public class TimelyAndReliableLocalDelivery extends AbstractNotificationAwareMai
 		}
 		catch (Exception e)
 		{
-			LOGGER.error("Failed to invoke service method.", e);
+			log.error("Failed to invoke service method.", e);
 		}
 		
 		final Tx txToTrack = this.getTxToTrack(msg, sender, recipients);
@@ -191,7 +190,7 @@ public class TimelyAndReliableLocalDelivery extends AbstractNotificationAwareMai
 						notificationProducer.produce(new Message(msg), recipients.toInternetAddressCollection());
 				if (notifications != null && notifications.size() > 0)
 				{
-					LOGGER.debug("Sending MDN \"dispatched\" messages");
+					log.debug("Sending MDN \"dispatched\" messages");
 					// create a message for each notification and put it on James "stack"
 					for (NotificationMessage message : notifications)
 					{
@@ -208,7 +207,7 @@ public class TimelyAndReliableLocalDelivery extends AbstractNotificationAwareMai
 						catch (Throwable t)
 						{
 							// don't kill the process if this fails
-							LOGGER.error("Error sending MDN dispatched message.", t);
+							log.error("Error sending MDN dispatched message.", t);
 						}
 						///CLOVER:ON
 					}
@@ -222,7 +221,7 @@ public class TimelyAndReliableLocalDelivery extends AbstractNotificationAwareMai
 				this.sendDSN(txToTrack, recipients, false);
 		}
 		
-		LOGGER.debug("Exiting timely and reliable service method.");
+		log.debug("Exiting timely and reliable service method.");
 	}
 
 	/**

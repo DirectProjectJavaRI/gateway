@@ -36,8 +36,8 @@ import org.nhindirect.stagent.mail.notifications.NotificationHelper;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
 import org.nhindirect.stagent.mail.notifications.NotificationType;
 import org.nhindirect.stagent.mail.notifications.ReportingUserAgent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -46,10 +46,9 @@ import org.slf4j.LoggerFactory;
  * @author Umesh Madan
  *
  */
+@Slf4j
 public class NotificationProducer implements NotificationCreator
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(NotificationProducer.class);
-
 	protected final NotificationSettings settings;
 	
 	/**
@@ -68,7 +67,7 @@ public class NotificationProducer implements NotificationCreator
 		builder.append("\n\r\tMDN Producer Name: " + settings.getProductName());
 		builder.append("\n\r\tMDN Response Test: " + settings.getText());
 		
-		LOGGER.debug(builder.toString());
+		log.debug(builder.toString());
 	}
 	
 	/**
@@ -93,13 +92,14 @@ public class NotificationProducer implements NotificationCreator
         }
 
         
-        if (!settings.isAutoResponse() || !envelope.hasDomainRecipients() || NotificationHelper.isMDN(envelope.getMessage()))
+        if (!settings.isAutoResponse() || !envelope.hasDomainRecipients() 
+        		|| NotificationHelper.isMDN(envelope.getMessage()) || NotificationHelper.isDSN(envelope.getMessage()))
         {
-        	LOGGER.info("No MDN messages to send.");
+        	log.info("No MDN messages to send.");
             return Collections.emptyList();
         }
 
-        LOGGER.info("Generating MDN \"processed\" messages");
+        log.info("Generating MDN \"processed\" messages");
         
         Collection<InternetAddress> senders = envelope.getDomainRecipients().toInternetAddressCollection();
         Collection<NotificationMessage> notifications = NotificationHelper.createNotificationMessages(envelope.getMessage(), senders, this); 

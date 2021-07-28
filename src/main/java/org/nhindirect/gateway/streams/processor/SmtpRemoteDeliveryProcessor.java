@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Consumer;
 
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -16,15 +17,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.nhind.config.rest.DomainService;
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
-import org.nhindirect.gateway.streams.SmtpRemoteDeliveryInput;
 import org.nhindirect.gateway.streams.SmtpRemoteDeliverySource;
 import org.nhindirect.stagent.NHINDAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.xbill.DNS.ARecord;
 import org.xbill.DNS.ExtendedResolver;
@@ -36,11 +34,12 @@ import org.xbill.DNS.Type;
 
 import com.google.common.collect.HashMultimap;
 
-@EnableBinding(SmtpRemoteDeliveryInput.class)
+import lombok.extern.slf4j.Slf4j;
+
+@Configuration
+@Slf4j
 public class SmtpRemoteDeliveryProcessor
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(SmtpRemoteDeliveryProcessor.class);	
-	
 	@Value("${direct.gateway.remotedelivery.gateway.name:}")
 	protected String gatewayNames;
 	
@@ -74,36 +73,46 @@ public class SmtpRemoteDeliveryProcessor
 	@Autowired
 	protected DomainService domainService;
 	
-	@StreamListener(target = SmtpRemoteDeliveryInput.SMTP_REMOTE_DELIVERY_MESSAGE_INPUT)
-	public void remotelyDeliverMessage(Message<?> streamMsg) throws MessagingException
+	@Bean
+	public Consumer<Message<?>> directSmtpRemoteDeliveryInput() 
 	{
-		final SMTPMailMessage smtpMessage = SMTPMailMessageConverter.fromStreamMessage(streamMsg);
-	
-		if (smtpMessage.getRecipientAddresses().isEmpty())
+		return streamMsg -> 
 		{
-			LOGGER.warn("Mail from {} has no recipients and can not be remotely delivered", smtpMessage.getMailFrom());
-			return;
-		}
-		
-		if (!streamMsg.getHeaders().containsKey(SmtpRemoteDeliverySource.REMOTE_DELIVERY_GROUPED))
-		{
-			LOGGER.debug("Message id {} needs to be grouped.  Grouping by domain and requeuing.",  smtpMessage.getMimeMessage().getMessageID());
-			groupAndRequeue(smtpMessage);
-		}
-		else
-		{
-			LOGGER.info("SmtpRemoteDeliveryProcessor processing message from {} and message id {} ", smtpMessage.getMailFrom().toString(),
-					smtpMessage.getMimeMessage().getMessageID());
 			try
 			{
-				remoteDeliver(smtpMessage);
+				final SMTPMailMessage smtpMessage = SMTPMailMessageConverter.fromStreamMessage(streamMsg);
+			
+				if (smtpMessage.getRecipientAddresses().isEmpty())
+				{
+					log.warn("Mail from {} has no recipients and can not be remotely delivered", smtpMessage.getMailFrom());
+					return;
+				}
+				
+				if (!streamMsg.getHeaders().containsKey(SmtpRemoteDeliverySource.REMOTE_DELIVERY_GROUPED))
+				{
+					log.debug("Message id {} needs to be grouped.  Grouping by domain and requeuing.",  smtpMessage.getMimeMessage().getMessageID());
+					groupAndRequeue(smtpMessage);
+				}
+				else
+				{
+					log.info("SmtpRemoteDeliveryProcessor processing message from {} and message id {} ", smtpMessage.getMailFrom().toString(),
+							smtpMessage.getMimeMessage().getMessageID());
+					try
+					{
+						remoteDeliver(smtpMessage);
+					}
+					catch (Exception e)
+					{
+						log.error("Error with remote delivery of message id " + smtpMessage.getMimeMessage().getMessageID(), e);
+						throw e;
+					}
+				}
 			}
-			catch (Exception e)
+			catch (MessagingException e)
 			{
-				LOGGER.error("Error with remote delivery of message id " + smtpMessage.getMimeMessage().getMessageID(), e);
-				throw e;
+				throw new RuntimeException(e);
 			}
-		}
+		};
 	}
 	
 	protected void groupAndRequeue(SMTPMailMessage smtpMessage)
@@ -155,7 +164,7 @@ public class SmtpRemoteDeliveryProcessor
 				transport.sendMessage(smtpMessage.getMimeMessage(),  
 						smtpMessage.getRecipientAddresses().toArray(new InternetAddress[smtpMessage.getRecipientAddresses().size()]));
 				
-				LOGGER.info("Sucessfully sent message with id {} from {} to server {} ", smtpMessage.getMimeMessage().getMessageID(),  smtpMessage.getMailFrom(), server);
+				log.info("Sucessfully sent message with id {} from {} to server {} ", smtpMessage.getMimeMessage().getMessageID(),  smtpMessage.getMailFrom(), server);
 				
 				lastError = null;
 				
@@ -163,7 +172,7 @@ public class SmtpRemoteDeliveryProcessor
 			}
 			catch (Exception e)
 			{
-				LOGGER.warn("Failed to send message with id " + smtpMessage.getMimeMessage().getMessageID() + " to server " + server + ": " + e.getMessage());
+				log.warn("Failed to send message with id " + smtpMessage.getMimeMessage().getMessageID() + " to server " + server + ": " + e.getMessage());
 				lastError = e;
 			}
 			finally
@@ -209,7 +218,7 @@ public class SmtpRemoteDeliveryProcessor
 			
 			if (retRecords == null || retRecords.length == 0)
 			{
-				LOGGER.warn("Could not find any DNS records for domain " + domainName);
+				log.warn("Could not find any DNS records for domain " + domainName);
 				throw new MessagingException("Could not find any DNS records for domain " + domainName);
 			}
 			
@@ -234,12 +243,12 @@ public class SmtpRemoteDeliveryProcessor
 				}
 			}
 				
-			if (LOGGER.isDebugEnabled())
+			if (log.isDebugEnabled())
 			{
 				final StringBuilder builder = new StringBuilder("Found the following servers for domain " + domainName);
 				retVal.forEach(server -> builder.append("\r\n\t").append(server));
 				
-				LOGGER.debug(builder.toString());
+				log.debug(builder.toString());
 				
 			}
 			

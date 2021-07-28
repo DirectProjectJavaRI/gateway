@@ -27,8 +27,8 @@ import org.apache.mailet.Mail;
 import org.apache.mailet.base.GenericMailet;
 import org.nhindirect.gateway.smtp.GatewayState;
 import org.nhindirect.stagent.cert.CertCacheFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Mailet used to refresh the state of the security and trust mailet.  Specifically it forces the {@link GatewayState} to stop and restart the 
@@ -41,17 +41,16 @@ import org.slf4j.LoggerFactory;
  * @author Greg Meyer
  * @since 1.4
  */
+@Slf4j
 public class RefreshSecurityAndTrustStateMailet extends GenericMailet 
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(RefreshSecurityAndTrustStateMailet.class);
-	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void service(Mail mail) throws MessagingException 
 	{ 	
-		LOGGER.info("Gateway state refresh requested through RefreshSecurityAndTrustStateMailet.  " +
+		log.info("Gateway state refresh requested through RefreshSecurityAndTrustStateMailet.  " +
 				"Attempting to stop and restart the settings update manager.");
 		
 		GatewayState gwState = GatewayState.getInstance();
@@ -67,7 +66,7 @@ public class RefreshSecurityAndTrustStateMailet extends GenericMailet
 		}
 		catch (Exception e)
 		{
-			LOGGER.warn("Failed to restart the settings update manager.", e);
+			log.warn("Failed to restart the settings update manager.", e);
 		}
 		finally
 		{

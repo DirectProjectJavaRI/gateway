@@ -4,21 +4,20 @@ package org.nhindirect.gateway.streams;
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.messaging.MessageChannel;
+import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.stereotype.Component;
 
-@EnableBinding(STAOutput.class)
+@Component
 public class STASource
 {
-	@Autowired
-	@Qualifier(STAOutput.STA_OUTPUT)
-	private MessageChannel staChannel;
+	// Maps to the Spring Cloud Stream functional output binding name.
+	protected static final String OUT_BINDING_NAME = "direct-sta-processor-out-0";
 	
-	@Output(STAOutput.STA_OUTPUT)
+	@Autowired
+	private StreamBridge streamBridge;
+	
 	public <T> void staProcess(SMTPMailMessage msg) 
 	{
-		this.staChannel.send(SMTPMailMessageConverter.toStreamMessage(msg));
+		streamBridge.send(OUT_BINDING_NAME, SMTPMailMessageConverter.toStreamMessage(msg));
 	}
 }

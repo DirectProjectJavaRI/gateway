@@ -1,11 +1,16 @@
 package org.nhindirect.gateway.smtp;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
 import javax.mail.internet.InternetAddress;
 
-import junit.framework.TestCase;
-
-public class DomainPostmasterTest extends TestCase 
+public class DomainPostmasterTest 
 {
+	@Test
 	public void testConstructDefaultPostmaster()
 	{
 		DomainPostmaster postmaster = new DomainPostmaster();
@@ -14,6 +19,7 @@ public class DomainPostmasterTest extends TestCase
 		assertEquals("", postmaster.getDomain());
 	}
 	
+	@Test
 	public void testConstructPostmasterWithDomain()
 	{
 		DomainPostmaster postmaster = new DomainPostmaster("domain1", null);
@@ -24,6 +30,7 @@ public class DomainPostmasterTest extends TestCase
 		assertEquals("domain1", postmaster.getDomain());
 	}	
 	
+	@Test
 	public void testConstructPostmasterWithDomainAndPostmaster() throws Exception
 	{
 		DomainPostmaster postmaster = new DomainPostmaster("domain1", new InternetAddress("me@domain1"));
@@ -33,6 +40,7 @@ public class DomainPostmasterTest extends TestCase
 		assertEquals("domain1", postmaster.getDomain());
 	}	
 	
+	@Test
 	public void testConstructPostmaster_NullDomain_AssertException() throws Exception
 	{
 		boolean exceptionOccured = false;
@@ -48,6 +56,7 @@ public class DomainPostmasterTest extends TestCase
 		assertTrue(exceptionOccured);
 	}	
 	
+	@Test
 	public void testSetDomain_DefaultConstructor() throws Exception
 	{
 		DomainPostmaster postmaster = new DomainPostmaster();
@@ -57,6 +66,7 @@ public class DomainPostmasterTest extends TestCase
 		assertEquals("domain2", postmaster.getDomain());
 	}	
 	
+	@Test
 	public void testSetDomain_ParamConstructor() throws Exception
 	{
 		DomainPostmaster postmaster = new DomainPostmaster("domain1", new InternetAddress("me@domain1"));
@@ -65,6 +75,7 @@ public class DomainPostmasterTest extends TestCase
 		assertEquals("domain2", postmaster.getDomain());
 	}
 	
+	@Test
 	public void testSetPostmaster_DefaultConstructor() throws Exception
 	{
 		DomainPostmaster postmaster = new DomainPostmaster();
@@ -73,6 +84,7 @@ public class DomainPostmasterTest extends TestCase
 		assertEquals("me@domain1", postmaster.getPostmaster().toString());
 	}	
 	
+	@Test
 	public void testSetPostmaster_ParamConstructor() throws Exception
 	{
 		DomainPostmaster postmaster = new DomainPostmaster("domain1", new InternetAddress("me@domain1"));

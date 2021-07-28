@@ -3,21 +3,20 @@ package org.nhindirect.gateway.streams;
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.messaging.MessageChannel;
+import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.stereotype.Component;
 
-@EnableBinding(XDRemoteDeliveryOutput.class)
+@Component
 public class XDRemoteDeliverySource
 {
-	@Autowired
-	@Qualifier(XDRemoteDeliveryOutput.XD_DELIVERY_MESSAGE_OUTPUT)
-	private MessageChannel xdRemoteDeliveryChannel;
+	// Maps to the Spring Cloud Stream functional output binding name.
+	protected static final String OUT_BINDING_NAME = "direct-xd-delivery-out-0";
 	
-	@Output(XDRemoteDeliveryOutput.XD_DELIVERY_MESSAGE_OUTPUT)
+	@Autowired
+	private StreamBridge streamBridge;
+	
 	public <T> void xdRemoteDelivery(SMTPMailMessage msg) 
 	{
-		xdRemoteDeliveryChannel.send(SMTPMailMessageConverter.toStreamMessage(msg));
+		streamBridge.send(OUT_BINDING_NAME, SMTPMailMessageConverter.toStreamMessage(msg));
 	}
 }

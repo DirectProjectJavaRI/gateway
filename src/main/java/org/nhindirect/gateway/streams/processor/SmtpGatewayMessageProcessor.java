@@ -1,5 +1,7 @@
 package org.nhindirect.gateway.streams.processor;
 
+import java.util.function.Consumer;
+
 import javax.mail.MessagingException;
 
 import org.nhindirect.common.mail.SMTPMailMessage;
@@ -7,22 +9,19 @@ import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
 import org.nhindirect.gateway.smtp.GatewayState;
 import org.nhindirect.gateway.smtp.SmtpAgent;
 import org.nhindirect.gateway.streams.STASource;
-import org.nhindirect.gateway.streams.SmtpGatewayMessageInput;
 import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 
+import lombok.extern.slf4j.Slf4j;
 
-@EnableBinding(SmtpGatewayMessageInput.class)
+@Configuration
+@Slf4j
 public class SmtpGatewayMessageProcessor
 {		
-	private static final Logger LOGGER = LoggerFactory.getLogger(SmtpGatewayMessageProcessor.class);	
-	
 	@Autowired
 	protected SmtpAgent smtpAgent;
 	
@@ -43,12 +42,22 @@ public class SmtpGatewayMessageProcessor
 		this.staSource = staSource;
 	}	
 	
-	@StreamListener(target = SmtpGatewayMessageInput.SMTP_GATEWAY_MESSAGE_INPUT)
-	public void processSmtpMessage(Message<?> streamMsg) throws MessagingException
+	@Bean
+	public Consumer<Message<?>> directSmtpGatewayMessageInput() throws MessagingException
 	{
-		final SMTPMailMessage smtpMessage = SMTPMailMessageConverter.fromStreamMessage(streamMsg);
-		
-		preProcessMessage(smtpMessage);
+		return streamMsg -> 
+		{		
+			try 
+			{
+				final SMTPMailMessage smtpMessage = SMTPMailMessageConverter.fromStreamMessage(streamMsg);
+			
+				preProcessMessage(smtpMessage);
+			}
+			catch (Exception e )
+			{
+				throw new RuntimeException("Failed to process message.", e);
+			}
+		};
 	}
 
 	
@@ -57,7 +66,7 @@ public class SmtpGatewayMessageProcessor
 			
 		final NHINDAddress sender = MessageUtils.getMailSender(smtpMessage);
 		
-		LOGGER.info("SmtpGatewayMessageProcessor receiving message from sender " + sender.toString());
+		log.info("SmtpGatewayMessageProcessor receiving message from sender " + sender.toString());
 			
 
 		boolean isOutgoing = false;

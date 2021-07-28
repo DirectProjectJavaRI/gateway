@@ -39,8 +39,8 @@ import org.nhindirect.stagent.AgentError;
 import org.nhindirect.stagent.NHINDException;
 import org.nhindirect.stagent.cert.WrappedOnDemandX509CertificateEx;
 import org.nhindirect.stagent.cert.X509CertificateEx;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Utility methods for working with certificate stores and certificate data.
@@ -48,10 +48,9 @@ import org.slf4j.LoggerFactory;
  *
  * @since 4.2
  */
+@Slf4j
 public class CertStoreUtils
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CertStoreUtils.class);
-	
     public static X509Certificate certFromData(KeyStoreProtectionManager mgr,  byte[] data)
     {
     	X509Certificate retVal = null;
@@ -139,7 +138,7 @@ public class CertStoreUtils
             		}
             		catch (Exception e)
             		{
-            			LOGGER.warn("Could not retrieve the private key from the PKCS11 token: " + e.getMessage(), e);
+            			log.warn("Could not retrieve the private key from the PKCS11 token: " + e.getMessage(), e);
             		}
             	}
             }

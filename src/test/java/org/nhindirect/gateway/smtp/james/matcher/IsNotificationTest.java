@@ -1,5 +1,10 @@
 package org.nhindirect.gateway.smtp.james.matcher;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -7,19 +12,17 @@ import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.james.core.MailAddress;
 import org.nhindirect.gateway.smtp.james.mailet.MockMail;
 import org.nhindirect.gateway.testutils.TestUtils;
 
-public class IsNotificationTest extends TestCase
+public class IsNotificationTest
 {
-	@SuppressWarnings({ "deprecation" })
+	@Test
 	public void testIsNotification_MDNMessage_assertAllRecips() throws Exception
 	{
-		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("MDNMessage.txt")));
+		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("MDNMessage.txt"), Charset.defaultCharset()));
 		
 		
 		IsNotification matcher = new IsNotification();
@@ -37,10 +40,10 @@ public class IsNotificationTest extends TestCase
 		assertEquals(initialRecips.iterator().next().toString(), matchAddresses.iterator().next().toString());
 	}
 	
-	@SuppressWarnings({"deprecation" })
+	@Test
 	public void testIsNotification_DSNMessage_assertAllRecips() throws Exception
 	{
-		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("DSNMessage.txt")));
+		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("DSNMessage.txt"), Charset.defaultCharset()));
 		
 		
 		IsNotification matcher = new IsNotification();
@@ -58,10 +61,10 @@ public class IsNotificationTest extends TestCase
 		assertEquals(initialRecips.iterator().next().toString(), matchAddresses.iterator().next().toString());
 	}
 	
-	@SuppressWarnings({"deprecation" })
+	@Test
 	public void testIsNotification_ecryptedMessage_assertNull() throws Exception
 	{
-		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("EncryptedMessage.txt")));
+		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("EncryptedMessage.txt"), Charset.defaultCharset()));
 		
 		
 		IsNotSMIMEEncrypted matcher = new IsNotSMIMEEncrypted();
@@ -78,10 +81,10 @@ public class IsNotificationTest extends TestCase
 		assertEquals(null, matchAddresses);
 	}
 
-	@SuppressWarnings({"deprecation" })
+	@Test
 	public void testIsNotification_plainMessage_assertNull() throws Exception
 	{
-		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("PlainOutgoingMessage.txt")));
+		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("PlainOutgoingMessage.txt"),Charset.defaultCharset()));
 		
 		
 		IsNotification matcher = new IsNotification();
@@ -98,6 +101,7 @@ public class IsNotificationTest extends TestCase
 		assertEquals(null, matchAddresses);
 	}
 	
+	@Test
 	public void testIsNoticiation_nullMail_assertNull() throws Exception
 	{
 		
@@ -109,6 +113,7 @@ public class IsNotificationTest extends TestCase
 		assertEquals(null, matchAddresses);
 	}
 	
+	@Test
 	public void testIsNotification_nullMessage_assertNull() throws Exception
 	{
 		

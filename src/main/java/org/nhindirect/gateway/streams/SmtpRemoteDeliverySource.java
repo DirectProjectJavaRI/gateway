@@ -6,22 +6,21 @@ import java.util.Map;
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
+import org.springframework.stereotype.Component;
 
-@EnableBinding(SmtpRemoteDeliveryOutput.class)
+@Component
 public class SmtpRemoteDeliverySource
 {
-	public static final String REMOTE_DELIVERY_GROUPED = "REMOTE_DELIVERY_GROUPED";	
+	// Maps to the Spring Cloud Stream functional output binding name.
+	protected static final String OUT_BINDING_NAME = "direct-smtp-remote-delivery-out-0";
 	
 	@Autowired
-	@Qualifier(SmtpRemoteDeliveryOutput.SMTP_REMOTE_DELIVERY_MESSAGE_OUTPUT)
-	private MessageChannel remoteDeliveryChannel;
+	private StreamBridge streamBridge;
 	
-	@Output(SmtpRemoteDeliveryOutput.SMTP_REMOTE_DELIVERY_MESSAGE_OUTPUT)
+	public static final String REMOTE_DELIVERY_GROUPED = "REMOTE_DELIVERY_GROUPED";	
+	
 	public <T> void remoteDelivery(SMTPMailMessage msg, boolean grouped) 
 	{
 		final Map<String, Object> headerMap = new HashMap<>();
@@ -30,7 +29,6 @@ public class SmtpRemoteDeliverySource
 		final Message<?> streamMsg = (!grouped) ? SMTPMailMessageConverter.toStreamMessage(msg) :
 			SMTPMailMessageConverter.toStreamMessage(msg, headerMap);
 		
-		this.remoteDeliveryChannel.send(streamMsg);
-
+		streamBridge.send(OUT_BINDING_NAME, streamMsg);
 	}
 }

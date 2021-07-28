@@ -10,33 +10,31 @@ import javax.mail.internet.MimeMessage;
 
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Output;
-import org.springframework.messaging.MessageChannel;
+import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.stereotype.Component;
 
-@EnableBinding(SmtpGatewayMessageOutput.class)
+import lombok.extern.slf4j.Slf4j;
+
+@Component
+@Slf4j
 public class SmtpGatewayMessageSource
 {	
-	private static final Logger LOGGER = LoggerFactory.getLogger(SmtpGatewayMessageOutput.class);	
+	// Maps to the Spring Cloud Stream functional output binding name.
+	protected static final String OUT_BINDING_NAME = "direct-smtp-gateway-message-out-0";
 	
 	@Autowired
-	@Qualifier(SmtpGatewayMessageOutput.SMTP_GATEWAY_MESSAGE_OUTPUT)
-	private MessageChannel smtpGatewayChannel;
+	private StreamBridge streamBridge;
 	
-	@Output(SmtpGatewayMessageOutput.SMTP_GATEWAY_MESSAGE_OUTPUT)
 	public <T> void sendMimeMessage(MimeMessage msg)
 	{
 		try
 		{
-			this.smtpGatewayChannel.send(SMTPMailMessageConverter.toStreamMessage(mimeMsgToSMTPMailMessage(msg)));
+			streamBridge.send(OUT_BINDING_NAME, SMTPMailMessageConverter.toStreamMessage(mimeMsgToSMTPMailMessage(msg)));
 		}
 		catch (Exception e)
 		{
-			LOGGER.warn("Failed to send SMTP message to gateway processor stream channel.", e);
+			log.warn("Failed to send SMTP message to gateway processor stream channel.", e);
 		}
 	}
 

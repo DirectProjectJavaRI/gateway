@@ -1,8 +1,11 @@
 package org.nhindirect.gateway.smtp.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,7 +25,6 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FileUtils;
 
-import org.junit.Test;
 import org.nhindirect.common.crypto.CryptoExtensions;
 import org.nhindirect.config.model.Anchor;
 import org.nhindirect.config.model.CertPolicy;
@@ -76,7 +78,7 @@ public class SMTPAgentFactoryFunctional_Test extends SpringBaseTest
 	/**
      * Initialize the servers- LDAP and HTTP.
      */
-	@Override
+	@BeforeEach
 	public void setUp() throws Exception
 	{
 		// check for Windows... it doens't like file://<drive>... turns it into FTP
@@ -346,7 +348,7 @@ public class SMTPAgentFactoryFunctional_Test extends SpringBaseTest
             	// assert we have the proper ldap resolvers
             	Collection<CertificateResolver> resolvers = nAgent.getPublicCertResolvers();
             	assertNotNull(resolvers);
-            	assertEquals(2, resolvers.size());
+            	assertEquals(3, resolvers.size());
             	Iterator<CertificateResolver> iter = resolvers.iterator();
             	
  

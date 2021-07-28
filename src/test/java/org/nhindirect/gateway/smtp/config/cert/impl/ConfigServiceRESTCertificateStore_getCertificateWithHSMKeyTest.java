@@ -1,8 +1,14 @@
 package org.nhindirect.gateway.smtp.config.cert.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -17,14 +23,12 @@ import org.nhindirect.config.model.Certificate;
 import org.nhindirect.gateway.testutils.TestUtils;
 import org.nhindirect.stagent.cert.X509CertificateEx;
 
-import junit.framework.TestCase;
-
-public class ConfigServiceRESTCertificateStore_getCertificateWithHSMKeyTest extends TestCase 
+public class ConfigServiceRESTCertificateStore_getCertificateWithHSMKeyTest
 {
 	protected CertificateService proxy;
 	protected ConfigServiceRESTCertificateStore certService;
 	
-	@Override
+	@BeforeEach
 	public void setUp() throws Exception
 	{
 		proxy = mock(CertificateService.class);
@@ -48,7 +52,7 @@ public class ConfigServiceRESTCertificateStore_getCertificateWithHSMKeyTest exte
 		return certService;
 	}
 	
-	
+	@Test
 	public void testGetCertifcateWithPrivKey_noPrivKeyInHSM() throws Exception
 	{		
 		if (certService == null)

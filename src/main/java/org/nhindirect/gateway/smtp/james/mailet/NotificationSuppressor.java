@@ -41,19 +41,19 @@ import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.mail.notifications.MDNStandard;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This mailet determines if a notification messages need to be suppressed from delivery to the original message's edge client.
  * @author Greg Meyer
  * @since 2.0
  */
+@Slf4j
 public class NotificationSuppressor extends AbstractNotificationAwareMailet
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(NotificationSuppressor.class);
 	protected boolean consumeMDNProcessed;
 	
 	static
@@ -78,7 +78,7 @@ public class NotificationSuppressor extends AbstractNotificationAwareMailet
 	@Override
 	public void init() throws MessagingException
 	{
-		LOGGER.info("Initializing NotificationSupressor");
+		log.info("Initializing NotificationSupressor");
 		
 		super.init();
 			
@@ -88,7 +88,7 @@ public class NotificationSuppressor extends AbstractNotificationAwareMailet
 				this, ctx, false);
 		
 
-		LOGGER.info("NotificationSupressor initialization complete.");
+		log.info("NotificationSupressor initialization complete.");
 	}
 	
 	/**
@@ -126,7 +126,7 @@ public class NotificationSuppressor extends AbstractNotificationAwareMailet
 			{
 				// failing to call the txService should not result in an exception being thrown
 				// from this service.
-				LOGGER.warn("Failed to get notification suppression status from service.  Message will assume to not need supressing.");
+				log.warn("Failed to get notification suppression status from service.  Message will assume to not need supressing.");
 			}
 		}
 		

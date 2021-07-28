@@ -37,8 +37,7 @@ import org.apache.mailet.base.GenericMatcher;
 import org.nhindirect.gateway.smtp.SmtpAgentError;
 import org.nhindirect.gateway.smtp.SmtpAgentException;
 import org.nhindirect.stagent.NHINDAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Matcher for returning recipients when the sender is local and the recipient is not local.  This is useful
@@ -46,9 +45,9 @@ import org.slf4j.LoggerFactory;
  * @author Greg Meyer
  *
  */
+@Slf4j
 public class RecipAndSenderIsNotLocal extends  GenericMatcher
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(RecipAndSenderIsNotLocal.class);
 	private Set<String> domains = new HashSet<String>();
 	
 	/**
@@ -57,7 +56,7 @@ public class RecipAndSenderIsNotLocal extends  GenericMatcher
 	@Override
 	public void init()
 	{
-		LOGGER.info("Initializing RecipAndSenderIsNotLocal matcher.");
+		log.info("Initializing RecipAndSenderIsNotLocal matcher.");
 		
 		String localDomains = getCondition();
 		
@@ -74,7 +73,7 @@ public class RecipAndSenderIsNotLocal extends  GenericMatcher
 			this.domains.add(domain.toUpperCase(Locale.getDefault()));
 		}
 		
-		LOGGER.info(logMessage.toString());
+		log.info(logMessage.toString());
 	}
 	
 	/**
@@ -100,19 +99,19 @@ public class RecipAndSenderIsNotLocal extends  GenericMatcher
     	if (!domains.contains(domain))
     	{
     		// this is from a remote domain... this auto qualifies all recipients
-    		LOGGER.debug("Sender is remote.  Return all recipients as matching");
+    		log.debug("Sender is remote.  Return all recipients as matching");
     		return mail.getRecipients();
     	}
     	
     	// the sender is local, so only return recipients that are not local
-    	LOGGER.debug("Sender is local.  Matching non local recipients.");
+    	log.debug("Sender is local.  Matching non local recipients.");
     	
         Collection<MailAddress> matching = new Vector<MailAddress>();
         for (MailAddress addr : (Collection<MailAddress>)mail.getRecipients()) 
         {
             if (!domains.contains(addr.getDomain().name().toUpperCase(Locale.getDefault()))) 
             {
-            	LOGGER.debug("Matched recipient " + addr.toString());
+            	log.debug("Matched recipient " + addr.toString());
                 matching.add(addr);
             }
         }

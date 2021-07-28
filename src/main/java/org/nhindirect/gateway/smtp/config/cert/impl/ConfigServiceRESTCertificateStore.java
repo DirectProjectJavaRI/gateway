@@ -42,9 +42,10 @@ import org.nhindirect.stagent.cert.CacheableCertStore;
 import org.nhindirect.stagent.cert.CertCacheFactory;
 import org.nhindirect.stagent.cert.CertStoreCachePolicy;
 import org.nhindirect.stagent.cert.CertificateStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ConfigServiceRESTCertificateStore extends CertificateStore implements CacheableCertStore
 {
  	/**
@@ -62,8 +63,6 @@ public class ConfigServiceRESTCertificateStore extends CertificateStore implemen
 	protected static final int DEFAULT_WS_MAX_CAHCE_ITEMS = 1000;
 	protected static final int DEFAULT_WS_TTL = 3600; // 1 hour
     
-	private static final Logger LOGGER = LoggerFactory.getLogger(ConfigServiceRESTCertificateStore.class);
-	
 	private static final String CACHE_NAME = "CONFIG_SERVICE_CERT_CACHE";
 	
 	protected JCS cache;
@@ -248,7 +247,7 @@ public class ConfigServiceRESTCertificateStore extends CertificateStore implemen
     			retVal = this.lookupFromConfigStore(realSubjectName);
     			if (retVal == null || retVal.size() == 0)
     			{
-    				LOGGER.info("getCertificates(String subjectName) - Could not find a ConfigService certificate for subject " + subjectName);
+    				log.info("getCertificates(String subjectName) - Could not find a ConfigService certificate for subject " + subjectName);
     			}
     		}
     	}
@@ -259,7 +258,7 @@ public class ConfigServiceRESTCertificateStore extends CertificateStore implemen
     			
     		{
 
-    			LOGGER.info("getCertificates(String subjectName) - Could not find a ConfigService certificate for subject " + subjectName);
+    			log.info("getCertificates(String subjectName) - Could not find a ConfigService certificate for subject " + subjectName);
     		}
     	}
     	

@@ -1,13 +1,15 @@
 package org.nhindirect.gateway.smtp.james.mailet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.mailet.MailetConfig;
-import org.junit.Test;
+
 import org.nhindirect.common.options.OptionsManager;
 import org.nhindirect.common.options.OptionsManagerUtils;
 import org.nhindirect.common.options.OptionsParameter;

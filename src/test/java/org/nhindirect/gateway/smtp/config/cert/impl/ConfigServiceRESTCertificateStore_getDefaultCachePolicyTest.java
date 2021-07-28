@@ -1,31 +1,37 @@
 package org.nhindirect.gateway.smtp.config.cert.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.OutputStream;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.nhindirect.common.options.OptionsManagerUtils;
 import org.nhindirect.stagent.cert.CertCacheFactory;
-public class ConfigServiceRESTCertificateStore_getDefaultCachePolicyTest extends TestCase
+
+public class ConfigServiceRESTCertificateStore_getDefaultCachePolicyTest
 {
-	@Override
+	@BeforeEach
 	public void setUp()
 	{
 		OptionsManagerUtils.clearOptionsManagerInstance();
 		CertCacheFactory.getInstance().flushAll();
 	}
 	
-	@Override
+	@AfterEach
 	public void tearDown()
 	{
 		OptionsManagerUtils.clearOptionsManagerOptions();
 		CertCacheFactory.getInstance().flushAll();
 	}
 	
-	
+	@Test
 	public void testGetDefaultCachePolicyTest_useDefaultSettings_assertSettings() throws Exception
 	{
 		ConfigServiceRESTCertificateStore store = new ConfigServiceRESTCertificateStore(null);
@@ -55,7 +61,7 @@ public class ConfigServiceRESTCertificateStore_getDefaultCachePolicyTest extends
 
 	}	
 	
-	@SuppressWarnings("deprecation")
+	@Test
 	public void testGetDefaultCachePolicyTest_useSettingsFromPropertiesFile_assertSettings() throws Exception
 	{	
 		File propFile = new File("./target/props/agentSettings.properties");
@@ -64,19 +70,13 @@ public class ConfigServiceRESTCertificateStore_getDefaultCachePolicyTest extends
 	
 		System.setProperty("org.nhindirect.stagent.PropertiesFile", "./target/props/agentSettings.properties");
 		
-		OutputStream outStream = null;
 	
-		try
+		try (final OutputStream outStream = FileUtils.openOutputStream(propFile))
 		{
-			outStream = FileUtils.openOutputStream(propFile);
 			outStream.write("org.nhindirect.stagent.cert.wsresolver.MaxCacheSize=1200\r\n".getBytes());
 			outStream.write("org.nhindirect.stagent.cert.wsresolver.CacheTTL=900".getBytes());
 			outStream.flush();
 			
-		}
-		finally
-		{
-			IOUtils.closeQuietly(outStream);
 		}
 		
 		try
