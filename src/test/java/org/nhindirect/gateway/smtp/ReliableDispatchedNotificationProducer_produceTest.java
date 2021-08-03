@@ -1,5 +1,12 @@
 package org.nhindirect.gateway.smtp;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.Test;
+
+import java.nio.charset.Charset;
 import java.util.Collection;
 
 import javax.mail.Address;
@@ -7,8 +14,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
-
-import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.mailet.Mail;
@@ -24,7 +29,7 @@ import org.nhindirect.stagent.mail.Message;
 import org.nhindirect.stagent.mail.notifications.Notification;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
 
-public class ReliableDispatchedNotificationProducer_produceTest extends TestCase
+public class ReliableDispatchedNotificationProducer_produceTest
 {
 	/**
 	 * Gets the sender of the message.
@@ -60,10 +65,10 @@ public class ReliableDispatchedNotificationProducer_produceTest extends TestCase
 		return recipients;
 	}
 	
-	@SuppressWarnings("deprecation")
+	@Test
 	public void testCreateAckWithNoText() throws Exception
 	{
-		final MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("PlainOutgoingMessage.txt")));
+		final MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("PlainOutgoingMessage.txt"), Charset.defaultCharset()));
 		
 		final NHINDAddressCollection recipients = getMailRecipients(msg);
 				

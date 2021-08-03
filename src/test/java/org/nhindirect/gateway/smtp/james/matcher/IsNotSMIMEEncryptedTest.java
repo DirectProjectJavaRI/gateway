@@ -1,6 +1,10 @@
 package org.nhindirect.gateway.smtp.james.matcher;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Test;
+
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -13,14 +17,12 @@ import org.apache.james.core.MailAddress;
 import org.nhindirect.gateway.smtp.james.mailet.MockMail;
 import org.nhindirect.gateway.testutils.TestUtils;
 
-import junit.framework.TestCase;
-
-public class IsNotSMIMEEncryptedTest extends TestCase
+public class IsNotSMIMEEncryptedTest 
 {
-	@SuppressWarnings({"deprecation" })
+	@Test
 	public void testIsNotSMIMEMessage_unecryptedMessage_assertAllRecips() throws Exception
 	{
-		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("PlainOutgoingMessage.txt")));
+		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("PlainOutgoingMessage.txt"), Charset.defaultCharset()));
 		
 		
 		IsNotSMIMEEncrypted matcher = new IsNotSMIMEEncrypted();
@@ -38,10 +40,10 @@ public class IsNotSMIMEEncryptedTest extends TestCase
 		assertEquals(initialRecips.iterator().next().toString(), matchAddresses.iterator().next().toString());
 	}
 	
-	@SuppressWarnings({"deprecation" })
+	@Test
 	public void testIsNotSMIMEMessage_ecryptedMessage_assertNull() throws Exception
 	{
-		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("EncryptedMessage.txt")));
+		MimeMessage msg = new MimeMessage(null, IOUtils.toInputStream(TestUtils.readMessageResource("EncryptedMessage.txt"), Charset.defaultCharset()));
 		
 		
 		IsNotSMIMEEncrypted matcher = new IsNotSMIMEEncrypted();
@@ -58,6 +60,7 @@ public class IsNotSMIMEEncryptedTest extends TestCase
 		assertEquals(null, matchAddresses);
 	}
 	
+	@Test
 	public void testIsNotSMIMEMessage_nullMail_assertNull() throws Exception
 	{
 		
@@ -69,6 +72,7 @@ public class IsNotSMIMEEncryptedTest extends TestCase
 		assertEquals(null, matchAddresses);
 	}
 	
+	@Test
 	public void testIsNotSMIMEMessage_nullMessage_assertNull() throws Exception
 	{
 		

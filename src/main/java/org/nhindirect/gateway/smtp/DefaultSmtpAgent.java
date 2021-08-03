@@ -62,19 +62,18 @@ import org.nhindirect.stagent.mail.notifications.Notification;
 import org.nhindirect.stagent.mail.notifications.NotificationHelper;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
 import org.nhindirect.stagent.parser.EntitySerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.sun.mail.util.CRLFOutputStream;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Default implementation of the SmtpAgent interface.
  * {@inheritDoc}
  */
+@Slf4j
 public class DefaultSmtpAgent implements SmtpAgent
 {	
-	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSmtpAgent.class);
-	
 	private static final String PRINICPAL;
 
 	private NHINDAgent agent;
@@ -93,7 +92,7 @@ public class DefaultSmtpAgent implements SmtpAgent
 		}
 		catch (UnknownHostException e)
 		{
-			LOGGER.warn("Coulnd not get host name: " + e.getMessage());
+			log.warn("Coulnd not get host name: " + e.getMessage());
 		}
 		
 		PRINICPAL = "STAgent" + host;
@@ -186,7 +185,7 @@ public class DefaultSmtpAgent implements SmtpAgent
 		try
 		{
 		
-			LOGGER.trace("Entering processMessage(MimeMessage, NHINDAddressCollection, NHINDAddress");
+			log.trace("Entering processMessage(MimeMessage, NHINDAddressCollection, NHINDAddress");
 			
 			MessageProcessResult retVal = null;
 			
@@ -212,7 +211,7 @@ public class DefaultSmtpAgent implements SmtpAgent
 			catch (SmtpAgentException e)
 			{
 				// rethrow
-				LOGGER.trace("Exiting processMessage(MimeMessage, NHINDAddressCollection, NHINDAddress", e);
+				log.trace("Exiting processMessage(MimeMessage, NHINDAddressCollection, NHINDAddress", e);
 				throw e;
 			}
 			catch (Exception e)
@@ -251,11 +250,11 @@ public class DefaultSmtpAgent implements SmtpAgent
 					auditor.audit(PRINICPAL, new AuditEvent(AuditEvents.REJECTED_MESSAGE_NAME, AuditEvents.EVENT_TYPE), contexts);
 				}
 				
-				LOGGER.trace("Exiting processMessage(MimeMessage, NHINDAddressCollection, NHINDAddress", e);
+				log.trace("Exiting processMessage(MimeMessage, NHINDAddressCollection, NHINDAddress", e);
 				throw new SmtpAgentException(SmtpAgentError.Unknown, e);
 			}
 			
-			LOGGER.trace("Exiting processMessage(MimeMessage, NHINDAddressCollection, NHINDAddress");
+			log.trace("Exiting processMessage(MimeMessage, NHINDAddressCollection, NHINDAddress");
 			return retVal;
 		}
 		finally
@@ -275,7 +274,7 @@ public class DefaultSmtpAgent implements SmtpAgent
 
 	private void preProcessMessage(MimeMessage message, NHINDAddress sender)
 	{
-		LOGGER.debug("Message Recieved from: " + sender.getAddress());
+		log.debug("Message Recieved from: " + sender.getAddress());
 		copyMessage(message, settings.getRawMessageSettings());		
 	}
 	
@@ -338,7 +337,7 @@ public class DefaultSmtpAgent implements SmtpAgent
 				}
 				catch (Exception e)
 				{
-					LOGGER.trace("Failed to canonicalize message", e);
+					log.trace("Failed to canonicalize message", e);
 					throw new SmtpAgentException(SmtpAgentError.Unknown, e);
 				}
 			}
@@ -349,7 +348,7 @@ public class DefaultSmtpAgent implements SmtpAgent
 				
 				auditor.audit(PRINICPAL, new AuditEvent(AuditEvents.OUTGOING_MESSAGE_NAME, AuditEvents.EVENT_TYPE), contexts);
 			}	
-			LOGGER.debug("Sending outgoing message from " + envelope.getSender().toString() + " to STAgent");
+			log.debug("Sending outgoing message from " + envelope.getSender().toString() + " to STAgent");
 		}
 		else
 		{
@@ -360,7 +359,7 @@ public class DefaultSmtpAgent implements SmtpAgent
 				
 				auditor.audit(PRINICPAL, new AuditEvent(AuditEvents.INCOMING_MESSAGE_NAME, AuditEvents.EVENT_TYPE), contexts);
 			}				
-			LOGGER.debug("Sending incoming message from " + envelope.getSender().toString() + " to STAgent");
+			log.debug("Sending incoming message from " + envelope.getSender().toString() + " to STAgent");
 		}
 
 		
@@ -435,7 +434,7 @@ public class DefaultSmtpAgent implements SmtpAgent
         catch (Exception e)
         {
         	// don't bail on the whole process if we can't create notifications messages
-        	LOGGER.error("Failed to create notification messages.", e);
+        	log.error("Failed to create notification messages.", e);
         }
         
     	// check if this is an incoming MDN message... is so, audit it
@@ -529,7 +528,7 @@ public class DefaultSmtpAgent implements SmtpAgent
 			}
 			catch (MessagingException e)
 			{
-				LOGGER.warn("Error retrieving header " + header + " from the message.");
+				log.warn("Error retrieving header " + header + " from the message.");
 			}
 		}
 		

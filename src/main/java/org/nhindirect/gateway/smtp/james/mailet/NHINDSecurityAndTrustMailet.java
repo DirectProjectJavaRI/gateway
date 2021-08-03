@@ -57,10 +57,10 @@ import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -69,10 +69,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Greg Meyer
  * @since 1.0
  */
+@Slf4j
 public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet 
 {    
-	private static final Logger LOGGER = LoggerFactory.getLogger(NHINDSecurityAndTrustMailet.class);	
-	
+
 	protected SmtpAgent agent;
 	protected boolean autoDSNForGeneral  = false;
 	protected boolean autoDSNForTimelyAndReliable  = false;
@@ -105,7 +105,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 	@Override
 	public void init() throws MessagingException
 	{
-		LOGGER.info("Initializing NHINDSecurityAndTrustMailet");
+		log.info("Initializing NHINDSecurityAndTrustMailet");
 		
 		super.init();
 		
@@ -164,7 +164,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 		}
 		catch (SmtpAgentException e)
 		{
-			LOGGER.error("Failed to create the SMTP agent: " + e.getMessage(), e);
+			log.error("Failed to create the SMTP agent: " + e.getMessage(), e);
 			throw new MessagingException("Failed to create the SMTP agent: " + e.getMessage(), e);
 		}		
 		
@@ -173,7 +173,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 		///CLOVER:OFF
 		if (agent == null)
 		{
-			LOGGER.error("Failed to create the SMTP agent. Reason unknown.");
+			log.error("Failed to create the SMTP agent. Reason unknown.");
 			throw new MessagingException("Failed to create the SMTP agent.  Reason unknown.");
 		}	
 		///CLOVER:ON
@@ -187,7 +187,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 		gwState.setSmptAgentFactory(factory);
 		gwState.startAgentSettingsManager();
 		
-		LOGGER.info("NHINDSecurityAndTrustMailet initialization complete.");
+		log.info("NHINDSecurityAndTrustMailet initialization complete.");
 	}
 
 	@Override
@@ -208,7 +208,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 		
 			Tx txToMonitor = null;
 			
-			LOGGER.trace("Entering service(Mail mail)");
+			log.trace("Entering service(Mail mail)");
 			
 			onPreprocessMessage(mail);
 			
@@ -220,7 +220,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 			
 			final NHINDAddress sender = MessageUtils.getMailSender(smtpMailMessage);
 			
-			LOGGER.info("Proccessing message from sender " + sender.toString());
+			log.info("Proccessing message from sender " + sender.toString());
 			MessageProcessResult result = null;
 					
 			final boolean isOutgoing = isOutgoing(msg, sender);
@@ -237,19 +237,19 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 			try
 			{
 				// process the message with the agent stack
-				LOGGER.trace("Calling agent.processMessage");
+				log.trace("Calling agent.processMessage");
 				result = agent.processMessage(msg, recipients, sender);
-				LOGGER.trace("Finished calling agent.processMessage");
+				log.trace("Finished calling agent.processMessage");
 				
 				if (result == null)
 				{				
-					LOGGER.error("Failed to process message.  processMessage returned null.");		
+					log.error("Failed to process message.  processMessage returned null.");		
 					
 					onMessageRejected(mail, originalRecipList, sender, isOutgoing, txToMonitor, null);
 					
 					mail.setState(Mail.GHOST);
 					
-					LOGGER.trace("Exiting service(Mail mail)");
+					log.trace("Exiting service(Mail mail)");
 					return;
 				}
 			}	
@@ -257,12 +257,12 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 			{
 				// catch all
 				
-				LOGGER.error("Failed to process message: " + e.getMessage(), e);					
+				log.error("Failed to process message: " + e.getMessage(), e);					
 				
 				onMessageRejected(mail, originalRecipList, sender, isOutgoing, txToMonitor, e);
 				
 				mail.setState(Mail.GHOST);
-				LOGGER.trace("Exiting service(Mail mail)");
+				log.trace("Exiting service(Mail mail)");
 	
 				return;
 			}
@@ -277,7 +277,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 				/*
 				 * TODO: Handle exception... GHOST the message for now and eat it
 				 */		
-				LOGGER.debug("Processed message is null.  GHOST and eat the message.");
+				log.debug("Processed message is null.  GHOST and eat the message.");
 	
 				onMessageRejected(mail, recipients, sender, null);
 	
@@ -310,7 +310,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 			final Collection<NotificationMessage> notifications = result.getNotificationMessages();
 			if (notifications != null && notifications.size() > 0)
 			{
-				LOGGER.info("MDN messages requested.  Sending MDN \"processed\" messages");
+				log.info("MDN messages requested.  Sending MDN \"processed\" messages");
 				// create a message for each notification and put it on James "stack"
 				for (NotificationMessage message : notifications)
 				{
@@ -321,7 +321,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 					catch (Throwable t)
 					{
 						// don't kill the process if this fails
-						LOGGER.error("Error sending MDN message.", t);
+						log.error("Error sending MDN message.", t);
 					}
 				}
 			}
@@ -331,7 +331,7 @@ public class NHINDSecurityAndTrustMailet extends AbstractNotificationAwareMailet
 			
 			onPostprocessMessage(mail, result, isOutgoing, txToMonitor);
 			
-			LOGGER.trace("Exiting service(Mail mail)");
+			log.trace("Exiting service(Mail mail)");
 		}
 		finally
 		{

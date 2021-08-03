@@ -38,10 +38,10 @@ import org.nhindirect.gateway.smtp.dsn.impl.FailedDeliveryDSNCreator;
 import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Notification messages are not tracked by the security and trust mailet to allow for a modular tracking design.  This mailet should be configured to 
@@ -49,10 +49,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Greg Meyer
  * @since 2.0
  */
+@Slf4j
 public class TrackIncomingNotification extends AbstractNotificationAwareMailet
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TrackIncomingNotification.class);
-
 	static
 	{		
 		initJVMParams();
@@ -86,7 +85,7 @@ public class TrackIncomingNotification extends AbstractNotificationAwareMailet
 	@Override
 	public void service(Mail mail) throws MessagingException 
 	{ 		
-		LOGGER.debug("Calling track incoming notification service");
+		log.debug("Calling track incoming notification service");
 		final MimeMessage msg = mail.getMessage();
 
 		final SMTPMailMessage smtpMailMessage = mailToSMTPMailMessage(mail);
@@ -108,12 +107,12 @@ public class TrackIncomingNotification extends AbstractNotificationAwareMailet
 			///CLOVER:OFF
 			catch (ServiceException ex)
 			{
-				LOGGER.warn("Failed to submit message to monitoring service.", ex);
+				log.warn("Failed to submit message to monitoring service.", ex);
 			}
 			///CLOVER:ON
 		}
 		
-		LOGGER.debug("Exiting track incoming notification service");
+		log.debug("Exiting track incoming notification service");
 	}
 	
 

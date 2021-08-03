@@ -1,8 +1,10 @@
 package org.nhindirect.gateway.smtp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -10,7 +12,6 @@ import java.util.Arrays;
 import javax.mail.Message.RecipientType;
 
 import org.nhindirect.gateway.testutils.TestUtils;
-import org.junit.Test;
 import org.nhindirect.gateway.testutils.BaseTestPlan;
 import org.nhindirect.stagent.mail.Message;
 import org.nhindirect.stagent.mail.notifications.NotificationHelper;

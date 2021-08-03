@@ -1,7 +1,9 @@
 package org.nhindirect.gateway.smtp.james.mailet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,7 +22,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.commons.io.FileUtils;
 import org.apache.mailet.Mailet;
 import org.apache.mailet.MailetConfig;
-import org.junit.Test;
+
 import org.nhindirect.common.crypto.CryptoExtensions;
 import org.nhindirect.common.tx.TxService;
 import org.nhindirect.common.tx.impl.NoOpTxServiceClient;

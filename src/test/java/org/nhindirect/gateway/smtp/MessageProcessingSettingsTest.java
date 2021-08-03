@@ -1,10 +1,15 @@
 package org.nhindirect.gateway.smtp;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 
-import junit.framework.TestCase;
 
-public class MessageProcessingSettingsTest extends TestCase 
+public class MessageProcessingSettingsTest
 {
 
 	private static final File validSaveFolder = new File("./target/SaveMessageFolder");
@@ -25,6 +30,7 @@ public class MessageProcessingSettingsTest extends TestCase
 		
 	}
 	
+	@Test
 	public void testConstructor()
 	{
 		ConcreteMessageProcessingSettings settings = new ConcreteMessageProcessingSettings();
@@ -32,6 +38,7 @@ public class MessageProcessingSettingsTest extends TestCase
 		assertNull(settings.getSaveMessageFolder());
 	}
 	
+	@Test
 	public void testSetSaveMessageFolder()
 	{
 		ConcreteMessageProcessingSettings settings = new ConcreteMessageProcessingSettings();
@@ -41,6 +48,7 @@ public class MessageProcessingSettingsTest extends TestCase
 		assertTrue(settings.hasSaveMessageFolder());
 	}
 	
+	@Test
 	public void testSetSaveMessageFolder_InvalidFolderName_AssertException()
 	{
 		

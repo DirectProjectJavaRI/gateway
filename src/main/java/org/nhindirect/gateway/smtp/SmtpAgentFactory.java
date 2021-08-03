@@ -79,8 +79,8 @@ import org.nhindirect.stagent.policy.impl.DomainPolicyResolver;
 import org.nhindirect.stagent.trust.DefaultTrustAnchorResolver;
 import org.nhindirect.stagent.trust.TrustAnchorResolver;
 import org.nhindirect.stagent.trust.TrustModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The SmtpAgentFactory is a bootstrapper for creating instances of the {@link SmtpAgent) based on configuration information.  Configurations
@@ -91,12 +91,11 @@ import org.slf4j.LoggerFactory;
  * @author Greg Meyer
  *
  */
+@Slf4j
 public class SmtpAgentFactory 
 {		
 	
 	protected static SmtpAgentFactory INSTANCE;
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(SmtpAgentFactory.class);	
 
 	protected static final String MESSAGE_SETTING_RAW = "Raw";
 	protected static final String MESSAGE_SETTING_INCOMING = "Incoming";
@@ -508,7 +507,7 @@ public class SmtpAgentFactory
 		}	
 		
 		if (setting == null || setting.getValue() == null || setting.getValue().isEmpty())
-			storeTypes = STORE_TYPE_DNS + "," + STORE_TYPE_PUBLIC_LDAP; // default to DNS,LDAP
+			storeTypes = STORE_TYPE_DNS + "," + STORE_TYPE_PUBLIC_LDAP + "," + STORE_TYPE_WS; // default to DNS,LDAP,WS
 		else
 			storeTypes = setting.getValue();
 		
@@ -644,7 +643,7 @@ public class SmtpAgentFactory
 		}
 		catch (Exception e)
 		{
-			LOGGER.warn("Could not get setting " + settingName, e);
+			log.warn("Could not get setting " + settingName, e);
 		}
 		
 		return retVal;
@@ -658,7 +657,7 @@ public class SmtpAgentFactory
 		}
 		catch (Exception e)
 		{
-			LOGGER.info("Could not get setting " + settingName);
+			log.info("Could not get setting " + settingName);
 			return null;
 		}
 	}

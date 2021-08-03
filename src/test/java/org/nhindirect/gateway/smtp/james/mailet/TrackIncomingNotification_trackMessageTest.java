@@ -1,5 +1,9 @@
 package org.nhindirect.gateway.smtp.james.mailet;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -18,9 +22,7 @@ import org.nhindirect.gateway.testutils.TestUtils;
 import org.nhindirect.stagent.parser.EntitySerializer;
 
 
-import junit.framework.TestCase;
-
-public class TrackIncomingNotification_trackMessageTest extends TestCase
+public class TrackIncomingNotification_trackMessageTest
 {
 	abstract class TestPlan extends BaseTestPlan 
 	{		
@@ -82,6 +84,7 @@ public class TrackIncomingNotification_trackMessageTest extends TestCase
 		}			
 	}
 	
+	@Test
 	public void testTrackMessage_iMFMessage_assertMessageNoTracked() throws Exception 
 	{
 		new TestPlan() 
@@ -96,6 +99,7 @@ public class TrackIncomingNotification_trackMessageTest extends TestCase
 		}.perform();
 	}
 	
+	@Test
 	public void testTrackMessage_nullParserAndNullTx_assertMessageNoTracked() throws Exception 
 	{
 		new TestPlan() 
@@ -117,6 +121,7 @@ public class TrackIncomingNotification_trackMessageTest extends TestCase
 		}.perform();
 	}
 	
+	@Test
 	public void testMonitorMessage_MDNMessage_assertMessageTracked() throws Exception 
 	{
 		new TestPlan() 
@@ -143,6 +148,7 @@ public class TrackIncomingNotification_trackMessageTest extends TestCase
 		}.perform();
 	}
 	
+	@Test
 	public void testMonitorMessage_DSNMessage_assertMessageTracked() throws Exception 
 	{
 		new TestPlan() 

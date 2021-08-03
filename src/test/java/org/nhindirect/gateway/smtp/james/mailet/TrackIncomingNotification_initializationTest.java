@@ -1,5 +1,11 @@
 package org.nhindirect.gateway.smtp.james.mailet;
 
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,9 +14,8 @@ import org.apache.mailet.MailetConfig;
 import org.nhindirect.common.tx.impl.DefaultTxDetailParser;
 import org.nhindirect.gateway.testutils.BaseTestPlan;
 
-import junit.framework.TestCase;
 
-public class TrackIncomingNotification_initializationTest extends TestCase
+public class TrackIncomingNotification_initializationTest
 {
 	abstract class TestPlan extends BaseTestPlan 
 	{		
@@ -42,6 +47,7 @@ public class TrackIncomingNotification_initializationTest extends TestCase
 		
 	}
 	
+	@Test
 	public void testInitialization_emptyMonitorURL() throws Exception 
 	{
 		new TestPlan() 
@@ -55,6 +61,7 @@ public class TrackIncomingNotification_initializationTest extends TestCase
 		}.perform();
 	}	
 	
+	@Test
 	public void testInitialization_nullMonitorURL() throws Exception 
 	{
 		new TestPlan() 
@@ -69,6 +76,7 @@ public class TrackIncomingNotification_initializationTest extends TestCase
 		}.perform();
 	}	
 	
+	@Test
 	public void testInitialization_valueMonitorURL() throws Exception 
 	{
 		new TestPlan() 

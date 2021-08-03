@@ -3,8 +3,8 @@ package org.nhindirect.stagent;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.nhind.config.rest.AddressService;
 import org.nhind.config.rest.AnchorService;
 import org.nhind.config.rest.CertPolicyService;
@@ -38,12 +38,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = WebEnvironment.DEFINED_PORT)
 @TestPropertySource("classpath:bootstrap.properties")
-@DirtiesContext
+//@DirtiesContext
 public abstract class SpringBaseTest
 {
 	protected String filePrefix;
@@ -133,7 +133,7 @@ public abstract class SpringBaseTest
 	protected KeyStoreProtectionManager keyStoreMgr;
 	
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception
 	{
 		//Thread.sleep(1000);	
@@ -161,26 +161,26 @@ public abstract class SpringBaseTest
 	
 	protected void cleanDataStore() throws Exception
 	{		
-		anchorRepo.deleteAll();
+		anchorRepo.deleteAll().block();
 		
-		groupReltnRepo.deleteAll();
+		groupReltnRepo.deleteAll().block();
 		
-		addressRepo.deleteAll();
+		addressRepo.deleteAll().block();
 		
-		bundleDomainRepo.deleteAll();
+		bundleDomainRepo.deleteAll().block();
 		
-		bundleRepo.deleteAll();
+		bundleRepo.deleteAll().block();
 		
-		domainRepo.deleteAll();
+		domainRepo.deleteAll().block();
 		
-		policyGroupRepo.deleteAll();
+		policyGroupRepo.deleteAll().block();
 		
-		policyRepo.deleteAll();
+		policyRepo.deleteAll().block();
 		
-		certRepo.deleteAll();
+		certRepo.deleteAll().block();
 		
-		dnsRepo.deleteAll();
+		dnsRepo.deleteAll().block();
 		
-		settingRepo.deleteAll();
+		settingRepo.deleteAll().block();
 	}
 }

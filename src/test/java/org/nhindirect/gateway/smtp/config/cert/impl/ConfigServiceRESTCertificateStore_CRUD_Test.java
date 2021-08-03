@@ -1,8 +1,10 @@
 package org.nhindirect.gateway.smtp.config.cert.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.security.cert.X509Certificate;
@@ -11,7 +13,7 @@ import java.util.Collection;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.jcs.JCS;
-import org.junit.Test;
+
 import org.nhind.config.rest.CertificateService;
 import org.nhindirect.config.model.Certificate;
 import org.nhindirect.gateway.testutils.BaseTestPlan;

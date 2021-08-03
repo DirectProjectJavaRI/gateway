@@ -3,6 +3,7 @@ package org.nhindirect.gateway.streams.processor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
@@ -18,26 +19,24 @@ import org.nhindirect.gateway.smtp.GatewayState;
 import org.nhindirect.gateway.smtp.MessageProcessResult;
 import org.nhindirect.gateway.smtp.SmtpAgent;
 import org.nhindirect.gateway.smtp.dsn.DSNCreator;
-import org.nhindirect.gateway.streams.STAInput;
 import org.nhindirect.gateway.streams.STAPostProcessSource;
 import org.nhindirect.gateway.streams.SmtpGatewayMessageSource;
 import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 
-@EnableBinding(STAInput.class)
+import lombok.extern.slf4j.Slf4j;
+
+@Configuration
+@Slf4j
 public class STAProcessor
-{
-	private static final Logger LOGGER = LoggerFactory.getLogger(STAProcessor.class);	
-	
+{	
 	@Autowired
 	protected SmtpAgent smtpAgent;	
 	
@@ -72,137 +71,145 @@ public class STAProcessor
 		this.staPostProcessSource = staPostProcessSource;
 	}	
 	
-	@StreamListener(target = STAInput.STA_INPUT)
-	public void processSmtpMessage(Message<?> streamMsg) throws MessagingException
+	@Bean
+	public Consumer<Message<?>> directStaProcessorInput()
 	{
-		MessageProcessResult result = null;
-		
-		Tx txToMonitor = null;	
-		
-		SMTPMailMessage smtpMessage = SMTPMailMessageConverter.fromStreamMessage(streamMsg);
-		
-		final NHINDAddressCollection recipients = MessageUtils.getMailRecipients(smtpMessage);
-		
-		final NHINDAddress sender = MessageUtils.getMailSender(smtpMessage);
-		
-		boolean isOutgoing = false;
-		GatewayState.getInstance().lockForProcessing();
-		try
+		return streamMsg ->
 		{
-			isOutgoing = MessageUtils.isOutgoing(smtpMessage.getMimeMessage(), sender, smtpAgent.getAgent());
+					
+			MessageProcessResult result = null;
 			
-			// if the message is outgoing, then the tracking information must be
-			// gathered now before the message is transformed
-			if (isOutgoing)
-				txToMonitor = MessageUtils.getTxToTrack(smtpMessage.getMimeMessage(), sender, recipients, this.txParser);
+			Tx txToMonitor = null;	
 			
-			// recipients can get modified by the security and trust agent, so make a local copy
-			// before processing
-			final NHINDAddressCollection originalRecipList = NHINDAddressCollection.create(recipients);
+			SMTPMailMessage smtpMessage = SMTPMailMessageConverter.fromStreamMessage(streamMsg);
 			
+			boolean isOutgoing = false;
+			GatewayState.getInstance().lockForProcessing();
 			try
 			{
-				// process the message with the agent stack
-				LOGGER.trace("Calling stapProcessor.processSmtpMessage");
-				result = smtpAgent.processMessage(smtpMessage.getMimeMessage(), recipients, sender);
-				LOGGER.trace("Finished calling agent.processMessage");
+				final NHINDAddressCollection recipients = MessageUtils.getMailRecipients(smtpMessage);
 				
-				if (result == null)
-				{				
-					LOGGER.error("Failed to process message.  processMessage returned null.");		
+				final NHINDAddress sender = MessageUtils.getMailSender(smtpMessage);
+				
+				isOutgoing = MessageUtils.isOutgoing(smtpMessage.getMimeMessage(), sender, smtpAgent.getAgent());
+				
+				// if the message is outgoing, then the tracking information must be
+				// gathered now before the message is transformed
+				if (isOutgoing)
+					txToMonitor = MessageUtils.getTxToTrack(smtpMessage.getMimeMessage(), sender, recipients, this.txParser);
+				
+				// recipients can get modified by the security and trust agent, so make a local copy
+				// before processing
+				final NHINDAddressCollection originalRecipList = NHINDAddressCollection.create(recipients);
+				
+				try
+				{
+					// process the message with the agent stack
+					log.trace("Calling stapProcessor.processSmtpMessage");
+					result = smtpAgent.processMessage(smtpMessage.getMimeMessage(), recipients, sender);
+					log.trace("Finished calling agent.processMessage");
 					
-					onMessageRejected(smtpMessage, originalRecipList, sender, isOutgoing, txToMonitor, null);
+					if (result == null)
+					{				
+						log.error("Failed to process message.  processMessage returned null.");		
+						
+						onMessageRejected(smtpMessage, originalRecipList, sender, isOutgoing, txToMonitor, null);
+						
+						
+						log.trace("Exiting service(Mail mail)");
+						return;
+					}
+				}	
+				catch (Throwable e)
+				{
+					// catch all
 					
+					log.info("Failed to process message: " + e.getMessage(), e);					
 					
-					LOGGER.trace("Exiting service(Mail mail)");
+					onMessageRejected(smtpMessage, originalRecipList, sender, isOutgoing, txToMonitor, e);
+					
 					return;
 				}
-			}	
-			catch (Throwable e)
-			{
-				// catch all
 				
-				LOGGER.info("Failed to process message: " + e.getMessage(), e);					
-				
-				onMessageRejected(smtpMessage, originalRecipList, sender, isOutgoing, txToMonitor, e);
-				
-				return;
-			}
-			
-			LOGGER.debug("Updating SMTPMailMessage message with processed result");
-			if (result.getProcessedMessage() != null)
-			{
-				smtpMessage = new SMTPMailMessage((MimeMessage)result.getProcessedMessage().getMessage(), 
-						(List<InternetAddress>)recipients.toInternetAddressCollection(), 
-						(InternetAddress)sender);
-			}
-			else
-			{
-	
-				LOGGER.debug("Processed message is null.  Eat the message.");
-	
-				return;
-			}
-			
-			LOGGER.trace("Removing reject recipients from the RCTP headers");
-			// remove reject recipients from the RCTP headers
-			if (result.getProcessedMessage().getRejectedRecipients() != null && 
-					result.getProcessedMessage().getRejectedRecipients().size() > 0 && smtpMessage.getRecipientAddresses() != null &&
-							smtpMessage.getRecipientAddresses().size() > 0)
-			{
-				
-				final List<InternetAddress> newRCPTList = new ArrayList<InternetAddress>();
-				for (InternetAddress rctpAdd : smtpMessage.getRecipientAddresses())
+				log.debug("Updating SMTPMailMessage message with processed result");
+				if (result.getProcessedMessage() != null)
 				{
-					if (!MessageUtils.isRcptRejected(rctpAdd, result.getProcessedMessage().getRejectedRecipients()))
+					smtpMessage = new SMTPMailMessage((MimeMessage)result.getProcessedMessage().getMessage(), 
+							(List<InternetAddress>)recipients.toInternetAddressCollection(), 
+							(InternetAddress)sender);
+				}
+				else
+				{
+		
+					log.debug("Processed message is null.  Eat the message.");
+		
+					return;
+				}
+				
+				log.trace("Removing reject recipients from the RCTP headers");
+				// remove reject recipients from the RCTP headers
+				if (result.getProcessedMessage().getRejectedRecipients() != null && 
+						result.getProcessedMessage().getRejectedRecipients().size() > 0 && smtpMessage.getRecipientAddresses() != null &&
+								smtpMessage.getRecipientAddresses().size() > 0)
+				{
+					
+					final List<InternetAddress> newRCPTList = new ArrayList<InternetAddress>();
+					for (InternetAddress rctpAdd : smtpMessage.getRecipientAddresses())
 					{
-						newRCPTList.add(rctpAdd);
+						if (!MessageUtils.isRcptRejected(rctpAdd, result.getProcessedMessage().getRejectedRecipients()))
+						{
+							newRCPTList.add(rctpAdd);
+						}
+					}
+					
+					smtpMessage = new SMTPMailMessage(smtpMessage.getMimeMessage(), newRCPTList, (InternetAddress)sender);
+				}
+				
+				log.trace("Handling sending MDN messages");
+				/*
+				 * Handle sending MDN messages
+				 */
+				final Collection<NotificationMessage> notifications = result.getNotificationMessages();
+				if (notifications != null && notifications.size() > 0)
+				{
+					log.trace("MDN messages requested.  Sending MDN \"processed\" messages");
+					// create a message for each notification and send it the SmtpGatewayMessageProcessor via streams
+					for (NotificationMessage message : notifications)
+					{
+						try
+						{
+							smtpMessageSource.sendMimeMessage(message);
+						}
+						catch (Throwable t)
+						{
+							// don't kill the process if this fails
+							log.error("Error sending MDN message.", t);
+						}
 					}
 				}
 				
-				smtpMessage = new SMTPMailMessage(smtpMessage.getMimeMessage(), newRCPTList, (InternetAddress)sender);
+				log.trace("Track message");
+				// track message
+				MessageUtils.trackMessage(txToMonitor, isOutgoing, txService);
+				
+				
+				log.trace("Post processing for rejected recips.");
+				onPostprocessMessage(smtpMessage, result, isOutgoing, txToMonitor);
+				
+				log.trace("Sending to sta post process");
+				staPostProcessSource.staPostProcess(smtpMessage);
+				
+				log.trace("Exiting Message<?> streamMsg");
 			}
-			
-			LOGGER.trace("Handling sending MDN messages");
-			/*
-			 * Handle sending MDN messages
-			 */
-			final Collection<NotificationMessage> notifications = result.getNotificationMessages();
-			if (notifications != null && notifications.size() > 0)
+			catch (MessagingException e)
 			{
-				LOGGER.trace("MDN messages requested.  Sending MDN \"processed\" messages");
-				// create a message for each notification and send it the SmtpGatewayMessageProcessor via streams
-				for (NotificationMessage message : notifications)
-				{
-					try
-					{
-						smtpMessageSource.sendMimeMessage(message);
-					}
-					catch (Throwable t)
-					{
-						// don't kill the process if this fails
-						LOGGER.error("Error sending MDN message.", t);
-					}
-				}
+				throw new RuntimeException(e);
 			}
-			
-			LOGGER.trace("Track message");
-			// track message
-			MessageUtils.trackMessage(txToMonitor, isOutgoing, txService);
-			
-			
-			LOGGER.trace("Post processing for rejected recips.");
-			onPostprocessMessage(smtpMessage, result, isOutgoing, txToMonitor);
-			
-			LOGGER.trace("Sending to sta post process");
-			staPostProcessSource.staPostProcess(smtpMessage);
-			
-			LOGGER.trace("Exiting Message<?> streamMsg");
-		}
-		finally
-		{
-			GatewayState.getInstance().unlockFromProcessing();
-		}
+			finally
+			{
+				GatewayState.getInstance().unlockFromProcessing();
+			}
+		};
 	}
 	
 	protected void onMessageRejected(SMTPMailMessage mail, NHINDAddressCollection recipients, NHINDAddress sender, boolean isOutgoing,
@@ -234,7 +241,7 @@ public class STAProcessor
 		catch (Throwable e)
 		{
 			// don't kill the process if this fails
-			LOGGER.error("Error sending DSN failure message.", e);
+			log.error("Error sending DSN failure message.", e);
 		}
 	}	
 }

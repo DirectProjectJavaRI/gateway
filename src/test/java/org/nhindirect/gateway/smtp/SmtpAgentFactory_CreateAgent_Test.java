@@ -1,8 +1,10 @@
 package org.nhindirect.gateway.smtp;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import org.nhindirect.gateway.testutils.TestUtils;
 import org.nhindirect.stagent.SpringBaseTest;
 
@@ -21,10 +23,13 @@ public class SmtpAgentFactory_CreateAgent_Test extends SpringBaseTest
 		assertNotNull(agent.getAgent());
 	}	
 	
-	@Test(expected=SmtpAgentException.class)
+	@Test
 	public void testCreateDefaultAgent_InvalidConfiguration_AssertException() throws Exception
 	{
-		SmtpAgentFactory.getInstance(certService, bundleService, domainService, anchorService, settingService, 
-				certPolService, null, keyStoreMgr).createSmtpAgent();
+		Assertions.assertThrows(SmtpAgentException.class, () -> 
+		{
+			SmtpAgentFactory.getInstance(certService, bundleService, domainService, anchorService, settingService, 
+					certPolService, null, keyStoreMgr).createSmtpAgent();
+		});
 	}			
 }

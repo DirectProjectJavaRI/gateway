@@ -1,14 +1,15 @@
 package org.nhindirect.gateway.smtp.james.mailet;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.mailet.Mailet;
 import org.apache.mailet.MailetConfig;
-import org.junit.Test;
 import org.nhindirect.gateway.smtp.GatewayState;
 import org.nhindirect.gateway.testutils.TestUtils;
 import org.nhindirect.stagent.SpringBaseTest;

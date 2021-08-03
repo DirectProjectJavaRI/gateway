@@ -1,18 +1,22 @@
 package org.nhindirect.gateway.smtp.james.mailet;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.ArgumentMatchers.any;
+
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Matchers.any;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeMessage;
 
-import junit.framework.TestCase;
 
 import org.apache.james.mailbox.MailboxManager;
 import org.apache.james.metrics.api.MetricFactory;
@@ -29,7 +33,7 @@ import org.nhindirect.gateway.testutils.TestUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.parser.EntitySerializer;
 
-public class TimelyAndReliableLocalDelivery_serviceTest extends TestCase
+public class TimelyAndReliableLocalDelivery_serviceTest
 {
 	abstract class TestPlan extends BaseTestPlan 
 	{		
@@ -105,7 +109,7 @@ public class TimelyAndReliableLocalDelivery_serviceTest extends TestCase
 	}
 	
 
-	
+	@Test
 	public void testService_successfulDelivery_noReliableHeader_assertMDNNotCreated() throws Exception
 	{
 		new TestPlan() 
@@ -120,6 +124,7 @@ public class TimelyAndReliableLocalDelivery_serviceTest extends TestCase
 		}.perform();
 	}
 	
+	@Test
 	public void testService_successfulDelivery_reliableHeader_assertMDNCreated() throws Exception
 	{
 		new TestPlan() 
@@ -150,6 +155,7 @@ public class TimelyAndReliableLocalDelivery_serviceTest extends TestCase
 		}.perform();
 	}
 	
+	@Test
 	public void testService_successfulDelivery_reliableHeader_nonIMFMessage_assertMDNNotCreated() throws Exception
 	{
 		new TestPlan() 
@@ -177,6 +183,7 @@ public class TimelyAndReliableLocalDelivery_serviceTest extends TestCase
 		}.perform();
 	}
 	
+	@Test
 	public void testService_failedDelivery_assertDSNCreated() throws Exception
 	{
 		new TestPlan() 
@@ -237,6 +244,7 @@ public class TimelyAndReliableLocalDelivery_serviceTest extends TestCase
 		}.perform();
 	}
 	
+	@Test
 	public void testService_failedDelivery_nonIMF_assertDSNNotCreated() throws Exception
 	{
 		new TestPlan() 

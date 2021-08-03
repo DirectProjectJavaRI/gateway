@@ -22,18 +22,17 @@ import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.NHINDAgent;
 import org.nhindirect.stagent.cryptography.SMIMEStandard;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Common methods used for inspecting and gathering information about messages
  * @author Greg Meyer
  * @Since 6.0
  */
+@Slf4j
 public class MessageUtils
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MessageUtils.class);	
-	
 	/**
 	 * Gets the sender of the message.
 	 * @param mail The mail object to get the mail information from.
@@ -174,7 +173,7 @@ public class MessageUtils
 		///CLOVER:OFF
 		catch (Exception e)
 		{
-			LOGGER.warn("Failed to parse message to Tx object.", e);
+			log.warn("Failed to parse message to Tx object.", e);
 			return null;
 		}
 		///CLOVER:ON
@@ -231,7 +230,7 @@ public class MessageUtils
 			}
 			catch (ServiceException ex)
 			{
-				LOGGER.warn("Failed to submit message to monitoring service.", ex);
+				log.warn("Failed to submit message to monitoring service.", ex);
 			}
 		}
 		

@@ -18,6 +18,9 @@ import org.apache.mailet.MailetContext;
 import org.apache.mailet.TemporaryLookupException;
 import org.slf4j.Logger;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class MockMailetContext implements MailetContext 
 {
 	protected Collection<Mail> sentMessages  = new ArrayList<Mail>();
@@ -212,7 +215,7 @@ public class MockMailetContext implements MailetContext
 	public Logger getLogger()
 	{
 		// TODO Auto-generated method stub
-		return null;
+		return log;
 	}
 
 }

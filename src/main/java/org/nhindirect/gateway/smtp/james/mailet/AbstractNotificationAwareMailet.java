@@ -44,9 +44,9 @@ import org.nhindirect.gateway.smtp.dsn.DSNCreator;
 import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Abstract mailet class that instantiates instances of the monitoring service, parser, and DSNCreator.  Also include utility methods for retrieving the message sender and 
@@ -54,11 +54,10 @@ import org.springframework.context.ApplicationContext;
  * @author Greg Meyer
  * @Since 2.0
  */
+@Slf4j
 public abstract class AbstractNotificationAwareMailet extends GenericMailet
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractNotificationAwareMailet.class);	
-	
-	
+
 	protected ApplicationContext ctx;
 	protected DSNCreator dsnCreator;
 	protected TxDetailParser txParser;
@@ -100,7 +99,7 @@ public abstract class AbstractNotificationAwareMailet extends GenericMailet
 	{
 		if (this.ctx == null)
 		{
-			LOGGER.warn("Application context is null.  DSN creation will be disabled.");
+			log.warn("Application context is null.  DSN creation will be disabled.");
 			return null;
 		}
 		
@@ -110,7 +109,7 @@ public abstract class AbstractNotificationAwareMailet extends GenericMailet
 		}
 		catch (Exception e)
 		{
-			LOGGER.warn("DSN creator not found in application context.  DSN creation will be disabled.");
+			log.warn("DSN creator not found in application context.  DSN creation will be disabled.");
 			return null;
 		}			
 	
@@ -153,7 +152,7 @@ public abstract class AbstractNotificationAwareMailet extends GenericMailet
 		catch (Throwable e)
 		{
 			// don't kill the process if this fails
-			LOGGER.error("Error sending DSN failure message.", e);
+			log.error("Error sending DSN failure message.", e);
 		}
 	}
 	
@@ -176,7 +175,7 @@ public abstract class AbstractNotificationAwareMailet extends GenericMailet
 	{		
 		if (this.ctx == null)
 		{
-			LOGGER.warn("Application context is null.  Will fall back to the the NoOp message monitor.");
+			log.warn("Application context is null.  Will fall back to the the NoOp message monitor.");
 			return new NoOpTxServiceClient();
 		}
 		
@@ -186,7 +185,7 @@ public abstract class AbstractNotificationAwareMailet extends GenericMailet
 		}
 		catch (Exception e)
 		{
-			LOGGER.warn("Monitoring service not found in application context.  Will fall back to the the NoOp message monitor.");
+			log.warn("Monitoring service not found in application context.  Will fall back to the the NoOp message monitor.");
 			return new NoOpTxServiceClient();
 		}	
 	}

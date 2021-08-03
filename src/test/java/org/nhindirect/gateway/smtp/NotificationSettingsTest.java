@@ -1,9 +1,14 @@
 package org.nhindirect.gateway.smtp;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NotificationSettingsTest extends TestCase 
+import org.junit.jupiter.api.Test;
+
+public class NotificationSettingsTest
 {
+	@Test
 	public void testDefaultConstructor()
 	{
 		NotificationSettings settings = new NotificationSettings();
@@ -14,6 +19,7 @@ public class NotificationSettingsTest extends TestCase
 		assertFalse(settings.hasText());
 	}
 	
+	@Test
 	public void testConstructor_setAutoResponseTrue()
 	{
 		NotificationSettings settings = new NotificationSettings(true);
@@ -24,6 +30,7 @@ public class NotificationSettingsTest extends TestCase
 		assertFalse(settings.hasText());
 	}	
 
+	@Test
 	public void testConstructor_setAutoResponseFalse()
 	{
 		NotificationSettings settings = new NotificationSettings(false);
@@ -34,7 +41,7 @@ public class NotificationSettingsTest extends TestCase
 		assertFalse(settings.hasText());
 	}	
 
-	
+	@Test
 	public void testConstructor_nullProductName()
 	{
 		NotificationSettings settings = new NotificationSettings(false, null, "");
@@ -45,6 +52,7 @@ public class NotificationSettingsTest extends TestCase
 		assertFalse(settings.hasText());
 	}	
 	
+	@Test
 	public void testConstructor_emptyProductName()
 	{
 		NotificationSettings settings = new NotificationSettings(false, "", "");
@@ -55,6 +63,7 @@ public class NotificationSettingsTest extends TestCase
 		assertFalse(settings.hasText());
 	}	
 	
+	@Test
 	public void testConstructor_setProductName()
 	{
 		NotificationSettings settings = new NotificationSettings(true, "Test Product", "");
@@ -65,6 +74,7 @@ public class NotificationSettingsTest extends TestCase
 		assertFalse(settings.hasText());
 	}	
 	
+	@Test
 	public void testConstructor_nullText()
 	{
 		NotificationSettings settings = new NotificationSettings(false, null, null);
@@ -75,6 +85,7 @@ public class NotificationSettingsTest extends TestCase
 		assertFalse(settings.hasText());
 	}	
 	
+	@Test
 	public void testConstructor_emptyText()
 	{
 		NotificationSettings settings = new NotificationSettings(true, "Test Product", "");
@@ -85,6 +96,7 @@ public class NotificationSettingsTest extends TestCase
 		assertFalse(settings.hasText());
 	}		
 	
+	@Test
 	public void testConstructor_setText()
 	{
 		NotificationSettings settings = new NotificationSettings(true, "Test Product", "Test Text");

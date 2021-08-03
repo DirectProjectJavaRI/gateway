@@ -1,13 +1,16 @@
 package org.nhindirect.gateway.smtp.james.mailet;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
-
-import junit.framework.TestCase;
 
 import org.apache.mailet.Mail;
 import org.apache.mailet.MailetConfig;
@@ -21,7 +24,7 @@ import org.nhindirect.stagent.parser.EntitySerializer;
 
 import com.sun.mail.dsn.DeliveryStatus;
 
-public class DirectBounce_sendDSNTest extends TestCase
+public class DirectBounce_sendDSNTest
 {
 	abstract class TestPlan extends BaseTestPlan 
 	{		
@@ -83,6 +86,7 @@ public class DirectBounce_sendDSNTest extends TestCase
 		}			
 	}
 	
+	@Test
 	public void testSendDSN_IMFMessage_assertDSNSent() throws Exception 
 	{
 		new TestPlan() 
@@ -115,6 +119,7 @@ public class DirectBounce_sendDSNTest extends TestCase
 		}.perform();
 	}	
 	
+	@Test
 	public void testSendDSN_IMFMessage_multipleDomainRecipse_assertMultiDSNSent() throws Exception 
 	{
 		new TestPlan() 
@@ -156,6 +161,7 @@ public class DirectBounce_sendDSNTest extends TestCase
 		}.perform();
 	}
 	
+	@Test
 	public void testSendDSN_MDNMessage_assertNotDSNSent() throws Exception 
 	{
 		new TestPlan() 

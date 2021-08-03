@@ -22,6 +22,7 @@ THE POSSIBILITY OF SUCH DAMAGE.
 package org.nhindirect.gateway.smtp.dsn.impl;
 
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -222,11 +223,9 @@ public abstract class AbstractDSNCreator implements DSNCreator
      * @return
      */
     ///CLOVER:OFF
-    @SuppressWarnings({ "unchecked", "deprecation" })
 	protected Enumeration<Header> convertStringToHeaders(String asString)
     {
-    	final InputStream str = IOUtils.toInputStream(asString);	
-    	try
+    	try (final InputStream str = IOUtils.toInputStream(asString, Charset.defaultCharset()))
     	{
     	   	InternetHeaders headers = new InternetHeaders(str);
     	
@@ -235,10 +234,6 @@ public abstract class AbstractDSNCreator implements DSNCreator
     	catch (Exception e)
     	{
     		// log warning
-    	}
-    	finally
-    	{
-        	IOUtils.closeQuietly(str);    		
     	}
     	
     	return null;

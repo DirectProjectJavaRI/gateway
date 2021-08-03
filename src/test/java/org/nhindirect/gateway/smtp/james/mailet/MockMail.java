@@ -15,9 +15,11 @@ import org.apache.mailet.Mail;
 import org.apache.mailet.PerRecipientHeaders;
 import org.apache.mailet.PerRecipientHeaders.Header;
 
-@SuppressWarnings("serial")
 public class MockMail implements Mail 
 {
+
+	private static final long serialVersionUID = -2594761004791378244L;
+	
 	private MimeMessage mimeMessage;
 	private String state = Mail.TRANSPORT;
 	private Collection<MailAddress> recipAddr;	
@@ -29,6 +31,13 @@ public class MockMail implements Mail
 	}
 	
 	public Serializable getAttribute(String arg0) 
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Mail duplicate() throws MessagingException
 	{
 		// TODO Auto-generated method stub
 		return null;

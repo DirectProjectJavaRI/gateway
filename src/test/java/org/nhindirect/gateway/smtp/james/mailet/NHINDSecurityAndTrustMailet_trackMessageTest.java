@@ -1,6 +1,8 @@
 package org.nhindirect.gateway.smtp.james.mailet;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -11,7 +13,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.mailet.MailetConfig;
-import org.junit.Test;
+
 import org.nhindirect.common.mail.MailStandard;
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.tx.TxService;

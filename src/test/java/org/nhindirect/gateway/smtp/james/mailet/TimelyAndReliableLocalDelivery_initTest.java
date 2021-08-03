@@ -1,6 +1,10 @@
 package org.nhindirect.gateway.smtp.james.mailet;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,9 +16,7 @@ import org.apache.james.user.api.UsersRepository;
 import org.apache.mailet.MailetConfig;
 import org.nhindirect.gateway.smtp.dsn.impl.FailedDeliveryDSNCreator;
 
-import junit.framework.TestCase;
-
-public class TimelyAndReliableLocalDelivery_initTest extends TestCase
+public class TimelyAndReliableLocalDelivery_initTest
 {
 	protected MailetConfig getMailetConfig() throws Exception
 	{
@@ -23,6 +25,7 @@ public class TimelyAndReliableLocalDelivery_initTest extends TestCase
 		return new MockMailetConfig(params, "TimelyAndReliableLocalDelivery");	
 	}
 	
+	@Test
 	public void testInit_initSuccessful() throws Exception
 	{
 		TimelyAndReliableLocalDelivery mailet = new TimelyAndReliableLocalDelivery(mock(UsersRepository.class), mock(MailboxManager.class),

@@ -1,20 +1,22 @@
 package org.nhindirect.gateway.smtp.james.mailet;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.mailet.Mail;
 import org.apache.mailet.MailetConfig;
-import org.junit.Test;
+
 import org.nhindirect.common.rest.exceptions.ServiceException;
 import org.nhindirect.common.tx.TxService;
 import org.nhindirect.common.tx.impl.NoOpTxServiceClient;

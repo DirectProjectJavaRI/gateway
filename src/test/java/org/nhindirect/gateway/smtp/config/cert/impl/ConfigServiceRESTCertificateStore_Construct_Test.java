@@ -1,12 +1,12 @@
 package org.nhindirect.gateway.smtp.config.cert.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
-
-import org.junit.Test;
 import org.nhind.config.rest.CertificateService;
 import org.nhindirect.gateway.testutils.BaseTestPlan;
 import org.nhindirect.stagent.SpringBaseTest;

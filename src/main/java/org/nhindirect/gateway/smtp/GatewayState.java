@@ -27,8 +27,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.nhindirect.stagent.MutableAgent;
 import org.nhindirect.stagent.NHINDAgent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Manages the settings state of the gateway provides read/write lock protectors for concurrent operations.
@@ -37,10 +37,9 @@ import org.slf4j.LoggerFactory;
  * @author Greg Meyer
  * @since 1.4
  */
+@Slf4j
 public class GatewayState 
 {
-	 private static final Logger LOGGER = LoggerFactory.getLogger(GatewayState.class);
-	
 	 protected static final long DEFAULT_SETTINGS_UPDATE_DELAY = 300000; // 5 mintues
 	
 	 protected static GatewayState INSTANCE;
@@ -250,7 +249,7 @@ public class GatewayState
 			// make sure the agent is mutable before trying to update it
 			if (!(theAgent instanceof MutableAgent))
 			{
-				LOGGER.warn("The configured agent is not mutable.  Configuration changes cannot be applied.");
+				log.warn("The configured agent is not mutable.  Configuration changes cannot be applied.");
 				return;
 			}
 			final MutableAgent runningAgent = (MutableAgent)theAgent;
@@ -262,18 +261,18 @@ public class GatewayState
 				// build a new configuration
 				try
 				{
-					LOGGER.info("Refreshing agent settings from configuration.");
+					log.info("Refreshing agent settings from configuration.");
 					
 					newAgent = factory.createNHINDAgent();
 					if (!(newAgent instanceof MutableAgent))
 					{
-						LOGGER.warn("The agent configuration does not allow attributes to be retrieved.  Cannot update currently running agent.");
+						log.warn("The agent configuration does not allow attributes to be retrieved.  Cannot update currently running agent.");
 						return;
 					}
 				}
 				catch (Throwable t)
 				{
-					LOGGER.warn("Could not get new agent settings.  Configuration may be in an invalid state or not reachable.", t);
+					log.warn("Could not get new agent settings.  Configuration may be in an invalid state or not reachable.", t);
 				}
 					
 				if (newAgent != null)

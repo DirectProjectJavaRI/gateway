@@ -1,5 +1,16 @@
 package org.nhindirect.gateway.smtp.james.mailet;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.ArgumentMatchers.any;
+
+import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 
 import javax.mail.MessagingException;
@@ -21,21 +32,13 @@ import org.nhindirect.stagent.mail.Message;
 import org.nhindirect.stagent.parser.EntitySerializer;
 import org.nhindirect.stagent.trust.TrustEnforcementStatus;
 
-import junit.framework.TestCase;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Matchers.any;
-
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 
 
-public class NHINDSecurityAndTrustMailet_service_Test extends TestCase
+public class NHINDSecurityAndTrustMailet_service_Test 
 {
 	private NHINDAddressCollection usedRecipients;
 	private NHINDAddress usedSender;
@@ -65,6 +68,7 @@ public class NHINDSecurityAndTrustMailet_service_Test extends TestCase
 
 	}
 	
+	@Test
 	public void testService_UseRcpt_AssertRecipientsUsed() throws Exception
 	{		
 		final MimeMessage mimeMsg = EntitySerializer.Default.deserialize(TestUtils.readMessageResource("PlainOutgoingMessage.txt"));		
@@ -103,6 +107,7 @@ public class NHINDSecurityAndTrustMailet_service_Test extends TestCase
 		
 	}
 	
+	@Test
 	public void testService_UseToHeader_AssertRecipientsUsed() throws Exception
 	{		
 		final MimeMessage mimeMsg = EntitySerializer.Default.deserialize(TestUtils.readMessageResource("PlainOutgoingMessage.txt"));		
@@ -138,6 +143,7 @@ public class NHINDSecurityAndTrustMailet_service_Test extends TestCase
 		
 	}	
 	
+	@Test
 	public void testService_ProcessIsNull_AssertGhostState() throws Exception
 	{		
 		final MimeMessage mimeMsg = EntitySerializer.Default.deserialize(TestUtils.readMessageResource("PlainOutgoingMessage.txt"));		
@@ -161,6 +167,7 @@ public class NHINDSecurityAndTrustMailet_service_Test extends TestCase
 		
 	}		
 	
+	@Test
 	public void testService_ProcessThrowsRuntimeException_AssertExceptionAndGhostState() throws Exception
 	{		
 		final MimeMessage mimeMsg = EntitySerializer.Default.deserialize(TestUtils.readMessageResource("PlainOutgoingMessage.txt"));		
@@ -197,6 +204,7 @@ public class NHINDSecurityAndTrustMailet_service_Test extends TestCase
 		
 	}	
 	
+	@Test
 	public void testService_ProcessThrowsSmtpAgentException_AssertExceptionAndGhostState() throws Exception
 	{		
 		final MimeMessage mimeMsg = EntitySerializer.Default.deserialize(TestUtils.readMessageResource("PlainOutgoingMessage.txt"));		
@@ -234,6 +242,7 @@ public class NHINDSecurityAndTrustMailet_service_Test extends TestCase
 		
 	}
 	
+	@Test
 	public void testService_NullProcessedMessage_GhostState() throws Exception
 	{		
 		final MimeMessage mimeMsg = EntitySerializer.Default.deserialize(TestUtils.readMessageResource("PlainOutgoingMessage.txt"));		
@@ -267,7 +276,7 @@ public class NHINDSecurityAndTrustMailet_service_Test extends TestCase
 		
 	}		
 
-	@SuppressWarnings("unused")
+	@Test
 	public void testService_RejectRecipients_AssertRejectedList() throws Exception
 	{		
 		final MimeMessage mimeMsg = EntitySerializer.Default.deserialize(TestUtils.readMessageResource("PlainOutgoingMessage.txt"));		
@@ -289,7 +298,6 @@ public class NHINDSecurityAndTrustMailet_service_Test extends TestCase
 						env.setAgent(new MockNHINDAgent(Arrays.asList("cerner.com")));
 						env.categorizeRecipients(TrustEnforcementStatus.Success);
 						
-						NHINDAddressCollection rejectedRecips = env.getRejectedRecipients();
 						return new MessageProcessResult(env, null);
 				    }
 				});
