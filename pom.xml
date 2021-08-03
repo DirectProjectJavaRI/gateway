@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>gateway</artifactId>    
     <name>Direct Project Agent Gateways.</name>
-    <version>8.0.0-SNAPSHOT</version>
+    <version>8.0.0</version>
     <description>Direct Project security agent gateways and bridges.</description>
     <inceptionYear>2010</inceptionYear>
     <url>https://github.com/DirectProjectJavaRI/gateway</url>        
@@ -68,32 +68,32 @@
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>agent</artifactId>
-	        <version>8.0.0-SNAPSHOT</version>
+	        <version>8.0.0</version>
 	    </dependency> 
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-common</artifactId>
-	        <version>8.0.0-SNAPSHOT</version>
+	        <version>8.0.0</version>
 	    </dependency> 	
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-common-audit</artifactId>
-	        <version>8.0.0-SNAPSHOT</version>
+	        <version>8.0.0</version>
 	    </dependency> 	        
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>config-service-client</artifactId>
-	        <version>8.0.0-SNAPSHOT</version>
+	        <version>8.0.0</version>
 	    </dependency>	
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-msg-monitor-client</artifactId>
-	        <version>8.0.0-SNAPSHOT</version>
+	        <version>8.0.0</version>
 	    </dependency>	
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>xd-common</artifactId>
-	        <version>8.0.0-SNAPSHOT</version>
+	        <version>8.0.0</version>
 	        <exclusions>
 	           <exclusion>
 	              <groupId>org.springframework.boot</groupId>
@@ -134,7 +134,7 @@
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>config-service-jar</artifactId>
-	        <version>8.0.0-SNAPSHOT</version>
+	        <version>8.0.0</version>
 	        <scope>test</scope>	        
 	    </dependency>							
 	    <dependency>
