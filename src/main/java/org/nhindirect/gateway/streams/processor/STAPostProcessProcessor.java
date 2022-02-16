@@ -88,8 +88,8 @@ public class STAPostProcessProcessor
 				 * If encrypted then at this point, then it's an outgoing message.
 				 */
 				final boolean  isOutgoing = SMIMEStandard.isEncrypted(smtpMessage.getMimeMessage());
-				
-				
+				boolean  isXDrecipient = false;
+
 				if (isOutgoing)
 				{
 					// TODO: Implement virus scanning
@@ -98,7 +98,7 @@ public class STAPostProcessProcessor
 					 * send remotely
 					 */
 					
-					log.debug("Outgoing message.  Sending to remote delivery");
+					log.info("Outgoing message.  Sending to remote delivery");
 					
 					/*
 					 * If the routeLocalRecipientToGateway flag is set, we will try to by-pass the remote delivery gateway
@@ -111,7 +111,13 @@ public class STAPostProcessProcessor
 				}
 				else
 				{
-					/*
+               /*
+                * send locally
+                */
+
+               log.info("Incoming message.  Sending to local delivery");
+
+               /*
 					 * need to check if this is an incoming notification message
 					 * and check to see if it needs to suppressed from delivering to the 
 					 * final destination
@@ -128,26 +134,32 @@ public class STAPostProcessProcessor
 					 */
 					if (xdEnabled)
 					{
-						final List<InternetAddress> xdRecipients = smtpMessage.getRecipientAddresses().stream()
+                  log.debug("XD endpoints enabled");
+
+                  final List<InternetAddress> xdRecipients = smtpMessage.getRecipientAddresses().stream()
 							.filter(addr -> routingResolver.isXdEndpoint(addr.getAddress())).collect(Collectors.toList()); 
 						
 						if (!xdRecipients.isEmpty())
 						{
 							final SMTPMailMessage xdBoundMessage = new SMTPMailMessage(smtpMessage.getMimeMessage(), xdRecipients, 
 									smtpMessage.getMailFrom());
-							
-							xdRemoteDeliverySource.xdRemoteDelivery(xdBoundMessage);
+
+                     log.info("XD recipient.  Sending to XD local delivery");
+                     isXDrecipient = true;
+                     xdRemoteDeliverySource.xdRemoteDelivery(xdBoundMessage);
 						}
 					}
-					
-					/*
-					 * Now do final delivery for non XD recipients.  This just simply puts the message a channel that will actually do
-					 * the final delivery.  There could be any possibility of implementers listening on this channel, and we will 
-					 * leave it to those implementations to do their work.  Because this is using asycn delivery to the final destination,
-					 * it is up the the final delivery implementation to generate a negative MDN/DSN if final delivery cannot be performed.
-					 */
-					lastMileSource.staLastMile(smtpMessage);
-					
+
+					if(!isXDrecipient) {
+                  /*
+                   * Now do final delivery for non XD recipients.  This just simply puts the message a channel that will actually do
+                   * the final delivery.  There could be any possibility of implementers listening on this channel, and we will
+                   * leave it to those implementations to do their work.  Because this is using asycn delivery to the final destination,
+                   * it is up the the final delivery implementation to generate a negative MDN/DSN if final delivery cannot be performed.
+                   */
+                  log.info("SMTP recipient.  Sending to SMTP local delivery");
+                  lastMileSource.staLastMile(smtpMessage);
+               }
 				}
 			}
 			catch (MessagingException e)
