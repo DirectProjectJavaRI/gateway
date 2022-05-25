@@ -98,7 +98,7 @@ public class STAPostProcessProcessor
 					 * send remotely
 					 */
 					
-					log.info("Outgoing message.  Sending to remote delivery");
+					log.info("Sending outgoing message to remote/loopback delivery");
 					
 					/*
 					 * If the routeLocalRecipientToGateway flag is set, we will try to by-pass the remote delivery gateway
@@ -115,7 +115,7 @@ public class STAPostProcessProcessor
                 * send locally
                 */
 
-               log.info("Incoming message.  Sending to local delivery");
+               log.info("Sending incoming message to local/loopback delivery");
 
                /*
 					 * need to check if this is an incoming notification message
