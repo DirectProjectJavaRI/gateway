@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>gateway</artifactId>    
     <name>Direct Project Agent Gateways.</name>
-    <version>8.0.0</version>
+    <version>8.1.0</version>
     <description>Direct Project security agent gateways and bridges.</description>
     <inceptionYear>2010</inceptionYear>
     <url>https://github.com/DirectProjectJavaRI/gateway</url>        
@@ -68,32 +68,27 @@
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>agent</artifactId>
-	        <version>8.0.0</version>
+	        <version>8.1.0</version>
 	    </dependency> 
 	    <dependency>
 	        <groupId>org.nhind</groupId>
-	        <artifactId>direct-common</artifactId>
-	        <version>8.0.0</version>
-	    </dependency> 	
-	    <dependency>
-	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-common-audit</artifactId>
-	        <version>8.0.0</version>
+	        <version>8.1.0</version>
 	    </dependency> 	        
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>config-service-client</artifactId>
-	        <version>8.0.0</version>
+	        <version>8.1.0</version>
 	    </dependency>	
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-msg-monitor-client</artifactId>
-	        <version>8.0.0</version>
+	        <version>8.1.0</version>
 	    </dependency>	
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>xd-common</artifactId>
-	        <version>8.0.0</version>
+	        <version>8.1.0</version>
 	        <exclusions>
 	           <exclusion>
 	              <groupId>org.springframework.boot</groupId>
@@ -134,7 +129,7 @@
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>config-service-jar</artifactId>
-	        <version>8.0.0</version>
+	        <version>8.1.0</version>
 	        <scope>test</scope>	        
 	    </dependency>							
 	    <dependency>
@@ -309,7 +304,16 @@
               </execution>
             </executions>
          </plugin>      
-          -->    
+          -->   
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>0.8.0</version>
+          <extensions>true</extensions>
+          <configuration>
+            <publishingServerId>central</publishingServerId>
+          </configuration>
+        </plugin>    
     </plugins>	    
   </build>                        
   <reporting>
@@ -371,24 +375,5 @@
 	            </configuration>
 	        </plugin>  	                         
 		</plugins>
-  </reporting>
-  <distributionManagement>
-    <site>
-      <id>nhind-site</id>
-      <name>NHIN Direct API publication site</name>
-      <url>sftp://api.nhindirect.org/x/www/api.nhindirect.org/java/site/gateway/${project.version}</url>
-    </site>
-    <snapshotRepository>
-        <id>sonatype-snapshot</id>
-        <name>Sonatype OSS Maven SNAPSHOT Repository</name>
-        <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        <uniqueVersion>false</uniqueVersion>
-     </snapshotRepository>
-     <repository>
-        <id>sonatype-release</id>
-        <name>Sonatype OSS Maven Release Repositor</name>
-        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        <uniqueVersion>false</uniqueVersion>
-     </repository>	    
-  </distributionManagement>         
+  </reporting>      
 </project>
