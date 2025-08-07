@@ -9,19 +9,14 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.Charset;
 import java.util.Collection;
 
-import javax.mail.Address;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.InternetHeaders;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Address;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetHeaders;
+import jakarta.mail.internet.MimeMessage;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.mailet.Mail;
 import org.nhindirect.common.mail.MDNStandard;
-import org.nhindirect.common.mail.SMTPMailMessage;
-import org.nhindirect.gateway.smtp.james.mailet.AbstractNotificationAwareMailet;
 import org.nhindirect.gateway.testutils.TestUtils;
-import org.nhindirect.gateway.util.MessageUtils;
 import org.nhindirect.stagent.AddressSource;
 import org.nhindirect.stagent.NHINDAddress;
 import org.nhindirect.stagent.NHINDAddressCollection;
@@ -31,24 +26,7 @@ import org.nhindirect.stagent.mail.notifications.NotificationMessage;
 
 public class ReliableDispatchedNotificationProducer_produceTest
 {
-	/**
-	 * Gets the sender of the message.
-	 * @param mail The mail object to get the mail information from.
-	 * @return The sender of the message.
-	 * @throws MessagingException
-	 */
-	protected NHINDAddress getMailSender(Mail mail) throws MessagingException
-	{
-		// get the sender
-		final SMTPMailMessage smtpMailMessage = AbstractNotificationAwareMailet.mailToSMTPMailMessage(mail);
-		
-		final InternetAddress senderAddr =  MessageUtils.getMailSender(smtpMailMessage);
-		if (senderAddr == null)
-			throw new MessagingException("Failed to process message.  The sender cannot be null or empty.");
-						
-			// not the best way to do this
-		return new NHINDAddress(senderAddr, AddressSource.From);
-	}
+
 
 	protected NHINDAddressCollection getMailRecipients(MimeMessage mail) throws MessagingException
 	{

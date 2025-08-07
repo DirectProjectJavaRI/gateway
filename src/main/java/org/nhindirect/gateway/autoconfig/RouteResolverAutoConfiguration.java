@@ -1,18 +1,18 @@
-package org.nhindirect.gateway.springconfig;
+package org.nhindirect.gateway.autoconfig;
 
 import org.nhind.config.rest.AddressService;
 import org.nhindirect.xd.routing.RoutingResolver;
 import org.nhindirect.xd.routing.impl.RoutingResolverImpl;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class RouteResolverConfig
+@AutoConfiguration
+public class RouteResolverAutoConfiguration
 {
 	@Bean
 	@ConditionalOnMissingBean
-	public RoutingResolver routingResolver(AddressService addressService) 
+	RoutingResolver routingResolver(AddressService addressService) 
 	{
 		return new RoutingResolverImpl(addressService);
 	}

@@ -1,6 +1,6 @@
-package org.nhindirect.gateway.springconfig;
+package org.nhindirect.gateway.autoconfig;
 
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nhindirect.common.options.OptionsManager;
@@ -9,12 +9,14 @@ import org.nhindirect.gateway.smtp.GatewayState;
 import org.nhindirect.gateway.smtp.SmtpAgent;
 import org.nhindirect.gateway.smtp.SmtpAgentFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.web.reactive.server.ReactiveWebServerFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class SMTPAgentConfig
+@AutoConfiguration
+@ConditionalOnMissingBean(ReactiveWebServerFactory.class)
+public class SMTPAgentAutoConfiguration
 {
 	@Value("${direct.gateway.agent.useOutgoingPolicyForIncomingNotifications:true}")
 	protected boolean useOutgoingPolicyForIncomingNotifications;
@@ -28,7 +30,6 @@ public class SMTPAgentConfig
 	@Value("${direct.gateway.agent.jceSensitiveProviderName:}")
 	protected String jceSenstiveProviderName;
 		
-	
 	@Bean
 	@ConditionalOnMissingBean
 	public SmtpAgent smtpAgent(SmtpAgentFactory factory)

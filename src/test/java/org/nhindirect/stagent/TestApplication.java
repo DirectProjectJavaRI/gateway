@@ -1,33 +1,45 @@
 package org.nhindirect.stagent;
 
-import org.nhindirect.gateway.springconfig.KeyStoreProtectionMgrConfig;
-import org.springframework.boot.SpringApplication;
+import static org.mockito.Mockito.mock;
+
+import org.nhindirect.gateway.smtp.SmtpAgent;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.embedded.netty.NettyReactiveWebServerFactory;
+import org.springframework.boot.web.reactive.server.ReactiveWebServerFactory;
+import org.springframework.cloud.stream.binder.test.EnableTestBinder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
-@ComponentScan({"org.nhindirect.config", "org.nhind.config"})
-@EnableFeignClients({"org.nhind.config.rest.feign"})
-@EnableR2dbcRepositories("org.nhindirect.config.repository")
-@Import({StreamsConfiguration.class, KeyStoreProtectionMgrConfig.class})
+@EnableTestBinder
 public class TestApplication
 {
     public static void main(String[] args) 
     {
-        SpringApplication.run(TestApplication.class, args);
+    	new SpringApplicationBuilder(TestApplication.class).web(WebApplicationType.REACTIVE).run(args);
     }  
     
     @Bean
     @ConditionalOnMissingBean
-    public HttpMessageConverters httpMessageConverters()
+    HttpMessageConverters httpMessageConverters()
     {
     	return new HttpMessageConverters();
     }
+    
+    @Bean
+    ReactiveWebServerFactory reactiveWebServerFactory() {
+        return new NettyReactiveWebServerFactory();
+    }
+    
+    @ConditionalOnMissingBean
+    @Bean
+    SmtpAgent mockSmtpAgent() {
+    	
+    	return mock(SmtpAgent.class);
+    }
+    
 }

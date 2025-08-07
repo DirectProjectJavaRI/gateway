@@ -23,7 +23,7 @@ package org.nhindirect.gateway.smtp;
 
 import java.util.Arrays;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 
 import org.nhindirect.common.mail.MDNStandard;
 import org.nhindirect.stagent.NHINDAddress;

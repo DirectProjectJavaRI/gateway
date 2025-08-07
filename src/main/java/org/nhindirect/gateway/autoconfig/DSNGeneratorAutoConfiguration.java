@@ -1,25 +1,25 @@
-package org.nhindirect.gateway.springconfig;
+package org.nhindirect.gateway.autoconfig;
 
 import org.nhindirect.gateway.smtp.dsn.DSNCreator;
 import org.nhindirect.gateway.smtp.dsn.impl.FailedDeliveryDSNCreator;
 import org.nhindirect.gateway.smtp.dsn.impl.RejectedRecipientDSNCreator;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class DSNGeneratorConfig
+@AutoConfiguration
+public class DSNGeneratorAutoConfiguration
 {
 	@Bean
 	@ConditionalOnMissingBean
-	public DSNCreator rejectedRecipientDSNCreator()
+	DSNCreator rejectedRecipientDSNCreator()
 	{
 		return new RejectedRecipientDSNCreator(null);
 	}
 	
 	@Bean
 	@ConditionalOnMissingBean
-	public DSNCreator failedDeliveryDSNCreator()
+	DSNCreator failedDeliveryDSNCreator()
 	{
 		return new FailedDeliveryDSNCreator(null);
 	}	

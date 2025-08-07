@@ -1,4 +1,4 @@
-package org.nhindirect.gateway.springconfig;
+package org.nhindirect.gateway.autoconfig;
 
 import java.net.UnknownHostException;
 import java.time.Duration;
@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.xbill.DNS.ExtendedResolver;
 import org.xbill.DNS.Resolver;
 import org.xbill.DNS.ResolverConfig;
@@ -18,9 +18,9 @@ import org.xbill.DNS.SimpleResolver;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Configuration
+@AutoConfiguration
 @Slf4j
-public class DNSResolverConfig
+public class DNSResolverAutoConfiguration
 {
 
 	@Value("${direct.gateway.remotedelivery.dns.lookup.timeout:3}")
@@ -34,7 +34,7 @@ public class DNSResolverConfig
 	
 	
 	@Bean
-	public ExtendedResolver getDNSResolver() throws Exception
+	ExtendedResolver getDNSResolver() throws Exception
 	{
 		ExtendedResolver extendedResolver = null;
 		try
