@@ -50,6 +50,19 @@ public class KeyStoreProtectionMgrConfig
 	  {
 		  log.info("HSM configured.  Attempting to connect to device.");
 		  
+		  // Special case for String "null" so the source string can be set to null if needed
+		  if (keyStoreSourceAsString.equalsIgnoreCase("null"))
+			  keyStoreSourceAsString = null;
+		  
+		  StringBuilder builder = new StringBuilder("HSM configuration details: \r\n");
+		  builder.append("\tkeyStoreType: ").append(keyStoreType).append("\r\n");
+		  builder.append("\tkeyStoreSourceAsString: ").append(keyStoreSourceAsString).append("\r\n");
+		  builder.append("\tkeyStoreProviderName: ").append(keyStoreProviderName).append("\r\n");
+		  builder.append("\tkeyStorePassPhraseAlias: ").append(keyStorePassPhraseAlias).append("\r\n");
+		  builder.append("\tinitOnStart: ").append(initOnStart).append("\r\n");
+		  
+		  log.info(builder.toString());
+		  
 		  try
 		  {
 			  final BootstrappedPKCS11Credential cred = new BootstrappedPKCS11Credential(keyStorePin);
