@@ -28,7 +28,7 @@
    <parent>
 	   <groupId>org.springframework.boot</groupId>
 	   <artifactId>spring-boot-dependencies</artifactId>
-	   <version>3.5.0</version>
+	   <version>4.0.1</version>
 	   <relativePath />
    </parent>  
   <scm>
@@ -48,8 +48,8 @@
 		<dependencies>	
 		  <dependency>
 				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-starter-parent</artifactId>
-				<version>2025.0.0</version>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>2025.1.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 		  </dependency>  
@@ -108,9 +108,13 @@
 		    <artifactId>spring-boot-starter</artifactId>
 	    </dependency>
 		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-micrometer-metrics</artifactId>
+		</dependency>		    
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream</artifactId>
-		</dependency>	    		
+		</dependency>	   	 		
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-test</artifactId>
@@ -125,7 +129,7 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-rabbit</artifactId>
 			<scope>test</scope>
-		</dependency>				    
+		</dependency>						    
 		<dependency>
 		    <groupId>com.h2database</groupId>
 		    <artifactId>h2</artifactId>

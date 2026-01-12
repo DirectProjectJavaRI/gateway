@@ -11,11 +11,9 @@ import org.nhindirect.gateway.smtp.SmtpAgentFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.web.reactive.server.ReactiveWebServerFactory;
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-@ConditionalOnMissingBean(ReactiveWebServerFactory.class)
 public class SMTPAgentAutoConfiguration
 {
 	@Value("${direct.gateway.agent.useOutgoingPolicyForIncomingNotifications:true}")
@@ -32,7 +30,7 @@ public class SMTPAgentAutoConfiguration
 		
 	@Bean
 	@ConditionalOnMissingBean
-	public SmtpAgent smtpAgent(SmtpAgentFactory factory)
+	SmtpAgent smtpAgent(SmtpAgentFactory factory)
 	{
 		OptionsManager.getInstance().setOptionsParameter(
 				new OptionsParameter(OptionsParameter.USE_OUTGOING_POLICY_FOR_INCOMING_NOTIFICATIONS, Boolean.toString(useOutgoingPolicyForIncomingNotifications)));
