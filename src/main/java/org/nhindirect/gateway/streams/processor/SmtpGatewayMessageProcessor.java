@@ -2,7 +2,7 @@ package org.nhindirect.gateway.streams.processor;
 
 import java.util.function.Consumer;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;

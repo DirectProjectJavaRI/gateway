@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;

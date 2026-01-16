@@ -1,20 +1,20 @@
-package org.nhindirect.gateway.springconfig;
+package org.nhindirect.gateway.autoconfig;
 
 import org.nhindirect.common.crypto.KeyStoreProtectionManager;
 import org.nhindirect.common.crypto.impl.BootstrappedKeyStoreProtectionManager;
 import org.nhindirect.common.crypto.impl.BootstrappedPKCS11Credential;
 import org.nhindirect.common.crypto.impl.StaticCachedPKCS11TokenKeyStoreProtectionManager;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Configuration
+@AutoConfiguration
 @Slf4j
-public class KeyStoreProtectionMgrConfig
+public class KeyStoreProtectionMgrAutoConfiguration
 {
 	  @Value("${direct.gateway.keystore.keyStorePin:som3randomp!n}")	
 	  private String keyStorePin;
@@ -46,7 +46,7 @@ public class KeyStoreProtectionMgrConfig
 	  @Bean	  
 	  @ConditionalOnMissingBean
 	  @ConditionalOnProperty(name="direct.gateway.keystore.hsmpresent", havingValue="true")
-	  public KeyStoreProtectionManager hsmKeyStoreProtectionManager()
+	  KeyStoreProtectionManager hsmKeyStoreProtectionManager()
 	  {
 		  log.info("HSM configured.  Attempting to connect to device.");
 		  
@@ -88,7 +88,7 @@ public class KeyStoreProtectionMgrConfig
 	  @Bean	  
 	  @ConditionalOnMissingBean
 	  @ConditionalOnProperty(name="direct.gateway.keystore.hsmpresent", havingValue="false", matchIfMissing=true)
-	  public KeyStoreProtectionManager nonHSMKeyStoreProtectionManager()
+	  KeyStoreProtectionManager nonHSMKeyStoreProtectionManager()
 	  {
 		  log.info("No HSM configured.");
 		  

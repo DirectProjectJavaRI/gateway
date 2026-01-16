@@ -1,18 +1,18 @@
-package org.nhindirect.gateway.springconfig;
+package org.nhindirect.gateway.autoconfig;
 
 import org.nhindirect.common.audit.Auditor;
 import org.nhindirect.common.audit.AuditorFactory;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class AuditorConfig
+@AutoConfiguration
+public class AuditorAutoConfiguration
 {
 	@Bean
 	@ConditionalOnMissingBean
-	public Auditor auditor()
+	Auditor auditor()
 	{
-		return AuditorFactory.createAuditor(AuditorConfig.class.getClassLoader());
+		return AuditorFactory.createAuditor(AuditorAutoConfiguration.class.getClassLoader());
 	}
 }

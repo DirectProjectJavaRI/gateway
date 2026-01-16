@@ -4,9 +4,7 @@ import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.stereotype.Component;
 
-@Component
 public class XDRemoteDeliverySource
 {
 	// Maps to the Spring Cloud Stream functional output binding name.

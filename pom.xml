@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>gateway</artifactId>    
     <name>Direct Project Agent Gateways.</name>
-    <version>8.2.0-SNAPSHOT</version>
+    <version>9.0.0-SNAPSHOT</version>
     <description>Direct Project security agent gateways and bridges.</description>
     <inceptionYear>2010</inceptionYear>
     <url>https://github.com/DirectProjectJavaRI/gateway</url>        
@@ -28,7 +28,7 @@
    <parent>
 	   <groupId>org.springframework.boot</groupId>
 	   <artifactId>spring-boot-dependencies</artifactId>
-	   <version>2.5.2</version>
+	   <version>4.0.1</version>
 	   <relativePath />
    </parent>  
   <scm>
@@ -42,23 +42,14 @@
      </license>
   </licenses>   
    <properties>
-      <commons-io.version>2.8.0</commons-io.version>
-      <mina-core.version>2.1.4</mina-core.version>
       <apache-james.version>3.2.0</apache-james.version>
    </properties>    
 	<dependencyManagement>
-		<dependencies>
-		  <dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>2.5.2</version>
-				<type>pom</type>
-				<scope>import</scope>
-		  </dependency>		
+		<dependencies>	
 		  <dependency>
 				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-starter-parent</artifactId>
-				<version>2020.0.3</version>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>2025.1.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 		  </dependency>  
@@ -68,27 +59,32 @@
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>agent</artifactId>
-	        <version>8.1.2</version>
+	        <version>9.0.0-SNAPSHOT</version>
 	    </dependency> 
 	    <dependency>
 	        <groupId>org.nhind</groupId>
+	        <artifactId>direct-common</artifactId>
+	        <version>9.0.0-SNAPSHOT</version>
+	    </dependency> 	
+	    <dependency>
+	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-common-audit</artifactId>
-	        <version>8.1.0</version>
+	        <version>9.0.0-SNAPSHOT</version>
 	    </dependency> 	        
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>config-service-client</artifactId>
-	        <version>8.1.0</version>
+	        <version>9.0.0-SNAPSHOT</version>
 	    </dependency>	
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-msg-monitor-client</artifactId>
-	        <version>8.1.0</version>
+	        <version>9.0.0-SNAPSHOT</version>
 	    </dependency>	
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>xd-common</artifactId>
-	        <version>8.1.0</version>
+	        <version>9.0.0-SNAPSHOT</version>
 	        <exclusions>
 	           <exclusion>
 	              <groupId>org.springframework.boot</groupId>
@@ -100,36 +96,11 @@
 	    <dependency>
 	        <groupId>commons-codec</groupId>
 	        <artifactId>commons-codec</artifactId>
-	    </dependency>     		 	    
-	    <dependency>
-	    	<groupId>commons-io</groupId>
-	    	<artifactId>commons-io</artifactId>
-	    	<version>${commons-io.version}</version>
-	    </dependency>	    	        
-		<dependency>
-		    <groupId>org.apache.james</groupId>
-		    <artifactId>apache-mailet-base</artifactId>
-		    <version>${apache-james.version}</version>	    
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.james</groupId>
-		    <artifactId>apache-mailet-api</artifactId>
-		    <version>${apache-james.version}</version>	    
-		</dependency>	
-		<dependency>
-		    <groupId>org.apache.james</groupId>
-		    <artifactId>james-server-mailets</artifactId>
-		    <version>${apache-james.version}</version>	    
-		</dependency>	
-		<dependency>
-		    <groupId>org.apache.james</groupId>
-		    <artifactId>javax-mail-extension</artifactId>
-		    <version>${apache-james.version}</version>	    
-		</dependency>														
+	    </dependency> 												
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>config-service-jar</artifactId>
-	        <version>8.1.2</version>
+	        <version>9.0.0-SNAPSHOT</version>
 	        <scope>test</scope>	        
 	    </dependency>							
 	    <dependency>
@@ -137,9 +108,13 @@
 		    <artifactId>spring-boot-starter</artifactId>
 	    </dependency>
 		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-micrometer-metrics</artifactId>
+		</dependency>		    
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream</artifactId>
-		</dependency>	    		
+		</dependency>	   	 		
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-test</artifactId>
@@ -147,16 +122,14 @@
 		</dependency>	 	
 		<dependency>
 		    <groupId>org.springframework.cloud</groupId>
-		    <artifactId>spring-cloud-stream</artifactId>
-		    <type>test-jar</type>
+		    <artifactId>spring-cloud-stream-test-binder</artifactId>
 		    <scope>test</scope>
-		    <classifier>test-binder</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-rabbit</artifactId>
 			<scope>test</scope>
-		</dependency>				    
+		</dependency>						    
 		<dependency>
 		    <groupId>com.h2database</groupId>
 		    <artifactId>h2</artifactId>
@@ -166,30 +139,21 @@
 	       <groupId>io.r2dbc</groupId>
 	       <artifactId>r2dbc-h2</artifactId>
 	       <scope>test</scope>
-	    </dependency>		
-	    <dependency>
-	        <groupId>org.apache.mina</groupId>
-	        <artifactId>mina-core</artifactId>
-	        <version>${mina-core.version}</version>
-			<scope>test</scope>	        
-	    </dependency>		    	    			     				 																																																																															
+	    </dependency>			    	    			     				 																																																																															
   </dependencies>        
   <build>
   	<extensions>
 		<extension>
 			<groupId>org.apache.maven.wagon</groupId>
 			<artifactId>wagon-webdav-jackrabbit</artifactId>
-			<version>3.3.3</version>
 		</extension>
 		<extension>
 			<groupId>org.apache.maven.wagon</groupId>
 			<artifactId>wagon-ssh-external</artifactId>
-			<version>3.3.3</version>
 		</extension>
 		<extension>
 			<groupId>org.apache.maven.wagon</groupId>
 			<artifactId>wagon-ssh</artifactId>
-			<version>3.3.3</version>
 		</extension>
    	</extensions>
     <resources>
@@ -213,15 +177,11 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId> 
-        <configuration>
-           <argLine>-Xmx1024m -XX:MaxPermSize=512m</argLine>
-        </configuration>        
+        <artifactId>maven-surefire-plugin</artifactId>     
       </plugin>
 	<plugin>
 		<groupId>org.apache.maven.plugins</groupId>
 		<artifactId>maven-jxr-plugin</artifactId>
-		<version>3.1.1</version>
 	</plugin> 
 	<plugin>
 		<groupId>org.apache.maven.plugins</groupId>
@@ -239,8 +199,8 @@
 			<optimize>true</optimize>
 			<showDeprecation>false</showDeprecation>
 			<encoding>UTF-8</encoding>
-			<source>1.8</source>
-			<target>1.8</target>
+			<source>17</source>
+			<target>17</target>
 		</configuration>
 	</plugin>	     
       <plugin>
@@ -274,7 +234,7 @@
 				<docfilessubdirs>true</docfilessubdirs>
 				<detectJavaApiLink>true</detectJavaApiLink>
 				<detectLinks>true</detectLinks>
-				<source>1.8</source>
+				<source>17</source>
 				<show>public</show>
 	            <excludePackageNames>
 	               org.nhindirect.gateway.smtp.annotation:org.nhindirect.gateway.smtp.module:org.nhindirect.gateway.smtp.provider:org.nhindirect.gateway.smtp.config.cert.impl:org.nhindirect.gateway.streams:org.nhindirect.gateway.springconfig:org.nhindirect.gateway.smtp.dsn.impl:org.nhindirect.gateway.util
@@ -332,7 +292,7 @@
 				<docfilessubdirs>true</docfilessubdirs>
 				<detectJavaApiLink>true</detectJavaApiLink>
 				<detectLinks>true</detectLinks>
-				<source>1.8</source>
+				<source>17</source>
 				<show>public</show>
 	            <excludePackageNames>
 	               org.nhindirect.gateway.smtp.annotation:org.nhindirect.gateway.smtp.module:org.nhindirect.gateway.smtp.provider:org.nhindirect.gateway.smtp.config.cert.impl:org.nhindirect.gateway.streams:org.nhindirect.gateway.springconfig:org.nhindirect.gateway.smtp.dsn.impl:org.nhindirect.gateway.util
@@ -343,7 +303,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
        			<configuration>
-          			<targetJdk>1.8</targetJdk>
+          			<targetJdk>17</targetJdk>
         		</configuration>					
 			</plugin>
 		    <plugin>

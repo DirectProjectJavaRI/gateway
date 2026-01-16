@@ -32,16 +32,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.mail.Address;
-import javax.mail.Header;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.InternetHeaders;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Address;
+import jakarta.mail.Header;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetHeaders;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.mailet.Mailet;
 import org.nhindirect.common.mail.dsn.DSNFailureTextBodyPartGenerator;
 import org.nhindirect.common.mail.dsn.DSNGenerator;
 import org.nhindirect.common.mail.dsn.DSNMessageHeaders;
@@ -49,6 +48,7 @@ import org.nhindirect.common.mail.dsn.DSNRecipientHeaders;
 import org.nhindirect.common.mail.dsn.DSNStandard.DSNAction;
 import org.nhindirect.common.mail.dsn.DSNStandard.DSNStatus;
 import org.nhindirect.common.mail.dsn.DSNStandard.MtaNameType;
+import org.nhindirect.common.options.ConfigurationSource;
 import org.nhindirect.common.tx.model.Tx;
 import org.nhindirect.common.tx.model.TxDetail;
 import org.nhindirect.common.tx.model.TxDetailType;
@@ -63,7 +63,7 @@ import org.nhindirect.stagent.NHINDAddressCollection;
  */
 public abstract class AbstractDSNCreator implements DSNCreator 
 {
-	protected Mailet mailet;
+	protected ConfigurationSource configSource;
 	protected DSNGenerator generator;
 	protected String postmasterMailbox;
 	protected String reportingMta;

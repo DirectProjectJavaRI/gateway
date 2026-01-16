@@ -14,7 +14,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.commons.lang.StringUtils;
 import org.nhind.config.rest.CertificateService;
 import org.nhindirect.common.crypto.PKCS11Credential;
 import org.nhindirect.common.crypto.impl.BootstrappedPKCS11Credential;
@@ -22,6 +21,7 @@ import org.nhindirect.common.crypto.impl.StaticPKCS11TokenKeyStoreProtectionMana
 import org.nhindirect.config.model.Certificate;
 import org.nhindirect.gateway.testutils.TestUtils;
 import org.nhindirect.stagent.cert.X509CertificateEx;
+import org.springframework.util.StringUtils;
 
 public class ConfigServiceRESTCertificateStore_getCertificateWithHSMKeyTest
 {
@@ -38,7 +38,7 @@ public class ConfigServiceRESTCertificateStore_getCertificateWithHSMKeyTest
 	
 	protected ConfigServiceRESTCertificateStore getCertService() throws Exception
 	{
-    	if (StringUtils.isEmpty(TestUtils.setupSafeNetToken()))
+    	if (!StringUtils.hasText(TestUtils.setupSafeNetToken()))
     		return null;
 		
 		final ConfigServiceRESTCertificateStore certService = new ConfigServiceRESTCertificateStore(proxy);

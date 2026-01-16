@@ -8,15 +8,9 @@ import java.io.InputStream;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyStore;
-import java.security.Security;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
-
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.PasswordCallback;
-
 import org.apache.commons.io.FileUtils;
 import org.nhind.config.rest.CertificateService;
 import org.nhind.config.rest.DomainService;
@@ -38,9 +32,11 @@ public class TestUtils
      * @return The Security provider name if the token is loaded successfully... an empty string other wise 
      * @throws Exception
      */
-	@SuppressWarnings("restriction")
 	public static String setupSafeNetToken() throws Exception
 	{	
+		// TODO: Implement using proper JDK configuration
+		
+		/*
 		final CallbackHandler handler = new CallbackHandler()
 		{
 			public void	handle(Callback[] callbacks)
@@ -72,6 +68,9 @@ public class TestUtils
 		}
 
 		return p.getName();
+		*/
+		
+		return "";
 	}
 	
 	public static String getTestConfigFile(String fileName)

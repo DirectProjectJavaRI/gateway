@@ -794,8 +794,6 @@ public class SmtpAgentFactory
 		return retVal;
 	}	
 	
-	
-	@SuppressWarnings("deprecation")
 	public void addPolicyToMap(Map<String, Collection<PolicyExpression>> policyMap, String domainName, CertPolicyGroupUse policyReltn)
 	{
 		// check to see if the domain is in the map

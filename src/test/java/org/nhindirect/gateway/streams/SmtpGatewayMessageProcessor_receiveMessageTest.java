@@ -6,7 +6,6 @@ import java.io.File;
 import java.util.Properties;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -14,8 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.nhind.config.rest.DomainService;
 import org.nhind.config.rest.SettingService;
 
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -53,7 +52,7 @@ public class SmtpGatewayMessageProcessor_receiveMessageTest
 			final SmtpGatewayMessageProcessor processor = context.getBean(SmtpGatewayMessageProcessor.class);
 			final SmtpGatewayMessageSource messageSource = context.getBean(SmtpGatewayMessageSource.class);
 			
-			STASource staSource = spy(mock(STASource.class));
+			STASource staSource = mock(STASource.class);
 			processor.setSTASource(staSource);
 			
 			TestUtils.createGatewayConfig(TestUtils.VALID_GATEWAY_CONFIG, settingService, domainService);
@@ -63,7 +62,7 @@ public class SmtpGatewayMessageProcessor_receiveMessageTest
 			final MimeMessage msg = new MimeMessage((Session)null, IOUtils.toInputStream(strMessage));
 			
 			messageSource.sendMimeMessage(msg);
-			
+
 			verify(staSource, times(1)).staProcess((SMTPMailMessage)any());
 		};
 	}

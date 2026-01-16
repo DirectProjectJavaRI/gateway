@@ -3,7 +3,7 @@ package org.nhindirect.stagent;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 
 import org.nhindirect.stagent.mail.Message;
 import org.nhindirect.stagent.trust.TrustEnforcementStatus;

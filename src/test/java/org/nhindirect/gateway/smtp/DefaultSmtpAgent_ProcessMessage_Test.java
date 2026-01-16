@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-import javax.mail.Message.RecipientType;
+import jakarta.mail.Message.RecipientType;
 
 import org.nhindirect.gateway.testutils.TestUtils;
 import org.nhindirect.gateway.testutils.BaseTestPlan;

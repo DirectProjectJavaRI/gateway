@@ -3,20 +3,18 @@ package org.nhindirect.gateway.streams;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.mail.Address;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Address;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component
 @Slf4j
 public class SmtpGatewayMessageSource
 {	

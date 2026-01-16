@@ -24,12 +24,12 @@ package org.nhindirect.gateway.smtp.dsn.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.mailet.Mailet;
 import org.nhindirect.common.mail.dsn.DSNFailureTextBodyPartGenerator;
 import org.nhindirect.common.mail.dsn.DSNGenerator;
 import org.nhindirect.common.mail.dsn.DSNStandard.DSNStatus;
 import org.nhindirect.common.mail.dsn.impl.DefaultDSNFailureTextBodyPartGenerator;
 import org.nhindirect.common.mail.dsn.impl.HumanReadableTextAssemblerFactory;
+import org.nhindirect.common.options.ConfigurationSource;
 import org.nhindirect.common.options.OptionsManager;
 import org.nhindirect.gateway.GatewayConfiguration;
 
@@ -61,7 +61,7 @@ public class FailedDeliveryDSNCreator extends AbstractDSNCreator
 	public FailedDeliveryDSNCreator(DSNGenerator generator, String postmasterMailbox, String reportingMta, 
 			DSNFailureTextBodyPartGenerator textGenerator)
 	{
-		this.mailet = null;
+		this.configSource = null;
 		this.generator = generator;
 		this.postmasterMailbox = postmasterMailbox;
 		this.reportingMta = reportingMta;
@@ -70,32 +70,32 @@ public class FailedDeliveryDSNCreator extends AbstractDSNCreator
 	}
 	///CLOVER:ON
 	
-	public FailedDeliveryDSNCreator(Mailet mailet)
+	public FailedDeliveryDSNCreator(ConfigurationSource configSource)
 	{
-		this.mailet = mailet;
+		this.configSource = configSource;
 		
 		this.dsnStatus = DSNStatus.DELIVERY_OTHER;
 		
 		generator = new DSNGenerator(GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_FAILED_PREFIX, 
-				mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_PREFIX));
+				configSource, FailedDeliveryDSNCreatorOptions.DEFAULT_PREFIX));
 		
 		postmasterMailbox = GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_POSTMASTER, 
-				mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_POSTMASTER);
+				configSource, FailedDeliveryDSNCreatorOptions.DEFAULT_POSTMASTER);
 		
 		reportingMta = GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_MTA_NAME, 
-				mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_MTA_NAME);
+				configSource, FailedDeliveryDSNCreatorOptions.DEFAULT_MTA_NAME);
 		
 		
 		textGenerator = new DefaultDSNFailureTextBodyPartGenerator(
 				GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_FAILED_HEADER, 
-						mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_HEADER), 
+						configSource, FailedDeliveryDSNCreatorOptions.DEFAULT_HEADER), 
 						GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_FAILED_FOOTER, 
-						mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_FOOTER), 
+								configSource, FailedDeliveryDSNCreatorOptions.DEFAULT_FOOTER), 
 						GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_FAILED_RECIP_TITLE, 
-						mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_FAILED_RECIP_TITLE), 
+								configSource, FailedDeliveryDSNCreatorOptions.DEFAULT_FAILED_RECIP_TITLE), 
 						FailedDeliveryDSNCreatorOptions.DEFAULT_ERROR_MESSAGE_TITLE,
 					GatewayConfiguration.getConfigurationParam(FailedDeliveryDSNCreatorOptions.DSN_FAILED_ERROR_MESSAGE, 
-								mailet, null, FailedDeliveryDSNCreatorOptions.DEFAULT_ERROR_MESSAGE),
+							configSource, FailedDeliveryDSNCreatorOptions.DEFAULT_ERROR_MESSAGE),
 			    HumanReadableTextAssemblerFactory.getInstance());
 	}
 }
