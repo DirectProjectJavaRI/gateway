@@ -43,7 +43,7 @@
   </licenses>   
    <properties>
       <commons-io.version>2.8.0</commons-io.version>
-      <mina-core.version>2.1.4</mina-core.version>
+      <mina-core.version>2.1.5</mina-core.version>
       <apache-james.version>3.2.0</apache-james.version>
    </properties>    
 	<dependencyManagement>
