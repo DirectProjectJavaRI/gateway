@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.jcs.JCS;
@@ -37,7 +38,6 @@ import org.nhindirect.common.crypto.CryptoExtensions;
 import org.nhindirect.common.crypto.KeyStoreProtectionManager;
 import org.nhindirect.common.options.OptionsManager;
 import org.nhindirect.common.options.OptionsParameter;
-import org.nhindirect.stagent.NHINDException;
 import org.nhindirect.stagent.cert.CacheableCertStore;
 import org.nhindirect.stagent.cert.CertCacheFactory;
 import org.nhindirect.stagent.cert.CertStoreCachePolicy;
@@ -269,14 +269,16 @@ public class ConfigServiceRESTCertificateStore extends CertificateStore implemen
     {    	
     	String domain;
     	
-    	Collection<org.nhindirect.config.model.Certificate> certificates;
+    	Collection<org.nhindirect.config.model.Certificate> certificates = null;
     	try
     	{
     		certificates = certService.getCertificatesByOwner(subjectName);
     	}
     	catch (Exception e)
     	{
-    		throw new NHINDException("WebService error getting certificates by subject: " + e.getMessage(), e);
+    		// we should be logging a warning if this fails instead of blowing up the entire certificate lookup
+    		// process if an exception occurs.  Upstream logic should handle the fact that a certificate could not be found
+    		log.warn("WebService error getting certificates by subject: {}", e.getMessage(), e);
     	}
     	
     	if (certificates == null || certificates.isEmpty())
@@ -294,7 +296,9 @@ public class ConfigServiceRESTCertificateStore extends CertificateStore implemen
         	}
         	catch (Exception e)
         	{
-        		throw new NHINDException("WebService error getting certificates by domain: " + e.getMessage(), e);
+        		// we should be logging a warning if this fails instead of blowing up the entire certificate lookup
+        		// process if an exception occurs.  Upstream logic should handle the fact that a certificate could not be found
+        		log.warn("WebService error getting certificates by domain: {}", e.getMessage(), e);
         	}
     	}
     	
@@ -338,14 +342,15 @@ public class ConfigServiceRESTCertificateStore extends CertificateStore implemen
     	}
     	catch (Exception e)
     	{
-    		throw new NHINDException("WebService error getting all certificates: " + e.getMessage(), e);
+    		log.warn("WebService error getting certificates by domain: {}", e.getMessage());
+    		return List.of();
     	}
     	 
     	// purge everything
     	this.flush(true);
     	
     	if (certificates == null || certificates.isEmpty())
-    		return Collections.emptyList();
+    		return List.of();
     	
     	// convert to X509Certificates and store
     	Collection<X509Certificate> retVal = new ArrayList<X509Certificate>();
