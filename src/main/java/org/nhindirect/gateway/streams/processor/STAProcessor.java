@@ -188,18 +188,6 @@ public class STAProcessor
 					}
 				}
 				
-				log.trace("Track message");
-				// track message
-				MessageUtils.trackMessage(txToMonitor, isOutgoing, txService);
-				
-				
-				log.trace("Post processing for rejected recips.");
-				onPostprocessMessage(smtpMessage, result, isOutgoing, txToMonitor);
-				
-				log.trace("Sending to sta post process");
-				staPostProcessSource.staPostProcess(smtpMessage);
-				
-				log.trace("Exiting Message<?> streamMsg");
 			}
 			catch (MessagingException e)
 			{
@@ -209,6 +197,20 @@ public class STAProcessor
 			{
 				GatewayState.getInstance().unlockFromProcessing();
 			}
+
+			// These operations do not reference the agent and do not need the processing lock.
+			// Releasing the lock before these calls prevents long-held read locks from blocking
+			// the SettingsManager write lock and starving other consumers.
+			log.trace("Track message");
+			MessageUtils.trackMessage(txToMonitor, isOutgoing, txService);
+
+			log.trace("Post processing for rejected recips.");
+			onPostprocessMessage(smtpMessage, result, isOutgoing, txToMonitor);
+
+			log.trace("Sending to sta post process");
+			staPostProcessSource.staPostProcess(smtpMessage);
+			
+			log.trace("Exiting Message<?> streamMsg");
 		};
 	}
 	
