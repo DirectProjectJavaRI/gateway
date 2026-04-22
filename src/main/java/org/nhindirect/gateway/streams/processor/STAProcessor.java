@@ -219,7 +219,10 @@ public class STAProcessor
 	{
 		// if this is an outgoing IMF message, then we need to send a DSN message
 		if (isOutgoing && tx != null && tx.getMsgType() == TxMessageType.IMF)
+		{
+			log.debug("Sending DSN message due to rejected message");
 			sendDSN(tx, recipients, true);
+		}
 	}
 	
 	
@@ -227,7 +230,10 @@ public class STAProcessor
 	{
 		// if there are rejected recipients and an outgoing IMF message, then we need to send a DSN message
 		if (isOutgoing && tx != null && tx.getMsgType() == TxMessageType.IMF && result.getProcessedMessage().hasRejectedRecipients())
+		{
+			log.debug("Sending DSN message due to rejected recipients");
 			sendDSN(tx, result.getProcessedMessage().getRejectedRecipients(), true);
+		}
 
 	}	
 	

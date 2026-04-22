@@ -1,6 +1,7 @@
 package org.nhindirect.gateway.streams.processor;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -80,7 +81,7 @@ public class STAPostProcessProcessor
 		{
 			try
 			{
-				final SMTPMailMessage smtpMessage = SMTPMailMessageConverter.fromStreamMessage(streamMsg);
+				SMTPMailMessage smtpMessage = SMTPMailMessageConverter.fromStreamMessage(streamMsg);
 				
 				log.debug("STAPostProcessProcessor processing message from " + smtpMessage.getMailFrom().toString());
 			
@@ -137,6 +138,12 @@ public class STAPostProcessProcessor
 									smtpMessage.getMailFrom());
 							
 							xdRemoteDeliverySource.xdRemoteDelivery(xdBoundMessage);
+							
+							// remove any XD recipients from the list of recipients before handing off to last mile delivery
+							List<InternetAddress> recipList = new ArrayList<>(smtpMessage.getRecipientAddresses());
+							recipList.removeAll(xdRecipients);
+							smtpMessage = new  SMTPMailMessage(smtpMessage.getMimeMessage(), recipList, 
+									smtpMessage.getMailFrom()); 
 						}
 					}
 					
@@ -146,7 +153,8 @@ public class STAPostProcessProcessor
 					 * leave it to those implementations to do their work.  Because this is using asycn delivery to the final destination,
 					 * it is up the the final delivery implementation to generate a negative MDN/DSN if final delivery cannot be performed.
 					 */
-					lastMileSource.staLastMile(smtpMessage);
+					if (!smtpMessage.getRecipientAddresses().isEmpty())
+						lastMileSource.staLastMile(smtpMessage);
 					
 				}
 			}
