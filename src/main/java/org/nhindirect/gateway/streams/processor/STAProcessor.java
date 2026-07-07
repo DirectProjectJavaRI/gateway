@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
+import jakarta.mail.Address;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -27,6 +28,7 @@ import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
@@ -55,6 +57,12 @@ public class STAProcessor
 	
 	@Autowired
 	protected STAPostProcessSource staPostProcessSource;
+
+	// Suppression of notifications messages for configured addresses.  Used
+	// for testing purposes and various validation tooling scenarios.  Generally not used
+	// in a production environment
+	@Value("${direct.gateway.notifications.suppressNotificationsForAddresses:}")
+	protected List<String> suppressNotificationAddresses;
 	
 	public STAProcessor()
 	{
@@ -178,7 +186,8 @@ public class STAProcessor
 					{
 						try
 						{
-							smtpMessageSource.sendMimeMessage(message);
+							if (!isNotificationSuppressed(message))
+								smtpMessageSource.sendMimeMessage(message);
 						}
 						catch (Throwable t)
 						{
@@ -237,11 +246,77 @@ public class STAProcessor
 
 	}	
 	
+	/*
+	 * Tests if the given address matches an address in the configured suppression list.
+	 */
+	protected boolean isAddressSuppressed(InternetAddress address)
+	{
+		if (suppressNotificationAddresses == null || suppressNotificationAddresses.isEmpty() || address == null)
+			return false;
+
+		final String emailAddr = address.getAddress();
+		if (emailAddr == null)
+			return false;
+
+		for (String suppressAddr : suppressNotificationAddresses)
+		{
+			if (!suppressAddr.trim().isEmpty() && emailAddr.equalsIgnoreCase(suppressAddr.trim()))
+				return true;
+		}
+
+		return false;
+	}
+
+	/*
+	 * MDN "processed" notifications are authored by the recipient they concern (carried in the
+	 * message's From header) and addressed back to the original sender, so suppression must be
+	 * decided against the From address, not the message's own recipients.
+	 */
+	protected boolean isNotificationSuppressed(MimeMessage message)
+	{
+		if (suppressNotificationAddresses == null || suppressNotificationAddresses.isEmpty())
+			return false;
+
+		try
+		{
+			final Address[] fromAddrs = message.getFrom();
+			if (fromAddrs != null)
+			{
+				for (Address addr : fromAddrs)
+				{
+					if (addr instanceof InternetAddress && isAddressSuppressed((InternetAddress) addr))
+						return true;
+				}
+			}
+		}
+		catch (MessagingException e)
+		{
+			log.warn("Could not read From address to check notification suppression", e);
+		}
+		return false;
+	}
+
 	protected void sendDSN(Tx tx, NHINDAddressCollection undeliveredRecipeints, boolean useSenderAsPostmaster)
 	{
 		try
 		{
-			final Collection<MimeMessage> msgs = dsnCreator.createDSNFailure(tx, undeliveredRecipeints, useSenderAsPostmaster);
+			// A generated DSN is always addressed back to the original sender, so suppression has to be
+			// decided against the failed/rejected recipients themselves (the addresses this list is meant
+			// to target) before the DSN is generated, not against the resulting DSN message's own headers.
+			final NHINDAddressCollection notSuppressedRecipients = new NHINDAddressCollection();
+			for (NHINDAddress recip : undeliveredRecipeints)
+			{
+				if (!isAddressSuppressed(recip))
+					notSuppressedRecipients.add(recip);
+			}
+
+			if (notSuppressedRecipients.isEmpty())
+			{
+				log.debug("All undelivered recipients are configured suppressed addresses; not generating a DSN notification");
+				return;
+			}
+
+			final Collection<MimeMessage> msgs = dsnCreator.createDSNFailure(tx, notSuppressedRecipients, useSenderAsPostmaster);
 			if (msgs != null && msgs.size() > 0)
 				for (MimeMessage msg : msgs)
 					smtpMessageSource.sendMimeMessage(msg);
@@ -251,5 +326,5 @@ public class STAProcessor
 			// don't kill the process if this fails
 			log.error("Error sending DSN failure message.", e);
 		}
-	}	
+	}
 }

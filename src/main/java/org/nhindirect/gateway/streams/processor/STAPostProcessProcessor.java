@@ -178,14 +178,27 @@ public class STAPostProcessProcessor
 		
 		try
 		{
+			log.debug("Tracking and checking for suppression of message id {} with a message type of {}", smtpMessage.getMimeMessage().getMessageID(),  txToTrack.getMsgType());
+			
 			// first check if this a MDN processed message and if the consume processed flag is turned on
 			final TxDetail detail = txToTrack.getDetail(TxDetailType.DISPOSITION);
+			
+			
 			if (consumeMDNProcessed && txToTrack.getMsgType() == TxMessageType.MDN 
 					&& detail != null && detail.getDetailValue().contains(MDNStandard.Disposition_Processed))
+			{
+				log.debug("consumeMDNProcessed flag is set to true and message is a processed MDN.  Message will be suppressed from sent to last mile delivery.");
 				suppress = true;
+			}
+				
 			// if the first rule does not apply, then go to the tx Service to see if the message should be suppressed
 			else if (txService != null && txToTrack != null && txService.suppressNotification(txToTrack))
+			{
+				log.debug("TxService has indicated that message id {} with a message type of {} should be suppressed. Message will be suppressed from sent to last mile delivery.", 
+						smtpMessage.getMimeMessage().getMessageID(),  txToTrack.getMsgType());
 				suppress = true;
+			}
+				
 		}
 		catch (ServiceException e)
 		{
