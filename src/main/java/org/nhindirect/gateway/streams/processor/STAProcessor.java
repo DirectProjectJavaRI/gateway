@@ -254,7 +254,7 @@ public class STAProcessor
 		if (suppressNotificationAddresses == null || suppressNotificationAddresses.isEmpty() || address == null)
 			return false;
 
-		final String emailAddr = address.getAddress();
+		final String emailAddr = normalizeAddress(address.getAddress());
 		if (emailAddr == null)
 			return false;
 
@@ -265,6 +265,36 @@ public class STAProcessor
 		}
 
 		return false;
+	}
+
+	/*
+	 * Normalizes a message address for suppression comparison by lower casing it and stripping
+	 * any plus addressing tag (eg. gm2552+category@example.com becomes gm2552@example.com) from
+	 * the local part, so that plus addressed variants of a configured suppression address are
+	 * also suppressed. Configured suppression addresses are not plus-addressing normalized since
+	 * they are expected to already be canonical addresses.
+	 */
+	protected String normalizeAddress(String address)
+	{
+		if (address == null)
+			return null;
+
+		final String trimmedAddr = address.trim();
+		if (trimmedAddr.isEmpty())
+			return null;
+
+		final int atIdx = trimmedAddr.indexOf('@');
+		if (atIdx < 0)
+			return trimmedAddr.toLowerCase();
+
+		String localPart = trimmedAddr.substring(0, atIdx);
+		final String domainPart = trimmedAddr.substring(atIdx);
+
+		final int plusIdx = localPart.indexOf('+');
+		if (plusIdx >= 0)
+			localPart = localPart.substring(0, plusIdx);
+
+		return (localPart + domainPart).toLowerCase();
 	}
 
 	/*

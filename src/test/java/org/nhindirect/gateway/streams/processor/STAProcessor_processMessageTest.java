@@ -1,5 +1,7 @@
 package org.nhindirect.gateway.streams.processor;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
@@ -193,6 +195,41 @@ public class STAProcessor_processMessageTest
 
 		verify(mockDsnCreator, never()).createDSNFailure(any(), any(), anyBoolean());
 		verify(mockSmtpMessageSource, never()).sendMimeMessage(any(MimeMessage.class));
+	}
+
+	/**
+	 * A plus addressed variant of a configured suppression address (eg. user1+category@cerner.com
+	 * when user1@cerner.com is configured) must still be suppressed.
+	 */
+	@Test
+	public void testIsAddressSuppressed_PlusAddressedVariantOfSuppressedAddress_assertSuppressed() throws Exception
+	{
+		processor.suppressNotificationAddresses = Arrays.asList("user1@cerner.com");
+
+		assertTrue(processor.isAddressSuppressed(new InternetAddress("user1+category@cerner.com")));
+	}
+
+	/**
+	 * Comparison must remain case insensitive after plus addressing normalization.
+	 */
+	@Test
+	public void testIsAddressSuppressed_PlusAddressedVariantDifferentCase_assertSuppressed() throws Exception
+	{
+		processor.suppressNotificationAddresses = Arrays.asList("User1@Cerner.com");
+
+		assertTrue(processor.isAddressSuppressed(new InternetAddress("USER1+Category@CERNER.COM")));
+	}
+
+	/**
+	 * An address that merely shares a local part prefix (not a plus addressing separator) must not
+	 * be suppressed.
+	 */
+	@Test
+	public void testIsAddressSuppressed_UnrelatedAddress_assertNotSuppressed() throws Exception
+	{
+		processor.suppressNotificationAddresses = Arrays.asList("user1@cerner.com");
+
+		assertFalse(processor.isAddressSuppressed(new InternetAddress("user10@cerner.com")));
 	}
 
 	// --- helpers ---
