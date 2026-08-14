@@ -8,7 +8,7 @@ import java.io.File;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
 import org.nhindirect.config.model.Anchor;

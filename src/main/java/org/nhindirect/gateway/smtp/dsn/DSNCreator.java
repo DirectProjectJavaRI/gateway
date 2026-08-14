@@ -23,8 +23,8 @@ package org.nhindirect.gateway.smtp.dsn;
 
 import java.util.Collection;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 import org.nhindirect.common.tx.model.Tx;
 import org.nhindirect.stagent.NHINDAddressCollection;

@@ -120,6 +120,7 @@ public class SmtpAgentFactory
 	protected final CertPolicyService polService;
 	protected final Auditor auditor;
 	protected final KeyStoreProtectionManager keyStoreMgr;
+	protected final Collection<String> dnsServers;
 	
 	public static SmtpAgentFactory getInstance(CertificateService certService, TrustBundleService bundleService, DomainService domainService,
 			AnchorService anchorService, SettingService settingService, CertPolicyService polService, Auditor auditor, KeyStoreProtectionManager keyStoreMgr)
@@ -131,8 +132,25 @@ public class SmtpAgentFactory
 		return INSTANCE;
 	}
 	
+	public static SmtpAgentFactory getInstance(CertificateService certService, TrustBundleService bundleService, DomainService domainService,
+			AnchorService anchorService, SettingService settingService, CertPolicyService polService, Auditor auditor, KeyStoreProtectionManager keyStoreMgr, Collection<String> dnsServers)
+	{
+
+		INSTANCE = new SmtpAgentFactory(certService, bundleService, domainService,
+					anchorService, settingService, polService, auditor, keyStoreMgr, dnsServers);
+		
+		return INSTANCE;
+	}
+	
 	protected SmtpAgentFactory(CertificateService certService, TrustBundleService bundleService, DomainService domainService,
 			AnchorService anchorService, SettingService settingService, CertPolicyService polService, Auditor auditor, KeyStoreProtectionManager keyStoreMgr)
+	{
+		this(certService, bundleService, domainService, anchorService, settingService, polService, auditor, keyStoreMgr, List.of());
+		
+	}
+	
+	protected SmtpAgentFactory(CertificateService certService, TrustBundleService bundleService, DomainService domainService,
+			AnchorService anchorService, SettingService settingService, CertPolicyService polService, Auditor auditor, KeyStoreProtectionManager keyStoreMgr, Collection<String> dnsServers)
 	{
 		this.certService = certService;
 		this.bundleService = bundleService;
@@ -142,7 +160,9 @@ public class SmtpAgentFactory
 		this.polService = polService;
 		this.auditor = auditor;
 		this.keyStoreMgr = keyStoreMgr;
+		this.dnsServers = dnsServers;
 	}
+	
 	
 	public SmtpAgent createSmtpAgent() throws SmtpAgentException
 	{
@@ -542,7 +562,7 @@ public class SmtpAgentFactory
 			 */			
 			else if(storeType.equalsIgnoreCase(STORE_TYPE_DNS))
 			{
-				lookedUpResolver = new DNSCertificateStore(Collections.emptyList(), null, new DNSCertificateStore.DefaultDNSCachePolicy());								
+				lookedUpResolver = new DNSCertificateStore(dnsServers, null, new DNSCertificateStore.DefaultDNSCachePolicy());								
 			}
 			/*
 			 * Config Service
@@ -794,8 +814,6 @@ public class SmtpAgentFactory
 		return retVal;
 	}	
 	
-	
-	@SuppressWarnings("deprecation")
 	public void addPolicyToMap(Map<String, Collection<PolicyExpression>> policyMap, String domainName, CertPolicyGroupUse policyReltn)
 	{
 		// check to see if the domain is in the map

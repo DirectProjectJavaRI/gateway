@@ -1,14 +1,12 @@
 spring: 
   cloud: 
+    function:
+      definition: directSmtpGatewayMessageInput;directStaProcessorInput;directStaPostProcessInput;directSmtpRemoteDeliveryInput
     stream: 
-      source: direct-smtp-gateway-message;direct-smtp-remote-delivery;direct-sta-processor;direct-sta-post-process;direct-sta-last-mile;direct-xd-delivery
-      function:
-        definition: directSmtpGatewayMessageInput;directStaProcessorInput;directStaPostProcessInput;directSmtpRemoteDeliveryInput
-    
+      output-bindings: direct-smtp-gateway-message;direct-smtp-remote-delivery;direct-sta-processor;direct-sta-post-process;direct-sta-last-mile;direct-xd-delivery
       bindings: 
         direct-smtp-gateway-message-out-0:
           destination: direct-smtp-mq-gateway
-          content-type: message/rfc822 
           
         directSmtpGatewayMessageInput-in-0:
           destination: direct-smtp-mq-gateway
@@ -21,7 +19,6 @@ spring:
             
         direct-sta-processor-out-0: 
           destination: direct-sta-process
-          content-type: message/rfc822 
           
         directStaProcessorInput-in-0: 
           destination: direct-sta-process    
@@ -34,7 +31,6 @@ spring:
           
         direct-sta-post-process-out-0: 
           destination: direct-sta-post-process
-          content-type: message/rfc822 
           
         directStaPostProcessInput-in-0: 
           group: direct-sta-post-process-message-group
@@ -46,7 +42,6 @@ spring:
             
         direct-smtp-remote-delivery-out-0: 
           destination: direct-remote-delivery-process
-          content-type: message/rfc822 
         
         #Default to max 5 attempts, retry at 6 minutes, then multiply by a factor of 4 for each retry  
         directSmtpRemoteDeliveryInput-in-0: 
@@ -61,7 +56,6 @@ spring:
        
         direct-xd-delivery-out-0: 
           destination: direct-xd-delivery-process
-          content-type: message/rfc822   
           
         direct-sta-last-mile-out-0: 
           destination: direct-sta-last-mile-delivery                    

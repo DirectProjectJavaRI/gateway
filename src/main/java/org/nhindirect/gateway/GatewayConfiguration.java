@@ -21,10 +21,11 @@ THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.nhindirect.gateway;
 
-import org.apache.mailet.Mailet;
+
+import org.nhindirect.common.options.ConfigurationSource;
 import org.nhindirect.common.options.OptionsManager;
 import org.nhindirect.common.options.OptionsParameter;
-import org.springframework.context.ApplicationContext;
+
 /**
  * Utility class for retrieving parameterized configuration options.  Options for the can be configured in one of two ways: 
  * either by setting appropriate option as an XML element in a mailet's XML configuration (optional and typically found in the config.xml file
@@ -45,27 +46,18 @@ public class GatewayConfiguration
     /**
      * Gets the configuration parameter requested.  The mailet init parameters are checked first, then the OptionsManager.
      * @param param The parameter to get the value of.
-     * @param mailet The mailet to search.  May be null
+     * @param configSource A ConfigurationSource to search.  May be null.
      * @return If found, returns, the value of the configured value.  Otherwise, the default value is returned
      */
-    public static final String getConfigurationParam(String param, Mailet mailet, ApplicationContext ctx, String defaultValue)
+    public static final String getConfigurationParam(String param, ConfigurationSource configSource, String defaultValue)
     {
 		// get from the mailet init parameter first
-		String paramValue = (mailet == null) ? null : mailet.getMailetConfig().getInitParameter(param);
+		String paramValue = (configSource == null) ? null : configSource.getPropertyAsString(param, "");
 		
-		if (paramValue == null || paramValue.isEmpty() && ctx != null)
-		{
-			// try the application context
-			try
-			{
-				paramValue = ctx.getEnvironment().getProperty(param);
-			}
-			catch (Exception e) {/* no-op */}
-		}
 		
 		if (paramValue == null || paramValue.isEmpty())
 		{
-			// if not in the mailet config, then try the 
+			// if not in the configuration source, then try the 
 			// Options manager
 			OptionsParameter optionsParam = OptionsManager.getInstance().getParameter(param);
 			if (optionsParam != null)
@@ -78,12 +70,12 @@ public class GatewayConfiguration
     /**
      * Gets the configuration parameter requested as a boolean value.  The same search rules are followed as in {@link #getConfigurationParam(String, Mailet, String)}.
      * @param param The parameter to get the value of.
-     * @param mailet The mailet to search.  May be null
+     * @param configSource A ConfigurationSource to search.  May be null.
      * @return If found, returns, the value of the configured value.  Otherwise, the default value is returned.
      */
-    public static final boolean getConfigurationParamAsBoolean(String param, Mailet mailet, ApplicationContext ctx, boolean defaultValue)
+    public static final boolean getConfigurationParamAsBoolean(String param, ConfigurationSource configSource, boolean defaultValue)
     {
-    	final String paramValue = getConfigurationParam(param, mailet, ctx, "");
+    	final String paramValue = getConfigurationParam(param, configSource, "");
     	
 		// get from the mailet init parameter first
 		return (paramValue.isEmpty()) ? defaultValue : Boolean.parseBoolean(paramValue);

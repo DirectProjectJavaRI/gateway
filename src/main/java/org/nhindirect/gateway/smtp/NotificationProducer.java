@@ -25,7 +25,7 @@ package org.nhindirect.gateway.smtp;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 
 import org.nhindirect.stagent.IncomingMessage;
 import org.nhindirect.stagent.NHINDAddress;

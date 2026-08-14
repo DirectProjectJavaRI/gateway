@@ -1,0 +1,10 @@
+org.nhindirect.gateway.autoconfig.AuditorAutoConfiguration
+org.nhindirect.gateway.autoconfig.ConfigServiceClientAutoConfiguration
+org.nhindirect.gateway.autoconfig.DNSResolverAutoConfiguration
+org.nhindirect.gateway.autoconfig.DSNGeneratorAutoConfiguration
+org.nhindirect.gateway.autoconfig.KeyStoreProtectionMgrAutoConfiguration
+org.nhindirect.gateway.autoconfig.MessageMonitorServiceAutoConfiguration
+org.nhindirect.gateway.autoconfig.RouteResolverAutoConfiguration
+org.nhindirect.gateway.autoconfig.SMTPAgentAutoConfiguration
+org.nhindirect.gateway.autoconfig.SMTPGatewayFactoryAutoConfiguration
+org.nhindirect.gateway.autoconfig.StreamsAutoConfiguration

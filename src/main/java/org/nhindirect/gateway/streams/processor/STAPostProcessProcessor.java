@@ -1,12 +1,13 @@
 package org.nhindirect.gateway.streams.processor;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 
 import org.nhind.config.rest.DomainService;
 import org.nhindirect.common.mail.SMTPMailMessage;
@@ -80,7 +81,7 @@ public class STAPostProcessProcessor
 		{
 			try
 			{
-				final SMTPMailMessage smtpMessage = SMTPMailMessageConverter.fromStreamMessage(streamMsg);
+				SMTPMailMessage smtpMessage = SMTPMailMessageConverter.fromStreamMessage(streamMsg);
 				
 				log.debug("STAPostProcessProcessor processing message from " + smtpMessage.getMailFrom().toString());
 			
@@ -137,6 +138,12 @@ public class STAPostProcessProcessor
 									smtpMessage.getMailFrom());
 							
 							xdRemoteDeliverySource.xdRemoteDelivery(xdBoundMessage);
+							
+							// remove any XD recipients from the list of recipients before handing off to last mile delivery
+							List<InternetAddress> recipList = new ArrayList<>(smtpMessage.getRecipientAddresses());
+							recipList.removeAll(xdRecipients);
+							smtpMessage = new  SMTPMailMessage(smtpMessage.getMimeMessage(), recipList, 
+									smtpMessage.getMailFrom()); 
 						}
 					}
 					
@@ -146,7 +153,8 @@ public class STAPostProcessProcessor
 					 * leave it to those implementations to do their work.  Because this is using asycn delivery to the final destination,
 					 * it is up the the final delivery implementation to generate a negative MDN/DSN if final delivery cannot be performed.
 					 */
-					lastMileSource.staLastMile(smtpMessage);
+					if (!smtpMessage.getRecipientAddresses().isEmpty())
+						lastMileSource.staLastMile(smtpMessage);
 					
 				}
 			}
@@ -170,14 +178,27 @@ public class STAPostProcessProcessor
 		
 		try
 		{
+			log.debug("Tracking and checking for suppression of message id {} with a message type of {}", smtpMessage.getMimeMessage().getMessageID(),  txToTrack.getMsgType());
+			
 			// first check if this a MDN processed message and if the consume processed flag is turned on
 			final TxDetail detail = txToTrack.getDetail(TxDetailType.DISPOSITION);
+			
+			
 			if (consumeMDNProcessed && txToTrack.getMsgType() == TxMessageType.MDN 
 					&& detail != null && detail.getDetailValue().contains(MDNStandard.Disposition_Processed))
+			{
+				log.debug("consumeMDNProcessed flag is set to true and message is a processed MDN.  Message will be suppressed from sent to last mile delivery.");
 				suppress = true;
+			}
+				
 			// if the first rule does not apply, then go to the tx Service to see if the message should be suppressed
 			else if (txService != null && txToTrack != null && txService.suppressNotification(txToTrack))
+			{
+				log.debug("TxService has indicated that message id {} with a message type of {} should be suppressed. Message will be suppressed from sent to last mile delivery.", 
+						smtpMessage.getMimeMessage().getMessageID(),  txToTrack.getMsgType());
 				suppress = true;
+			}
+				
 		}
 		catch (ServiceException e)
 		{

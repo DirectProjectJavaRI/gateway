@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Address;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 import org.nhindirect.common.mail.SMTPMailMessage;
 import org.nhindirect.common.mail.streams.SMTPMailMessageConverter;
@@ -27,6 +28,7 @@ import org.nhindirect.stagent.NHINDAddressCollection;
 import org.nhindirect.stagent.mail.notifications.NotificationMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
@@ -55,6 +57,12 @@ public class STAProcessor
 	
 	@Autowired
 	protected STAPostProcessSource staPostProcessSource;
+
+	// Suppression of notifications messages for configured addresses.  Used
+	// for testing purposes and various validation tooling scenarios.  Generally not used
+	// in a production environment
+	@Value("${direct.gateway.notifications.suppressNotificationsForAddresses:}")
+	protected List<String> suppressNotificationAddresses;
 	
 	public STAProcessor()
 	{
@@ -178,7 +186,8 @@ public class STAProcessor
 					{
 						try
 						{
-							smtpMessageSource.sendMimeMessage(message);
+							if (!isNotificationSuppressed(message))
+								smtpMessageSource.sendMimeMessage(message);
 						}
 						catch (Throwable t)
 						{
@@ -188,18 +197,6 @@ public class STAProcessor
 					}
 				}
 				
-				log.trace("Track message");
-				// track message
-				MessageUtils.trackMessage(txToMonitor, isOutgoing, txService);
-				
-				
-				log.trace("Post processing for rejected recips.");
-				onPostprocessMessage(smtpMessage, result, isOutgoing, txToMonitor);
-				
-				log.trace("Sending to sta post process");
-				staPostProcessSource.staPostProcess(smtpMessage);
-				
-				log.trace("Exiting Message<?> streamMsg");
 			}
 			catch (MessagingException e)
 			{
@@ -209,6 +206,20 @@ public class STAProcessor
 			{
 				GatewayState.getInstance().unlockFromProcessing();
 			}
+
+			// These operations do not reference the agent and do not need the processing lock.
+			// Releasing the lock before these calls prevents long-held read locks from blocking
+			// the SettingsManager write lock and starving other consumers.
+			log.trace("Track message");
+			MessageUtils.trackMessage(txToMonitor, isOutgoing, txService);
+
+			log.trace("Post processing for rejected recips.");
+			onPostprocessMessage(smtpMessage, result, isOutgoing, txToMonitor);
+
+			log.trace("Sending to sta post process");
+			staPostProcessSource.staPostProcess(smtpMessage);
+			
+			log.trace("Exiting Message<?> streamMsg");
 		};
 	}
 	
@@ -217,7 +228,10 @@ public class STAProcessor
 	{
 		// if this is an outgoing IMF message, then we need to send a DSN message
 		if (isOutgoing && tx != null && tx.getMsgType() == TxMessageType.IMF)
+		{
+			log.debug("Sending DSN message due to rejected message");
 			sendDSN(tx, recipients, true);
+		}
 	}
 	
 	
@@ -225,15 +239,114 @@ public class STAProcessor
 	{
 		// if there are rejected recipients and an outgoing IMF message, then we need to send a DSN message
 		if (isOutgoing && tx != null && tx.getMsgType() == TxMessageType.IMF && result.getProcessedMessage().hasRejectedRecipients())
+		{
+			log.debug("Sending DSN message due to rejected recipients");
 			sendDSN(tx, result.getProcessedMessage().getRejectedRecipients(), true);
+		}
 
 	}	
 	
+	/*
+	 * Tests if the given address matches an address in the configured suppression list.
+	 */
+	protected boolean isAddressSuppressed(InternetAddress address)
+	{
+		if (suppressNotificationAddresses == null || suppressNotificationAddresses.isEmpty() || address == null)
+			return false;
+
+		final String emailAddr = normalizeAddress(address.getAddress());
+		if (emailAddr == null)
+			return false;
+
+		for (String suppressAddr : suppressNotificationAddresses)
+		{
+			if (!suppressAddr.trim().isEmpty() && emailAddr.equalsIgnoreCase(suppressAddr.trim()))
+				return true;
+		}
+
+		return false;
+	}
+
+	/*
+	 * Normalizes a message address for suppression comparison by lower casing it and stripping
+	 * any plus addressing tag (eg. gm2552+category@example.com becomes gm2552@example.com) from
+	 * the local part, so that plus addressed variants of a configured suppression address are
+	 * also suppressed. Configured suppression addresses are not plus-addressing normalized since
+	 * they are expected to already be canonical addresses.
+	 */
+	protected String normalizeAddress(String address)
+	{
+		if (address == null)
+			return null;
+
+		final String trimmedAddr = address.trim();
+		if (trimmedAddr.isEmpty())
+			return null;
+
+		final int atIdx = trimmedAddr.indexOf('@');
+		if (atIdx < 0)
+			return trimmedAddr.toLowerCase();
+
+		String localPart = trimmedAddr.substring(0, atIdx);
+		final String domainPart = trimmedAddr.substring(atIdx);
+
+		final int plusIdx = localPart.indexOf('+');
+		if (plusIdx >= 0)
+			localPart = localPart.substring(0, plusIdx);
+
+		return (localPart + domainPart).toLowerCase();
+	}
+
+	/*
+	 * MDN "processed" notifications are authored by the recipient they concern (carried in the
+	 * message's From header) and addressed back to the original sender, so suppression must be
+	 * decided against the From address, not the message's own recipients.
+	 */
+	protected boolean isNotificationSuppressed(MimeMessage message)
+	{
+		if (suppressNotificationAddresses == null || suppressNotificationAddresses.isEmpty())
+			return false;
+
+		try
+		{
+			final Address[] fromAddrs = message.getFrom();
+			if (fromAddrs != null)
+			{
+				for (Address addr : fromAddrs)
+				{
+					if (addr instanceof InternetAddress && isAddressSuppressed((InternetAddress) addr))
+						return true;
+				}
+			}
+		}
+		catch (MessagingException e)
+		{
+			log.warn("Could not read From address to check notification suppression", e);
+		}
+		return false;
+	}
+
 	protected void sendDSN(Tx tx, NHINDAddressCollection undeliveredRecipeints, boolean useSenderAsPostmaster)
 	{
 		try
 		{
-			final Collection<MimeMessage> msgs = dsnCreator.createDSNFailure(tx, undeliveredRecipeints, useSenderAsPostmaster);
+			// A generated DSN is always addressed back to the original sender, so suppression has to be
+			// decided against the failed/rejected recipients themselves (the addresses this list is meant
+			// to target) before the DSN is generated, not against the resulting DSN message's own headers.
+			final NHINDAddressCollection notSuppressedRecipients = new NHINDAddressCollection();
+			for (NHINDAddress recip : undeliveredRecipeints)
+			{
+				if (!isAddressSuppressed(recip))
+					notSuppressedRecipients.add(recip);
+			}
+
+			if (notSuppressedRecipients.isEmpty())
+			{
+				log.debug("All undelivered recipients are configured suppressed addresses; not generating a DSN notification");
+				return;
+			}
+
+			final Collection<MimeMessage> msgs = dsnCreator.createDSNFailure(tx, notSuppressedRecipients, useSenderAsPostmaster);
 			if (msgs != null && msgs.size() > 0)
 				for (MimeMessage msg : msgs)
 					smtpMessageSource.sendMimeMessage(msg);
@@ -243,5 +356,5 @@ public class STAProcessor
 			// don't kill the process if this fails
 			log.error("Error sending DSN failure message.", e);
 		}
-	}	
+	}
 }

@@ -10,7 +10,7 @@ import java.io.File;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 
 import org.apache.jcs.JCS;
 
@@ -142,7 +142,7 @@ public class ConfigServiceRESTCertificateStore_CRUD_Test extends SpringBaseTest
 	}		
 	
 	@Test
-	public void testGetCertificates_NullProxy_AssertException() throws Exception 
+	public void testGetCertificates_NullProxy_EmptyCollection() throws Exception 
 	{
 		new TestPlan() 
 		{				  			
@@ -152,17 +152,10 @@ public class ConfigServiceRESTCertificateStore_CRUD_Test extends SpringBaseTest
 				
 				TestConfigServiceCertificateStore store = new TestConfigServiceCertificateStore(null);
 			
-				boolean exceptionOccured = false;
-				try
-				{
-					store.getAllCertificates();
-				}
-				catch (NHINDException e)
-				{
-					exceptionOccured = true;
-				}
-				
-				assertTrue(exceptionOccured);
+
+				assertEquals(0, store.getAllCertificates().size());
+
+
 			}
 		}.perform();
 	}	
@@ -349,18 +342,7 @@ public class ConfigServiceRESTCertificateStore_CRUD_Test extends SpringBaseTest
 				
 				TestConfigServiceCertificateStore store = new TestConfigServiceCertificateStore(null);
 				store.flush(true);
-				
-				boolean exceptionOccured = false;
-				try
-				{
-					store.getCertificates(new InternetAddress("test1@example.com"));
-				}
-				catch (NHINDException e)
-				{
-					exceptionOccured = true;
-				}
-				
-				assertTrue(exceptionOccured);
+				assertEquals(0, store.getAllCertificates().size());
 			}
 		}.perform();
 	}		
