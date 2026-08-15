@@ -1,3 +1,7 @@
+---
+title: Apache James Deployment
+---
+
 # Apache James Deployment
 
 Apache [James](http://james.apache.org/) is an open source Java based mail and news server supported by the Apache software foundation. It is implemented using a modular pattern and can extended by adding new modules and components. It can run either as a completely stand alone email system, or can be integrated into a more complex mail deployment acting as either the final mail destination or a smart relay.

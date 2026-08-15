@@ -1,3 +1,7 @@
+---
+title: SMTP Agent WebService Configuration
+---
+
 # SMTP Agent WebService Configuration
 
 WebService configuration for the SMTP protocol consists of an retrieving configuration parameters for both the SMTP agent and the security and trust agent from the DirectProjectconfiguration service. The configuration service exposes a web interface using a RESTful interface and can be accessed using a simple URL. Example:
@@ -79,7 +83,7 @@ To create a new domain, click the new **Create New Domain** link from the config
 
 ![WSConfigDomainSearch](assets/WSConfigDomainSearch.png)
 
-Each domain requires the domain name and an option postmaster address. Enter the domain name, postmaster address, set the status to enabled, and click add. Optionally, trust bundle can be added at this time by clicking **Select Trust Bundles**. If you choose not to add bundles at this time, you may do so later. **NOTE:** If the postmaster address is not specified, the SMPT Agent will default it to postmaster@<domain name>.
+Each domain requires the domain name and an option postmaster address. Enter the domain name, postmaster address, set the status to enabled, and click add. Optionally, trust bundle can be added at this time by clicking **Select Trust Bundles**. If you choose not to add bundles at this time, you may do so later. **NOTE:** If the postmaster address is not specified, the SMPT Agent will default it to postmaster@`<domain name>`.
 
 ![WSConfigAddDomain](assets/WSConfigAddDomain.png)
 
