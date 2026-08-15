@@ -1,3 +1,7 @@
+---
+title: Protocol Bridge Architecture
+---
+
 # Protocol Bridge Architecture
 
 The bridge architecture can conceptually be split into four parts and is logically stacked in the following order:

@@ -1,3 +1,7 @@
+---
+title: Writing A Protocol Bridge
+---
+
 # Writing A Protocol Bridge
 
 Protocol bridges are specific to two variables:
@@ -119,7 +123,7 @@ Pseduo James Example:
 ##### Dependencies
 The following jars are direct dependencies for writing protocol bridges.
 
-* agent-<version>.jar
-* gateway-<version>.jar
+* agent-`<version>`.jar
+* gateway-`<version>`.jar
 
 Transitive dependencies of these libraries may be required for development, testing, and deployment. These libraries are available in the public mavne repository under the group [org.nhind](http://repo1.maven.org/maven2/org/nhind/).

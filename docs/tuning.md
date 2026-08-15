@@ -1,3 +1,7 @@
+---
+title: Fined Grained Tuning
+---
+
 # Fined Grained Tuning
 
 Fine grained tuning of the following components can be achieved using the [OptionsManager](http://api.directproject.info/direct-common/6.0/apidocs/org/nhindirect/common/options/OptionsManager.html). For the Apache James server, these are most easily set by adding JVM parameters to the startup script.

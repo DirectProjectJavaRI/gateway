@@ -1,3 +1,7 @@
+---
+title: PKCS11 Configuration
+---
+
 # PKCS11 Configuration
 
 Depending on institutional or agency policy, private keys may be required to be protected in such a way that the private key is never exposed in unencrypted format unless loaded onto a PKCS11 token such as a NIST certified hardware security module (HSM). Previous and current versions of configuration service can store the private key in an encrypted PKCS12 container, however, this container is decrypted in the configuration service when needed and the private key is present in unecrypted format in process memory of both the configuration service and the gateway. As of version 2.2 of the configuration service, private keys can be store in a "wrapped" format where they are encrypted by a secret key encryption key and never decrypted in the configuration service. As of version 2.1 of the agent, the agent can "unwrap" the private keys into a PKCS11 token and perform signing and decryption operations without the private key ever being decrypted in process memory. As of version 4.1, the gateway can be configured to load and inject an appropriate PKCS11 token implementation into the agent.

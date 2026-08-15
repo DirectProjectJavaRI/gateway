@@ -1,3 +1,7 @@
+---
+title: DNS Failure Generation Config
+---
+
 # DNS Failure Generation Config
 
 Fine grained tuning of the information found in DSN 'bounce' message can be achieve via the [OptionsManager](http://api.directproject.info/direct-common/6.0/apidocs/org/nhindirect/common/options/OptionsManager.html).
