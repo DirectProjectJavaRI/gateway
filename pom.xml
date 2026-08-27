@@ -28,7 +28,7 @@
    <parent>
 	   <groupId>org.springframework.boot</groupId>
 	   <artifactId>spring-boot-dependencies</artifactId>
-	   <version>4.1.0</version>
+	   <version>4.1.1</version>
 	   <relativePath />
    </parent>  
   <scm>
@@ -49,7 +49,7 @@
 		  <dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>2025.1.2</version>
+				<version>2025.1.3</version>
 				<type>pom</type>
 				<scope>import</scope>
 		  </dependency>  
@@ -59,32 +59,32 @@
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>agent</artifactId>
-	        <version>9.0.0</version>
+	        <version>9.0.1-SNAPSHOT</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-common</artifactId>
-	        <version>9.0.0</version>
+	        <version>9.0.1-SNAPSHOT</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-common-audit</artifactId>
-	        <version>9.0.0</version>
+	        <version>9.0.1-SNAPSHOT</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>config-service-client</artifactId>
-	        <version>9.0.0</version>
+	        <version>9.0.1-SNAPSHOT</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-msg-monitor-client</artifactId>
-	        <version>9.0.0</version>
+	        <version>9.0.1-SNAPSHOT</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>xd-common</artifactId>
-	        <version>9.0.0</version>
+	        <version>9.0.1-SNAPSHOT</version>
 	        <exclusions>
 	           <exclusion>
 	              <groupId>org.springframework.boot</groupId>
@@ -100,7 +100,7 @@
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>config-service-jar</artifactId>
-	        <version>9.0.0</version>
+	        <version>9.0.1-SNAPSHOT</version>
 	        <scope>test</scope>
 	    </dependency>							
 	    <dependency>
