@@ -68,6 +68,11 @@
 	    </dependency>
 	    <dependency>
 	        <groupId>org.nhind</groupId>
+	        <artifactId>direct-gateway-common</artifactId>
+	        <version>9.0.1-SNAPSHOT</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-common-audit</artifactId>
 	        <version>9.0.1-SNAPSHOT</version>
 	    </dependency>
