@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>gateway</artifactId>
     <name>Direct Project Agent Gateways.</name>
-    <version>9.0.1-SNAPSHOT</version>
+    <version>9.1.0-SNAPSHOT</version>
     <description>Direct Project security agent gateways and bridges.</description>
     <inceptionYear>2010</inceptionYear>
     <url>https://github.com/DirectProjectJavaRI/gateway</url>        
@@ -59,37 +59,37 @@
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>agent</artifactId>
-	        <version>9.0.1-SNAPSHOT</version>
+	        <version>9.1.0-SNAPSHOT</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-common</artifactId>
-	        <version>9.0.1-SNAPSHOT</version>
+	        <version>9.1.0-SNAPSHOT</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-gateway-common</artifactId>
-	        <version>9.0.1-SNAPSHOT</version>
+	        <version>9.1.0-SNAPSHOT</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-common-audit</artifactId>
-	        <version>9.0.1-SNAPSHOT</version>
+	        <version>9.1.0-SNAPSHOT</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>config-service-client</artifactId>
-	        <version>9.0.1-SNAPSHOT</version>
+	        <version>9.1.0-SNAPSHOT</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>direct-msg-monitor-client</artifactId>
-	        <version>9.0.1-SNAPSHOT</version>
+	        <version>9.1.0-SNAPSHOT</version>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>xd-common</artifactId>
-	        <version>9.0.1-SNAPSHOT</version>
+	        <version>9.1.0-SNAPSHOT</version>
 	        <exclusions>
 	           <exclusion>
 	              <groupId>org.springframework.boot</groupId>
@@ -105,7 +105,7 @@
 	    <dependency>
 	        <groupId>org.nhind</groupId>
 	        <artifactId>config-service-jar</artifactId>
-	        <version>9.0.1-SNAPSHOT</version>
+	        <version>9.1.0-SNAPSHOT</version>
 	        <scope>test</scope>
 	    </dependency>							
 	    <dependency>
